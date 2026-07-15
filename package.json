@@ -1,0 +1,21 @@
+{
+  "name": "my-app-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "uv sync --directory apps/back && pnpm --filter web build",
+    "start": "node scripts/start.mjs",
+    "lint:back": "uv run --directory apps/back ruff check . && uv run --directory apps/back ruff format --check .",
+    "lint:web": "pnpm --filter web lint",
+    "type:back": "uv run --directory apps/back mypy .",
+    "type:web": "pnpm --filter web typecheck",
+    "test:back": "uv run --directory apps/back pytest",
+    "test:web": "pnpm --filter web test",
+    "check:back": "pnpm lint:back && pnpm type:back && pnpm test:back",
+    "check:web": "pnpm lint:web && pnpm type:web && pnpm test:web",
+    "check": "pnpm check:back && pnpm check:web"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
+  }
+}

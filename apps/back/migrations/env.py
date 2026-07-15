@@ -1,0 +1,51 @@
+"""Alembic 异步迁移环境。从 SQLModel.metadata 自动识别表结构。"""
+
+import asyncio
+from logging.config import fileConfig
+from typing import Any
+
+from alembic import context
+from sqlalchemy import Connection, pool
+from sqlalchemy.ext.asyncio import async_engine_from_config
+
+from app.core.config import settings
+from app.db.base import metadata  # 汇总所有模型的 metadata
+
+config = context.config
+config.set_main_option("sqlalchemy.url", settings.database_url)
+
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+target_metadata = metadata
+
+
+def run_migrations_offline() -> None:
+    context.configure(
+        url=settings.database_url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def do_run_migrations(connection: Connection) -> None:
+    context.configure(connection=connection, target_metadata=target_metadata, render_as_batch=True)
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+async def run_migrations_online() -> None:
+    section: dict[str, Any] = config.get_section(config.config_ini_section, {})
+    connectable = async_engine_from_config(section, prefix="sqlalchemy.", poolclass=pool.NullPool)
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+    await connectable.dispose()
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    asyncio.run(run_migrations_online())

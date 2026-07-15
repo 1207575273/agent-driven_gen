@@ -1,0 +1,93 @@
+[project]
+name = "app-back"
+version = "0.1.0"
+description = "通用母版后端: FastAPI + SQLModel + SQLite(WAL)"
+requires-python = ">=3.12"
+dependencies = [
+    # ---- 核心 Web 栈 ----
+    "fastapi>=0.115",
+    "sqlmodel>=0.0.22",
+    "aiosqlite>=0.20",
+    "uvicorn[standard]>=0.32",
+    "alembic>=1.14",
+    "pydantic-settings>=2.6",
+    # ---- 常用工具包(母版预置, 团队按需使用或删减)----
+    "httpx>=0.28",              # 调外部 HTTP 服务(测试客户端亦复用)
+    "orjson>=3.10",            # 更快的 JSON 序列化, 已设为默认响应
+    "structlog>=24.4",         # 结构化日志(打印关键参数, 便于脱敏)
+    "tenacity>=9.0",           # 重试 / 退避, 应对外部服务抖动
+    "python-multipart>=0.0.12",  # FastAPI 表单 / 文件上传支持
+    "email-validator>=2.2",    # 启用 Pydantic EmailStr 校验
+    # ---- 数据处理 / 报表(PMO、测试常用, 较重按需删减)----
+    "pandas>=2.2",             # 数据分析 / 清洗
+    "openpyxl>=3.1",           # Excel(.xlsx)读写, 也是 pandas 的 xlsx 引擎
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "pandas-stubs>=2.2",       # 让团队用 pandas 时也有类型检查
+]
+
+# 母版是应用而非库, 不需要 uv 构建/安装自身, 只装依赖。
+[tool.uv]
+package = false
+
+# ---------------------------------------------------------------------------
+# 第 1 道防线: Ruff (lint + format)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "ASYNC", "RUF"]
+
+# ---------------------------------------------------------------------------
+# 第 2 道防线: mypy (类型检查 = 编译期替身), strict 起步
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["migrations/"]
+
+# tests 里第三方装饰器(pytest_asyncio.fixture 等)可能未完全类型化,
+# 仅对该规则局部放宽, 其余 strict 检查保留。
+[[tool.mypy.overrides]]
+module = "app.tests.*"
+disallow_untyped_decorators = false
+
+# 第三方库缺类型存根时, 仅对其忽略"找不到存根", 不影响我们自己代码的 strict。
+[[tool.mypy.overrides]]
+module = ["openpyxl.*"]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# ---------------------------------------------------------------------------
+# 第 3 道防线: pytest + TDD + 覆盖率闸门
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["app/tests"]
+addopts = "--cov=app --cov-report=term-missing --cov-fail-under=80 -q"
+
+[tool.coverage.run]
+omit = ["app/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]

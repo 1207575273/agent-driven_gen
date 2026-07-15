@@ -1,0 +1,26 @@
+# ---- Python / 后端 ----
+__pycache__/
+*.py[cod]
+.venv/
+apps/back/dev.db
+apps/back/dev.db-*
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ---- Node / 前端 ----
+node_modules/
+apps/web/dist/
+# 前端构建产物由后端托管的目录
+apps/back/static/
+
+# ---- 环境 / 密钥 ----
+.env
+*.local
+
+# ---- OS / IDE ----
+.DS_Store
+.idea/
+.vscode/
