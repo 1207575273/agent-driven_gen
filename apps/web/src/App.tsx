@@ -40,7 +40,7 @@ export function App() {
   };
 
   return (
-    <main style={{ maxWidth: 640, margin: "40px auto", fontFamily: "system-ui, sans-serif" }}>
+    <main className="mx-auto my-10 max-w-2xl px-4 font-sans">
       <h1>通用母版 · Item 示例</h1>
       <p style={{ color: "#666" }}>
         配置化表单 → POST /api/v1/items → 列表 GET 回显(全程只用 GET / POST)。

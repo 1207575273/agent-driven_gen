@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
@@ -12,7 +13,7 @@ const frontendPort = Number(process.env.FRONTEND_PORT) || ports.frontend[0];
 const backendPort = Number(process.env.BACKEND_PORT) || ports.backend[0];
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: {
     port: frontendPort,
     // 端口已由 dev.mjs 探测确保空闲, 固定用它, 不再自动跳

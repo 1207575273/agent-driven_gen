@@ -15,6 +15,6 @@
     "formatter": { "quoteStyle": "double" }
   },
   "files": {
-    "ignore": ["dist", "src/api/schema.d.ts"]
+    "ignore": ["dist", "src/api/schema.d.ts", "**/*.css"]
   }
 }
