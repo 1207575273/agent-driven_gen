@@ -13,7 +13,7 @@ dependencies = [
     "pydantic-settings>=2.6",
     # ---- 常用工具包(母版预置, 团队按需使用或删减)----
     "httpx>=0.28",              # 调外部 HTTP 服务(测试客户端亦复用)
-    "orjson>=3.10",            # 更快的 JSON 序列化, 已设为默认响应
+    "orjson>=3.10",            # 更快的 JSON 序列化(按需使用)
     "structlog>=24.4",         # 结构化日志(打印关键参数, 便于脱敏)
     "tenacity>=9.0",           # 重试 / 退避, 应对外部服务抖动
     "python-multipart>=0.0.12",  # FastAPI 表单 / 文件上传支持

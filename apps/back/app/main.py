@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1 import api_router as v1_router
@@ -27,8 +27,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # pragma: no co
 
 def create_app() -> FastAPI:
     configure_logging(settings.log_level, sql_echo=settings.sql_echo)
-    app = FastAPI(title="通用母版 API", lifespan=lifespan, default_response_class=ORJSONResponse)
+    app = FastAPI(title="通用母版 API", lifespan=lifespan)
     register_exception_handlers(app)
+    # CORS: 提前放行跨域。默认全放行(origins/methods/headers 皆 *);
+    # 注意 allow_origins=["*"] 与 allow_credentials 不可同真(CORS 规范),
+    # 若日后用 cookie 鉴权需带凭证, 改用 allow_origin_regex 指定来源。
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.include_router(v1_router, prefix=f"{settings.api_prefix}/v1")
     _mount_static(app)
     return app

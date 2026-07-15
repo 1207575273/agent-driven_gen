@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     # 默认打印每条 SQL(便于开发排查); 生产可设 APP_SQL_ECHO=false 关闭
     sql_echo: bool = True
+    # CORS 放行来源: 默认 ["*"] 放行所有跨域(便于起步);
+    # 生产收窄用 APP_CORS_ORIGINS='["https://你的域名"]'(JSON 数组)
+    cors_origins: list[str] = ["*"]
 
 
 settings = Settings()
