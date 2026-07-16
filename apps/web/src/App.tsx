@@ -1,18 +1,17 @@
 import { ArchFlow } from "./components/ArchFlow";
 import { CapabilityGrid } from "./components/CapabilityGrid";
 import { ItemsPanel } from "./components/ItemsPanel";
+import { ResourceCard } from "./components/ResourceCard";
 
 function TopBar() {
   return (
     <header className="sticky top-0 z-10 border-b border-neutral-900 bg-[#0a0a0a]/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
         <span className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-sm bg-accent" />
           <span className="font-mono text-sm text-neutral-200">monorepo·母版</span>
         </span>
-        <span className="hidden font-mono text-xs text-neutral-500 sm:block">
-          FastAPI · SQLModel · React · TypeScript
-        </span>
+        <ResourceCard />
       </div>
     </header>
   );

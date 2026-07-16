@@ -45,6 +45,14 @@ export const itemsApi = {
   remove: (id: number) => request<{ success: boolean }>(`/items/${id}/delete`, { method: "POST" }),
 };
 
+export interface SystemStats {
+  cpu_percent: number; // 本进程占整机 CPU 的百分比
+  mem_rss: number; // 本进程常驻内存(字节)
+  mem_percent: number; // 本进程占系统内存的百分比
+  mem_total: number; // 系统总内存(字节)
+}
+
 export const systemApi = {
   health: () => request<{ status: string }>("/health"),
+  stats: () => request<SystemStats>("/system/stats"),
 };

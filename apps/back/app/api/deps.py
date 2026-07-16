@@ -12,6 +12,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.db.session import get_session
 from app.repositories.item_repository import ItemRepository
 from app.services.item_service import ItemService
+from app.services.system_service import SystemService
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
@@ -28,6 +29,14 @@ def get_item_service(repository: ItemRepositoryDep) -> ItemService:
 
 
 ItemServiceDep = Annotated[ItemService, Depends(get_item_service)]
+
+
+# 系统指标: 无 session/repository, 直接构造 service。
+def get_system_service() -> SystemService:
+    return SystemService()
+
+
+SystemServiceDep = Annotated[SystemService, Depends(get_system_service)]
 
 # 鉴权占位(母版不含鉴权)。团队接入后在此提供:
 # async def get_current_user(session: SessionDep, token: str = Depends(oauth2_scheme)) -> User: ...

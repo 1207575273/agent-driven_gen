@@ -29,3 +29,13 @@ export function useHealth() {
     refetchInterval: 15000,
   });
 }
+
+// 主机资源(CPU / 内存)轮询: 每 2s 拉一次, 供右上角资源卡片实时刷新。
+export function useSystemStats() {
+  return useQuery({
+    queryKey: ["system-stats"],
+    queryFn: systemApi.stats,
+    retry: false,
+    refetchInterval: 2000,
+  });
+}
