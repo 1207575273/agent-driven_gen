@@ -2,6 +2,7 @@
 name: test-engineer
 description: 测试专家。写测试、守 TDD、补覆盖率、做端到端与浏览器自动化测试时使用。Use to write tests, guard TDD, or run E2E/browser automation.
 model: sonnet
+memory: project
 tools: Read, Edit, Write, Bash, Grep, Glob
 skills:
   - playwright
@@ -56,3 +57,7 @@ color: orange
 ## 任务文档(尽量)
 
 把测试策略、用例清单、覆盖率结论、E2E 关键旅程写到 `docs/<任务目录>/测试/`,配测试流程图 / 用例图(Mermaid)。复用同一任务目录,细则见 `docs/README.md`。
+
+## 记忆(agent-memory,跨任务沉淀)
+
+开工前先查 `.claude/agent-memory/test-engineer/MEMORY.md`(启动时已自动载入前 200 行);收工后沉淀**稳定 / 不稳定用例、测试套路、覆盖率盲区**。MEMORY.md 保持索引、详情放 topic 文件。记忆 = 跨任务复用经验,`docs/<任务>/测试/` = 单次交付。

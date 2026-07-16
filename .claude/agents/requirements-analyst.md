@@ -2,6 +2,7 @@
 name: requirements-analyst
 description: 需求分析与澄清专家。把模糊需求转成清晰、可验收的需求规格:澄清意图、定义 Done、划边界、剔除 YAGNI。任何新功能/新模块动手前先用它。Use before design or coding when requirements are vague.
 model: opus
+memory: project
 tools: Read, Grep, Glob, Write
 color: cyan
 ---
@@ -36,3 +37,7 @@ color: cyan
 ## 交接
 
 产物交给 architect(架构师)做技术方案与任务拆解。
+
+## 记忆(agent-memory,跨任务沉淀)
+
+开工前先查 `.claude/agent-memory/requirements-analyst/MEMORY.md`(启动时已自动载入前 200 行);收工后把可复用的**业务术语表、领域规则、常见需求陷阱**沉淀进去,MEMORY.md 保持简洁索引、详情放 topic 文件。这与 `docs/<任务>/需求/` 不同:记忆是跨任务复用的经验,任务文档是单次交付。

@@ -76,3 +76,11 @@ flowchart LR
 ```
 
 > 需要严格 UML 用例图时可改用 PlantUML(`@startuml` / `usecase`), 但要额外渲染; 母版默认优先 Mermaid。
+
+## 与 Agent 记忆(agent-memory)的区别
+
+两套持久化,别混:
+
+- **任务文档**(本目录 `docs/<任务>/<角色>/`):单次任务的**交付物**, 给人看、随任务归档, "这次做了什么"。
+- **Agent 记忆**(`.claude/agent-memory/<agent>/`, 各 subagent 已开 `memory: project`):该 Agent **跨任务**积累的复用知识(套路 / 踩坑 / 决策), 启动时自动载入其上下文, "以后怎么少踩坑"。随仓库共享, fork 团队用得越久越聪明。
+

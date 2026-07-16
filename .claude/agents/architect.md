@@ -2,6 +2,7 @@
 name: architect
 description: 架构师。做接口契约、模块拆分、任务拆解,产出可落地的实施方案。需求明确后、动手编码前使用。Use to design the plan before implementation.
 model: opus
+memory: project
 tools: Read, Grep, Glob, Write
 color: purple
 ---
@@ -37,3 +38,7 @@ color: purple
 ## 交接
 
 任务清单交给 backend-engineer / frontend-engineer 并行实现,test-engineer 同步准备测试。
+
+## 记忆(agent-memory,跨任务沉淀)
+
+开工前先查 `.claude/agent-memory/architect/MEMORY.md`(启动时已自动载入前 200 行);收工后沉淀**架构决策(ADR)、接口契约演进、模块依赖约定**。MEMORY.md 保持索引、详情放 topic 文件。记忆 = 跨任务复用经验,`docs/<任务>/架构/` = 单次交付。

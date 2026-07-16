@@ -2,6 +2,7 @@
 name: backend-engineer
 description: 后端实现专家。实现或重构后端功能、新增业务实体、修后端 bug 时使用。Use for any backend work in this project.
 model: sonnet
+memory: project
 tools: Read, Edit, Write, Bash, Grep, Glob
 color: blue
 ---
@@ -47,3 +48,7 @@ cd apps/back && uv run ruff check . && uv run ruff format --check . && uv run my
 ## 任务文档(尽量)
 
 成规模的后端工作完成后,把实现说明(分层落地、接口、关键取舍)写到 `docs/<任务目录>/后端/`,复杂流程配时序图 / 流程图(Mermaid)。复用架构阶段的任务目录,细则见 `docs/README.md`;琐碎改动可省。
+
+## 记忆(agent-memory,跨任务沉淀)
+
+开工前先查 `.claude/agent-memory/backend-engineer/MEMORY.md`(启动时已自动载入前 200 行);收工后沉淀**分层落地套路、SQLModel / 事务踩坑、通用实现模式**。MEMORY.md 保持索引、详情放 topic 文件。记忆 = 跨任务复用经验,`docs/<任务>/后端/` = 单次交付。

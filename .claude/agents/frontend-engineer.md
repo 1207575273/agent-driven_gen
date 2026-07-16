@@ -2,6 +2,7 @@
 name: frontend-engineer
 description: 前端实现专家。实现前端页面、组件、交互,或修前端 bug 时使用。Use for any frontend work in this project.
 model: sonnet
+memory: project
 tools: Read, Edit, Write, Bash, Grep, Glob
 color: green
 ---
@@ -38,3 +39,7 @@ pnpm --filter web lint && pnpm --filter web typecheck && pnpm --filter web test
 ## 任务文档(尽量)
 
 成规模的前端工作完成后,把页面 / 组件 / 状态设计与交互流程写到 `docs/<任务目录>/前端/`,配组件结构图 / 交互流程图(Mermaid)。复用同一任务目录,细则见 `docs/README.md`;琐碎改动可省。
+
+## 记忆(agent-memory,跨任务沉淀)
+
+开工前先查 `.claude/agent-memory/frontend-engineer/MEMORY.md`(启动时已自动载入前 200 行);收工后沉淀**组件清单、交互套路、React Query / Zustand 约定与踩坑**。MEMORY.md 保持索引、详情放 topic 文件。记忆 = 跨任务复用经验,`docs/<任务>/前端/` = 单次交付。
