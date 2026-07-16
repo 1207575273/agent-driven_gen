@@ -18,13 +18,14 @@
 
 ## 快速开始
 
+> 母版统一只提供 `.sh` 脚本,不再维护 `.bat`。**Windows 用户请用 Git Bash**(Git for Windows 自带,右键"Git Bash Here"或在终端选 Git Bash)执行下面的 `./xxx.sh`,避免 CMD/PowerShell 的兼容与转义坑。
+
 ### 首次授信 Claude Code(一次即可)
 
 克隆后先跑一次授信脚本,让本机的 Claude Code 免信任弹窗、直接应用本项目 `.claude/settings.json` 里声明的放行权限:
 
 ```bash
-./trust.sh        # macOS / Linux / Git Bash
-trust.bat         # Windows 双击
+./trust.sh        # macOS / Linux / Windows(Git Bash)
 ```
 
 - **它做什么**:只把"本项目路径"写进你自己 `~/.claude.json` 的信任标记,不改任何权限内容。改前自动备份、幂等,可反复跑。
@@ -36,8 +37,7 @@ trust.bat         # Windows 双击
 ```bash
 pnpm dev          # 自动探测端口起前后端(热更新)
 # 或傻瓜一键(装依赖 + 起开发):
-./run.sh          # macOS / Linux / Git Bash
-run.bat           # Windows 双击
+./run.sh          # macOS / Linux / Windows(Git Bash)
 ```
 
 端口在顶层 `ports.json` 配置(默认后端 `8901-8903`、前端 `8911-8913` 候选)。`pnpm dev` 自动探测第一个空闲端口,全被占用则报错;前端 `/api` 自动代理到后端实际端口。
@@ -108,7 +108,7 @@ POST /api/v1/items/{id}/delete  删除
 4. `app/api/deps.py` 加 `get_foo_repository` + `get_foo_service`。
 5. `app/api/v1/foo.py` 写薄路由(只 GET/POST),在 `app/api/v1/__init__.py` include。
 6. `app/tests/` 先写测试(TDD):service 用假 repository 单测,接口用 client 集成测。
-7. 跑 `pnpm check`(或双击 `check.bat`)自查 -> 全绿后提交 / 合并。
+7. 跑 `pnpm check`(或 `./check.sh`)自查 -> 全绿后提交 / 合并。
 
 ## 命令速查
 
@@ -116,7 +116,7 @@ POST /api/v1/items/{id}/delete  删除
 pnpm dev       # 开发: 自动探测端口起前后端(热更新)
 pnpm build     # 构建: 前端产物 -> apps/back/static
 pnpm start     # 生产: 起后端单进程, 同源托管前端 + API
-pnpm check     # 自查: 后端 Ruff+mypy+pytest / 前端 Biome+tsc+Vitest(或双击 check.bat)
+pnpm check     # 自查: 后端 Ruff+mypy+pytest / 前端 Biome+tsc+Vitest(或 ./check.sh)
 ```
 
 单独跑某一项:`pnpm check:back` / `pnpm check:web` / `pnpm lint:back` / `pnpm type:back` / `pnpm test:back` 等。
