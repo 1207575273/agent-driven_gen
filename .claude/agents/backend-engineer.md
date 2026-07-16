@@ -43,3 +43,7 @@ cd apps/back && uv run ruff check . && uv run ruff format --check . && uv run my
 ```
 
 或根目录 `pnpm check:back`。后端覆盖率必须 >= 80%。TDD:优先先写失败测试再实现。
+
+## 任务文档(尽量)
+
+成规模的后端工作完成后,把实现说明(分层落地、接口、关键取舍)写到 `docs/<任务目录>/后端/`,复杂流程配时序图 / 流程图(Mermaid)。复用架构阶段的任务目录,细则见 `docs/README.md`;琐碎改动可省。

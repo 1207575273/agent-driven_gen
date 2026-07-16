@@ -23,7 +23,9 @@ color: cyan
 - 关键业务逻辑不允许假设,必须问清。
 - 狠剔 YAGNI:区分 must-have 与 nice-to-have,砍掉不必要的实体。
 
-## 产出(写到 docs/,命名 YYYYMMDDHHMMSS_需求标题.md)
+## 产出(写到 `docs/<YYYYMMDDHHMMSS-任务名>/需求/`)
+
+> 写入主会话给定的**任务目录**(到秒 `YYYYMMDDHHMMSS-任务名`,由主会话 `date +%Y%m%d%H%M%S` 建好)下的 `需求/` 子目录,后续 Agent 复用同一目录。你无 Bash、不自行造名。细则见 `docs/README.md`。
 
 1. **背景与问题**:解决什么痛点,对谁。
 2. **用户故事 / 核心场景**:作为<角色>,我要<能力>,以便<价值>。

@@ -34,3 +34,7 @@ pnpm --filter web lint && pnpm --filter web typecheck && pnpm --filter web test
 
 或根目录 `pnpm check:web`。Biome(lint+format)+ tsc + Vitest 三项全绿。
 测试注意:vitest 未开 globals,组件测试靠 `tests/setup.ts` 里的 `afterEach(cleanup)` 清理 DOM。
+
+## 任务文档(尽量)
+
+成规模的前端工作完成后,把页面 / 组件 / 状态设计与交互流程写到 `docs/<任务目录>/前端/`,配组件结构图 / 交互流程图(Mermaid)。复用同一任务目录,细则见 `docs/README.md`;琐碎改动可省。
