@@ -29,9 +29,22 @@ export interface ItemCreate {
   quantity?: number;
 }
 
+export interface ItemUpdate {
+  name?: string;
+  description?: string;
+  quantity?: number;
+}
+
+// 更新/删除走 POST 子路径, 不用 PATCH/PUT/DELETE。
 export const itemsApi = {
   list: () => request<Item[]>("/items"),
   create: (payload: ItemCreate) =>
     request<Item>("/items", { method: "POST", body: JSON.stringify(payload) }),
+  update: (id: number, payload: ItemUpdate) =>
+    request<Item>(`/items/${id}/update`, { method: "POST", body: JSON.stringify(payload) }),
   remove: (id: number) => request<{ success: boolean }>(`/items/${id}/delete`, { method: "POST" }),
+};
+
+export const systemApi = {
+  health: () => request<{ status: string }>("/health"),
 };

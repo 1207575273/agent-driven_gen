@@ -1,84 +1,60 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { itemsApi } from "./api/client";
-import { DynamicForm, type FieldConfig, type FormValues } from "./components/DynamicForm";
-import { useUiStore } from "./stores/useUiStore";
+import { ArchFlow } from "./components/ArchFlow";
+import { CapabilityGrid } from "./components/CapabilityGrid";
+import { ItemsPanel } from "./components/ItemsPanel";
 
-const ITEM_FIELDS: FieldConfig[] = [
-  { name: "name", label: "名称", type: "text", required: true, placeholder: "必填" },
-  { name: "description", label: "描述", type: "text", placeholder: "可选" },
-  { name: "quantity", label: "数量", type: "number", placeholder: "0" },
-];
+function TopBar() {
+  return (
+    <header className="sticky top-0 z-10 border-b border-neutral-900 bg-[#0a0a0a]/90 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+        <span className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-sm bg-accent" />
+          <span className="font-mono text-sm text-neutral-200">monorepo·母版</span>
+        </span>
+        <span className="hidden font-mono text-xs text-neutral-500 sm:block">
+          FastAPI · SQLModel · React · TypeScript
+        </span>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="py-20">
+      <h1 className="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-neutral-50 sm:text-5xl">
+        能直接跑通, 又写不进烂代码的
+        <br />
+        全栈母版
+      </h1>
+      <p className="mt-6 max-w-2xl text-base leading-relaxed text-neutral-400">
+        FastAPI + SQLModel 的三层后端, React + TypeScript 的前端, 一条 pnpm 命令起飞。 给 PMO 与测试
+        fork 出去, 迭代自己的工具与系统 —— 母版只保证开箱能跑通 + 写不进烂代码。
+      </p>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-neutral-900 py-8">
+      <p className="font-mono text-xs text-neutral-600">
+        pnpm dev · pnpm build · pnpm start · pnpm check —— KISS &amp; YAGNI
+      </p>
+    </footer>
+  );
+}
 
 export function App() {
-  const queryClient = useQueryClient();
-  const lastMessage = useUiStore((state) => state.lastMessage);
-  const setLastMessage = useUiStore((state) => state.setLastMessage);
-
-  const itemsQuery = useQuery({ queryKey: ["items"], queryFn: itemsApi.list });
-
-  const createMutation = useMutation({
-    mutationFn: itemsApi.create,
-    onSuccess: (item) => {
-      setLastMessage(`已创建: ${item.name}`);
-      void queryClient.invalidateQueries({ queryKey: ["items"] });
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: itemsApi.remove,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["items"] });
-    },
-  });
-
-  const handleSubmit = (values: FormValues) => {
-    createMutation.mutate({
-      name: String(values.name ?? ""),
-      description: values.description ? String(values.description) : undefined,
-      quantity: values.quantity ? Number(values.quantity) : 0,
-    });
-  };
-
   return (
-    <main className="mx-auto my-10 max-w-2xl px-4 font-sans">
-      <h1>通用母版 · Item 示例</h1>
-      <p style={{ color: "#666" }}>
-        配置化表单 → POST /api/v1/items → 列表 GET 回显(全程只用 GET / POST)。
-      </p>
-
-      <section>
-        <h2>新增</h2>
-        <DynamicForm
-          fields={ITEM_FIELDS}
-          onSubmit={handleSubmit}
-          submitting={createMutation.isPending}
-          submitLabel="创建"
-        />
-        {lastMessage ? <p style={{ color: "green" }}>{lastMessage}</p> : null}
-      </section>
-
-      <section>
-        <h2>列表</h2>
-        {itemsQuery.isLoading ? <p>加载中...</p> : null}
-        {itemsQuery.isError ? (
-          <p style={{ color: "crimson" }}>加载失败, 请确认后端已启动。</p>
-        ) : null}
-        <ul>
-          {itemsQuery.data?.map((item) => (
-            <li key={item.id}>
-              <strong>{item.name}</strong> × {item.quantity}
-              {item.description ? ` — ${item.description}` : ""}
-              <button
-                type="button"
-                style={{ marginLeft: 8 }}
-                onClick={() => deleteMutation.mutate(item.id)}
-              >
-                删除
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
+    <div className="min-h-full">
+      <TopBar />
+      <main className="mx-auto max-w-6xl px-6">
+        <Hero />
+        <ArchFlow />
+        <CapabilityGrid />
+        <ItemsPanel />
+        <Footer />
+      </main>
+    </div>
   );
 }
