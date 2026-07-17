@@ -1,0 +1,1 @@
+- [前端模式与约定](frontend-patterns.md) — React + TS + Tailwind 暗色主题组件模式、ECharts 配置模板、无障碍处理汇���
