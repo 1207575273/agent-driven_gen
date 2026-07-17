@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m 'docs\\(readme\\): 补充价值主张 + uv/pnpm 前置安装指引\\(附官方来源\\) *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'docs\\(readme\\): 新增'\\\\''单进程 Agent 团队\\(需求->测试\\)'\\\\''一节 *)"
+    ]
+  }
+}
