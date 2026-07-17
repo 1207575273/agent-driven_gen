@@ -5,6 +5,8 @@
 
 from sqlmodel import SQLModel
 
+from app.models.employee import Employee  # noqa: F401  仅为注册元数据
 from app.models.item import Item  # noqa: F401  仅为注册元数据
+from app.models.work_hour import WorkHour  # noqa: F401  仅为注册元数据
 
 metadata = SQLModel.metadata
