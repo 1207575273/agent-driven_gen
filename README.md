@@ -1,7 +1,15 @@
 # 通用 monorepo 母版
 
-一套极简、可 fork 的全栈脚手架。团队(PMO、测试等)clone 出去即可迭代自己的工具与系统。
+一套极简、可 fork 的**全栈**脚手架:前端 + 后端 + 质量闸门一次备齐。任何 web 业务、任何形态(内部工具、后台系统、数据看板、审批 / CRUD)都照着 Item 示例往外长即可。团队(PMO、测试等)clone 出去就能迭代自己的系统。
+
 母版只保证两件事:**开箱能跑通** + **写不进烂代码**(硬性质量闸门)。
+
+## 为什么是它(价值)
+
+- **一套整完前后端**:一个仓库、一条 `pnpm dev` 起飞,前端(React)+ 后端(FastAPI)+ 三道质量闸门全接好,不用自己从零拼脚手架。
+- **部署极简,无需 nginx**:生产是**同源单进程** —— `pnpm build` 把前端打进后端 `static`,`pnpm start` 起**一个** uvicorn 同时托管前端页面与 `/api`。没有反向代理、没有 nginx、没有跨域、没有多进程编排:**一个端口、一个进程、一台机器**就上线。
+- **任何 web 业务、任何形态**:完整三层 + 配置化前端,CRUD / 看板 / 审批 / 报表都能往外长;全程只用 GET / POST,心智极简。
+- **写不进烂代码**:Python 无编译期,靠 Ruff + mypy(strict) + pytest(覆盖率 ≥ 80%)+ 前端 Biome / tsc / Vitest 兜底,一键 `pnpm check` 自查。
 
 ## 技术栈
 
@@ -15,6 +23,58 @@
 | 质量自查 | `pnpm check`(手动一键);pre-commit + CI 为未来可选(见方案文档附录) |
 
 后端预置常用包:`httpx / orjson / structlog / tenacity / python-multipart / email-validator / pandas / openpyxl`(按需删减)。
+
+## 前置条件(项目基座)
+
+只需两样基座工具:**Node.js + pnpm**(前端与编排脚本)和 **uv**(Python 运行时与后端)。装好这两样,其余依赖由 `pnpm install` / `uv sync` 自动拉齐 —— 本机**不需要**预装 Python。
+
+### 1. Node.js + pnpm
+
+先装 Node.js LTS(>= 18),再装 pnpm:
+
+```bash
+# Node.js: 到 https://nodejs.org 下载 LTS, 或用 nvm / fnm 等版本管理器
+
+# pnpm 方式一(Node 自带 Corepack, 推荐):
+corepack enable pnpm
+
+# pnpm 方式二(独立安装):
+#   Windows(PowerShell):
+Invoke-WebRequest https://get.pnpm.io/install.ps1 -UseBasicParsing | Invoke-Expression
+#   macOS / Linux:
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+#   或: npm install -g pnpm@latest-11   /   brew install pnpm
+```
+
+> 官方来源:安装文档 <https://pnpm.io/installation> · GitHub <https://github.com/pnpm/pnpm>
+
+### 2. uv(自带并管理 Python 3.12,无需预装 Python)
+
+```bash
+#   Windows(PowerShell):
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+#   macOS / Linux:
+curl -LsSf https://astral.sh/uv/install.sh | sh
+#   或: brew install uv   /   pipx install uv
+
+# 备好 Python 3.12(可选; 后端命令 / pnpm build 首次运行会自动拉齐):
+uv python install 3.12
+```
+
+> 官方来源:安装文档 <https://docs.astral.sh/uv/getting-started/installation/> · GitHub <https://github.com/astral-sh/uv>
+
+> Windows 上这两条**安装命令用 PowerShell** 执行(一次性装工具);装好后日常开发再切回 Git Bash 跑 `./xxx.sh`。
+
+### 3. 校验 + 首次装依赖
+
+```bash
+node -v && pnpm -v && uv --version    # 三个都打印版本号即就绪
+
+pnpm install                          # 前端 + 编排脚本依赖
+uv sync --directory apps/back         # 后端 Python 依赖(uv 顺带备好 Python 3.12)
+```
+
+装依赖也可直接跑 `./run.sh`(傻瓜一键:装好依赖并起开发)。
 
 ## 快速开始
 
