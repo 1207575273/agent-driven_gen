@@ -1,0 +1,5 @@
+[     540ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[     587ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[    8741ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[    8742ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[    8744ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0

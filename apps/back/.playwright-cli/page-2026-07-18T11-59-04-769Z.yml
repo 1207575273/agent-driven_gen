@@ -1,0 +1,141 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: monorepo . 母版
+      - generic "当前后端进程占用" [ref=e9]:
+        - generic "本进程占整机 CPU" [ref=e10]:
+          - generic [ref=e11]: CPU
+          - generic [ref=e13]: 0%
+        - generic "本进程常驻内存 35.9 MB · 占系统内存 0.22% · 系统共 15.7 GB" [ref=e63]:
+          - generic [ref=e16]: MEM
+          - generic [ref=e17]: 36 MB
+          - generic [ref=e64]: 0.22%
+  - complementary [ref=e18]:
+    - navigation [ref=e19]:
+      - list [ref=e20]:
+        - listitem [ref=e21]:
+          - link "产能填报审计" [ref=e22] [cursor=pointer]:
+            - /url: /capacity/audit
+        - listitem [ref=e23]:
+          - link "产能交叉维度分析" [ref=e24] [cursor=pointer]:
+            - /url: /capacity/analysis
+        - listitem [ref=e25]:
+          - link "数据管理" [ref=e26] [cursor=pointer]:
+            - /url: /capacity/admin
+  - main [ref=e27]:
+    - generic [ref=e29]:
+      - heading "产能交叉维度分析" [level=1] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: 粒度
+          - generic [ref=e34]:
+            - button "月" [ref=e35]
+            - button "季" [ref=e36]
+            - button "半年" [ref=e37]
+        - generic [ref=e38]:
+          - generic [ref=e39]: 时段
+          - combobox "时段" [ref=e40]:
+            - option "2026H1" [selected]
+            - option "2026Q1"
+            - option "2026Q2"
+        - generic [ref=e41]:
+          - generic [ref=e42]: 部门层级
+          - combobox "部门层级" [ref=e43]:
+            - option "一级"
+            - option "二级" [selected]
+            - option "三级"
+            - option "四级"
+        - generic [ref=e44]:
+          - generic [ref=e45]: 部门
+          - textbox "部门" [ref=e46]:
+            - /placeholder: 全部部门
+        - generic [ref=e47]:
+          - generic [ref=e48]: 角色
+          - textbox "角色" [ref=e49]:
+            - /placeholder: 全部角色
+        - generic [ref=e50]:
+          - generic [ref=e51]: 分类层级
+          - combobox "分类层级" [ref=e52]:
+            - option "大类" [selected]
+            - option "分类"
+            - option "细分"
+        - button "重置" [ref=e53]
+      - generic [ref=e54]:
+        - button "时间x分类" [ref=e55]
+        - button "部门x分类" [ref=e56]
+        - button "角色x分类" [ref=e57]
+        - button "人员" [ref=e58]
+        - button "三快计划vs实际" [active] [ref=e59]
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - heading "Q1/Q2 三快计划 vs 实际" [level=3] [ref=e67]
+          - img [ref=e71]:
+            - generic [ref=e73]:
+              - generic [ref=e74]: "0"
+              - generic [ref=e75]: "500"
+              - generic [ref=e76]: 1,000
+              - generic [ref=e77]: 1,500
+              - generic [ref=e78]: 2,000
+              - generic [ref=e79]: 2,500
+              - generic [ref=e80]: 2026-Q1
+              - generic [ref=e81]: 2026-Q2
+              - generic [ref=e96]: 快服务-计划
+              - generic [ref=e99]: 快交付-计划
+              - generic [ref=e102]: 快营销-计划
+              - generic [ref=e105]: 快服务-实际
+              - generic [ref=e108]: 快交付-实际
+              - generic [ref=e111]: 快营销-实际
+        - generic [ref=e113]:
+          - heading "详细对比" [level=3] [ref=e114]
+          - table [ref=e116]:
+            - rowgroup [ref=e117]:
+              - row [ref=e118]:
+                - columnheader "季度" [ref=e119]
+                - columnheader "分类" [ref=e120]
+                - columnheader "计划" [ref=e121]
+                - columnheader "实际" [ref=e122]
+                - columnheader "偏差" [ref=e123]
+                - columnheader "达成率" [ref=e124]
+            - rowgroup [ref=e125]:
+              - row [ref=e126]:
+                - cell "2026-Q1" [ref=e127]
+                - cell "快服务" [ref=e128]
+                - cell "500.0" [ref=e129]
+                - cell "1660.8" [ref=e130]
+                - cell "+1160.8" [ref=e131]
+                - cell "332.2%" [ref=e133]
+              - row [ref=e135]:
+                - cell "2026-Q1" [ref=e136]
+                - cell "快交付" [ref=e137]
+                - cell "500.0" [ref=e138]
+                - cell "1379.3" [ref=e139]
+                - cell "+879.3" [ref=e140]
+                - cell "275.9%" [ref=e142]
+              - row [ref=e144]:
+                - cell "2026-Q1" [ref=e145]
+                - cell "快营销" [ref=e146]
+                - cell "200.0" [ref=e147]
+                - cell "359.9" [ref=e148]
+                - cell "+159.9" [ref=e149]
+                - cell "179.9%" [ref=e151]
+              - row [ref=e153]:
+                - cell "2026-Q2" [ref=e154]
+                - cell "快服务" [ref=e155]
+                - cell "400.0" [ref=e156]
+                - cell "1848.7" [ref=e157]
+                - cell "+1448.7" [ref=e158]
+                - cell "462.2%" [ref=e160]
+              - row [ref=e162]:
+                - cell "2026-Q2" [ref=e163]
+                - cell "快交付" [ref=e164]
+                - cell "400.0" [ref=e165]
+                - cell "2009.8" [ref=e166]
+                - cell "+1609.8" [ref=e167]
+                - cell "502.4%" [ref=e169]
+              - row [ref=e171]:
+                - cell "2026-Q2" [ref=e172]
+                - cell "快营销" [ref=e173]
+                - cell "400.0" [ref=e174]
+                - cell "387.0" [ref=e175]
+                - cell "-13.0" [ref=e176]
+                - cell "96.8%" [ref=e177]

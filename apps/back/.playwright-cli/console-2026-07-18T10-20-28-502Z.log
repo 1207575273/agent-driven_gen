@@ -1,0 +1,13 @@
+[     471ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8916/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[     650ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8916/favicon.ico:0
+[     663ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[    1680ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[    3690ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[    8005ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[  235169ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0
+[  237178ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0
+[  239191ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0
+[  241204ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0
+[  243225ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0
+[  245233ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0
+[  247245ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/system/stats:0

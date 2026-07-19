@@ -10,7 +10,13 @@ const QuantityChart = lazy(() =>
 );
 
 const ITEM_FIELDS: FieldConfig[] = [
-  { name: "name", label: "名称", type: "text", required: true, placeholder: "必填" },
+  {
+    name: "name",
+    label: "名称",
+    type: "text",
+    required: true,
+    placeholder: "必填",
+  },
   { name: "description", label: "描述", type: "text", placeholder: "可选" },
   { name: "quantity", label: "数量", type: "number", placeholder: "0" },
 ];

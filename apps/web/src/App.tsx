@@ -1,26 +1,20 @@
-import { Suspense, lazy } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Layout } from "./components/layout/Layout";
-import { LoadingSpinner } from "./components/shared/LoadingSpinner";
-
-const DashboardPage = lazy(() => import("./pages/DashboardPage"));
-const ProjectsPage = lazy(() => import("./pages/ProjectsPage"));
-const DepartmentsPage = lazy(() => import("./pages/DepartmentsPage"));
-const RolesPage = lazy(() => import("./pages/RolesPage"));
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AppLayout } from "./components/layout/AppLayout";
+import { CapacityAuditPage } from "./pages/CapacityAuditPage";
+import { CrossAnalysisPage } from "./pages/CrossAnalysisPage";
+import { DataAdminPage } from "./pages/DataAdminPage";
 
 export function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="projects" element={<ProjectsPage />} />
-            <Route path="departments" element={<DepartmentsPage />} />
-            <Route path="roles" element={<RolesPage />} />
-          </Route>
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Navigate to="/capacity/audit" replace />} />
+          <Route path="/capacity/audit" element={<CapacityAuditPage />} />
+          <Route path="/capacity/analysis" element={<CrossAnalysisPage />} />
+          <Route path="/capacity/admin" element={<DataAdminPage />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

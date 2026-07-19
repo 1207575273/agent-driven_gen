@@ -1,45 +1,66 @@
 @import "tailwindcss";
 
-/* 单一强调色: 克制的 emerald, 只用于主操作/在线态/图表/流向高亮, 其余保持中性灰 */
+/* 科技风主题：深空蓝底 + 青蓝霓虹光 + 玻璃拟态 */
 @theme {
-  --color-accent: #34d399;
+	--color-accent: #38bdf8;
+	--color-accent-glow: rgba(56, 189, 248, 0.2);
 }
 
 :root {
-  color-scheme: dark;
+	color-scheme: dark;
 }
 
 html,
 body,
 #root {
-  height: 100%;
+	height: 100%;
 }
 
 body {
-  margin: 0;
-  background-color: #0a0a0a;
-  color: #e5e5e5;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+	margin: 0;
+	background-color: #060b14;
+	color: #cbd5e1;
+	font-family: ui-sans-serif, system-ui, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
 }
 
-/* 细滚动条, 贴合暗色, 不喧宾夺主 */
+/* 细微网格背景，科技感 */
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	background-image: radial-gradient(
+			ellipse 80% 50% at 50% -20%,
+			rgba(56, 189, 248, 0.06),
+			transparent
+		),
+		radial-gradient(
+			ellipse 60% 40% at 100% 100%,
+			rgba(99, 102, 241, 0.04),
+			transparent
+		), linear-gradient(rgba(56, 189, 248, 0.015) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(56, 189, 248, 0.015) 1px, transparent 1px);
+	background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+}
+
+/* 细滚动条 */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+	width: 8px;
+	height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+	background: #060b14;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
-  border-radius: 6px;
+	background: #1e293b;
+	border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #333333;
+	background: #334155;
 }
 
 ::selection {
-  background: rgba(52, 211, 153, 0.22);
+	background: rgba(56, 189, 248, 0.3);
 }

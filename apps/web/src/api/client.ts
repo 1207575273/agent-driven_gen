@@ -3,7 +3,7 @@
 
 const BASE = "/api/v1";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const resp = await fetch(`${BASE}${path}`, {
     headers: { "Content-Type": "application/json" },
     ...init,
@@ -41,7 +41,10 @@ export const itemsApi = {
   create: (payload: ItemCreate) =>
     request<Item>("/items", { method: "POST", body: JSON.stringify(payload) }),
   update: (id: number, payload: ItemUpdate) =>
-    request<Item>(`/items/${id}/update`, { method: "POST", body: JSON.stringify(payload) }),
+    request<Item>(`/items/${id}/update`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
   remove: (id: number) => request<{ success: boolean }>(`/items/${id}/delete`, { method: "POST" }),
 };
 

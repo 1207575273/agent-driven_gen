@@ -15,7 +15,9 @@ describe("DynamicForm", () => {
     const onSubmit = vi.fn();
     render(<DynamicForm fields={FIELDS} onSubmit={onSubmit} />);
 
-    fireEvent.change(screen.getByLabelText("名称"), { target: { value: "widget" } });
+    fireEvent.change(screen.getByLabelText("名称"), {
+      target: { value: "widget" },
+    });
     fireEvent.submit(screen.getByTestId("dynamic-form"));
 
     expect(onSubmit).toHaveBeenCalledWith({ name: "widget" });

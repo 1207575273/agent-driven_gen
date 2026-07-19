@@ -1,0 +1,39 @@
+[    2300ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8913/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:21548
+[    2368ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10280ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10282ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10285ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10297ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10403ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10510ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10515ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   10515ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   20372ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   20374ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   24421ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   38254ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   38510ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   39235ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   40502ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   41193ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   43273ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   44450ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   45625ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   46351ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   53698ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[   53993ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[  380836ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8913/src/App.tsx?t=1784274765836:0
+[  380859ms] [ERROR] [hmr] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  381004ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8913/src/index.css?t=1784274765836:0
+[  381004ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  381017ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8913/src/index.css?t=1784274765870:0
+[  381018ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  381019ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8913/src/pages/DashboardPage.tsx?t=1784274765870:0
+[  381020ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8913/src/pages/ProjectsPage.tsx?t=1784274765870:0
+[  381020ms] [ERROR] [hmr] Failed to reload /src/pages/DashboardPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  381020ms] [ERROR] [hmr] Failed to reload /src/pages/ProjectsPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  381145ms] [ERROR] Failed to load resource: the server responded with a status of 504 () @ chrome-error://chromewebdata/:0
+[  381235ms] [ERROR] Failed to load resource: the server responded with a status of 504 () @ chrome-error://chromewebdata/:0
+[  381325ms] [ERROR] Fetch API cannot load chrome-error://chromewebdata/favicon.ico. URL scheme "chrome-error" is not supported. @ :1
+[  381488ms] [ERROR] Fetch API cannot load chrome-error://chromewebdata/favicon.ico. URL scheme "chrome-error" is not supported. @ :1
+[  381502ms] [ERROR] Fetch API cannot load chrome-error://chromewebdata/favicon.ico. URL scheme "chrome-error" is not supported. @ :1

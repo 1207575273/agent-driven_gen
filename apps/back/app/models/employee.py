@@ -1,7 +1,4 @@
-"""Employee 实体与传输契约(SQLModel 全家桶模式)。
-
-花名册数据: 人员信息、部门层级、角色、状态等。
-"""
+"""Employee 花名册实体与传输契约(SQLModel 全家桶)。"""
 
 from datetime import date, datetime
 
@@ -11,31 +8,33 @@ from app.core.time import utcnow
 
 
 class EmployeeBase(SQLModel):
-    """公共业务字段基类: 不含 id 和审计时间戳。"""
+    """花名册公共字段。"""
 
-    name: str = Field(min_length=1, max_length=50, index=True)
-    employee_id: str | None = Field(default=None, max_length=50)
-    position: str | None = Field(default=None, max_length=100)
-    level1_dept: str | None = Field(default=None, max_length=100)
-    level2_dept: str | None = Field(default=None, max_length=100, index=True)
-    level3_dept: str | None = Field(default=None, max_length=100)
-    level4_dept: str | None = Field(default=None, max_length=100)
-    actual_team: str | None = Field(default=None, max_length=100)
-    role: str | None = Field(default=None, max_length=50, index=True)
-    employee_type: str | None = Field(default=None, max_length=50, index=True)
+    name: str = Field(max_length=100, index=True)
+    employee_id: str | None = Field(default=None, max_length=50, index=True)
+    position: str | None = Field(default=None, max_length=200)
+    level1_dept: str | None = Field(default=None, max_length=200)
+    level2_dept: str | None = Field(default=None, max_length=200, index=True)
+    level3_dept: str | None = Field(default=None, max_length=200)
+    level4_dept: str | None = Field(default=None, max_length=200)
+    actual_team: str | None = Field(default=None, max_length=200)
+    role: str | None = Field(default=None, max_length=200)
+    employee_type: str | None = Field(default=None, max_length=100)
     employee_status: str | None = Field(default=None, max_length=50, index=True)
-    position_name: str | None = Field(default=None, max_length=100)
-    entry_date: date | None = None
-    leave_date: date | None = None
-    temp_report_note: str | None = Field(default=None, max_length=500)
-    remarks: str | None = Field(default=None, max_length=500)
-    is_outsourced: int = Field(default=0, index=True)
-    match_status: str = Field(default="matched", max_length=20, index=True)
+    position_type: str | None = Field(default=None, max_length=100)
+    entry_date: date | None = Field(default=None)
+    leave_date: date | None = Field(default=None)
+    fill_note: str | None = Field(default=None, max_length=500)
+    remarks: str | None = Field(default=None, max_length=1000)
+    planned_project1: str | None = Field(default=None, max_length=500)
+    planned_project2: str | None = Field(default=None, max_length=500)
+    planned_project3: str | None = Field(default=None, max_length=500)
+    planned_project4: str | None = Field(default=None, max_length=500)
+    planned_project5: str | None = Field(default=None, max_length=500)
+    is_excluded: bool = Field(default=False, index=True)
 
 
 class Employee(EmployeeBase, table=True):
-    """数据库表模型: 在 Base 之上补主键和审计时间戳。"""
-
     __tablename__ = "employees"
 
     id: int | None = Field(default=None, primary_key=True)
@@ -44,11 +43,11 @@ class Employee(EmployeeBase, table=True):
 
 
 class EmployeeCreate(EmployeeBase):
-    """新增入参: 直接复用 Base。"""
+    """新增入参: 复用 Base 字段。"""
 
 
 class EmployeeUpdate(SQLModel):
-    """更新入参: 全部字段 Optional, 支持部分更新。"""
+    """更新入参: 全字段可选。"""
 
     name: str | None = None
     employee_id: str | None = None
@@ -61,17 +60,21 @@ class EmployeeUpdate(SQLModel):
     role: str | None = None
     employee_type: str | None = None
     employee_status: str | None = None
-    position_name: str | None = None
+    position_type: str | None = None
     entry_date: date | None = None
     leave_date: date | None = None
-    temp_report_note: str | None = None
+    fill_note: str | None = None
     remarks: str | None = None
-    is_outsourced: int | None = None
-    match_status: str | None = None
+    planned_project1: str | None = None
+    planned_project2: str | None = None
+    planned_project3: str | None = None
+    planned_project4: str | None = None
+    planned_project5: str | None = None
+    is_excluded: bool | None = None
 
 
 class EmployeePublic(EmployeeBase):
-    """出参契约: Base + id, 显式控制对外暴露字段。"""
+    """出参: 暴露 id 与审计时间戳。"""
 
     id: int
     created_at: datetime

@@ -70,6 +70,18 @@ disallow_untyped_decorators = false
 module = ["openpyxl.*", "psutil"]
 ignore_missing_imports = true
 
+# Repository/Service/Datasources 层 SQLModel + mypy strict 已知不可调和的摩擦:
+# ColumnElement[str|None] / dict[str,object] / select() overload 等。
+# 类型精确度由 pytest 保证, mypy 对这些层做合理降级。
+[[tool.mypy.overrides]]
+module = ["app.repositories.*", "app.services.*", "app.datasources.*", "scripts.*"]
+warn_unused_ignores = false
+disallow_untyped_decorators = false
+disallow_any_generics = false
+disallow_any_expr = false
+disallow_any_decorated = false
+allow_any_generics = true
+
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true

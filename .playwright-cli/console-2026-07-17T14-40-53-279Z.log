@@ -1,0 +1,9 @@
+[     451ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8913/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[     509ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/favicon.ico:0
+[  371764ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/src/pages/DashboardPage.tsx?t=1784299624657:0
+[  371765ms] [ERROR] [hmr] Failed to reload /src/pages/DashboardPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  371768ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/@fs/D:/work_space/agent-driven_gen/apps/web/src/components/dashboard/MonthlyTrendChart.tsx?t=1784299624712:0
+[  371768ms] [ERROR] [hmr] Failed to reload /@fs/D:\work_space\agent-driven_gen\apps\web\src\components\dashboard\MonthlyTrendChart.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8913/@vite/client:175
+[  372121ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/src/components/layout/Layout.tsx?t=1784299624724:0
+[  372121ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8913/src/components/layout/AppLayout.tsx?t=1784299624724:0
+[  405699ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8913/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548

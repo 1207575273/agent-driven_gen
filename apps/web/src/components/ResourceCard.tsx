@@ -43,7 +43,9 @@ export function ResourceCard() {
             className={`h-full rounded-full transition-all duration-500 ${
               ok && data ? barColor(data.cpu_percent) : "bg-neutral-700"
             }`}
-            style={{ width: `${ok && data ? Math.min(100, data.cpu_percent) : 0}%` }}
+            style={{
+              width: `${ok && data ? Math.min(100, data.cpu_percent) : 0}%`,
+            }}
           />
         </div>
         <span className="w-9 text-right font-mono text-[11px] text-neutral-200">

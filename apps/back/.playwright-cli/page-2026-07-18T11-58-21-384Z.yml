@@ -1,0 +1,142 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: monorepo . 母版
+      - generic "当前后端进程占用" [ref=e9]:
+        - generic "本进程占整机 CPU" [ref=e10]:
+          - generic [ref=e11]: CPU
+          - generic [ref=e13]: 0.30%
+        - generic "本进程常驻内存 35.7 MB · 占系统内存 0.22% · 系统共 15.7 GB" [ref=e81]:
+          - generic [ref=e16]: MEM
+          - generic [ref=e17]: 36 MB
+          - generic [ref=e64]: 0.22%
+  - complementary [ref=e18]:
+    - navigation [ref=e19]:
+      - list [ref=e20]:
+        - listitem [ref=e21]:
+          - link "产能填报审计" [ref=e22] [cursor=pointer]:
+            - /url: /capacity/audit
+        - listitem [ref=e23]:
+          - link "产能交叉维度分析" [ref=e24] [cursor=pointer]:
+            - /url: /capacity/analysis
+        - listitem [ref=e25]:
+          - link "数据管理" [ref=e26] [cursor=pointer]:
+            - /url: /capacity/admin
+  - main [ref=e27]:
+    - generic [ref=e29]:
+      - heading "产能交叉维度分析" [level=1] [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: 粒度
+          - generic [ref=e34]:
+            - button "月" [ref=e35]
+            - button "季" [ref=e36]
+            - button "半年" [ref=e37]
+        - generic [ref=e38]:
+          - generic [ref=e39]: 时段
+          - combobox "时段" [ref=e40]:
+            - option "2026H1" [selected]
+            - option "2026Q1"
+            - option "2026Q2"
+        - generic [ref=e41]:
+          - generic [ref=e42]: 部门层级
+          - combobox "部门层级" [ref=e43]:
+            - option "一级"
+            - option "二级" [selected]
+            - option "三级"
+            - option "四级"
+        - generic [ref=e44]:
+          - generic [ref=e45]: 部门
+          - textbox "部门" [ref=e46]:
+            - /placeholder: 全部部门
+        - generic [ref=e47]:
+          - generic [ref=e48]: 角色
+          - textbox "角色" [ref=e49]:
+            - /placeholder: 全部角色
+        - generic [ref=e50]:
+          - generic [ref=e51]: 分类层级
+          - combobox "分类层级" [ref=e52]:
+            - option "大类" [selected]
+            - option "分类"
+            - option "细分"
+        - button "重置" [ref=e53]
+      - generic [ref=e54]:
+        - button "时间x分类" [ref=e55]
+        - button "部门x分类" [ref=e56]
+        - button "角色x分类" [active] [ref=e57]
+        - button "人员" [ref=e58]
+        - button "三快计划vs实际" [ref=e59]
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - heading "各角色分类投入分布" [level=3] [ref=e84]
+          - img [ref=e88]:
+            - generic [ref=e90]:
+              - generic [ref=e91]: 开发-后端
+              - generic [ref=e92]: 开发-前端
+              - generic [ref=e93]: 测试
+              - generic [ref=e94]: 产品
+              - generic [ref=e95]: 其他
+              - generic [ref=e96]: UED
+              - generic [ref=e97]: 开发-KK
+              - generic [ref=e98]: 八爪鱼
+        - generic [ref=e100]:
+          - heading "各角色人均产能" [level=3] [ref=e101]
+          - img [ref=e105]:
+            - generic [ref=e107]:
+              - generic [ref=e108]: "0"
+              - generic [ref=e109]: "20"
+              - generic [ref=e110]: "40"
+              - generic [ref=e111]: "60"
+              - generic [ref=e112]: "80"
+              - generic [ref=e113]: "100"
+              - generic [ref=e114]: "120"
+              - generic [ref=e115]: 开发-后端
+              - generic [ref=e116]: 开发-前端
+              - generic [ref=e117]: 测试
+              - generic [ref=e118]: 产品
+              - generic [ref=e119]: 其他
+              - generic [ref=e120]: UED
+              - generic [ref=e121]: 开发-KK
+              - generic [ref=e122]: 八爪鱼
+              - generic [ref=e133]: 人均产能
+        - generic [ref=e135]:
+          - heading "角色x分类交叉表" [level=3] [ref=e136]
+          - table [ref=e138]:
+            - rowgroup [ref=e139]:
+              - row [ref=e140]:
+                - columnheader "角色" [ref=e141]
+                - columnheader "人数" [ref=e142]
+                - columnheader "合计" [ref=e143]
+            - rowgroup [ref=e144]:
+              - row [ref=e145]:
+                - cell "开发-后端" [ref=e146]
+                - cell "61" [ref=e147]
+                - cell "6131.5" [ref=e148]
+              - row [ref=e149]:
+                - cell "开发-前端" [ref=e150]
+                - cell "33" [ref=e151]
+                - cell "3163.3" [ref=e152]
+              - row [ref=e153]:
+                - cell "测试" [ref=e154]
+                - cell "21" [ref=e155]
+                - cell "2067.3" [ref=e156]
+              - row [ref=e157]:
+                - cell "产品" [ref=e158]
+                - cell "16" [ref=e159]
+                - cell "1726.7" [ref=e160]
+              - row [ref=e161]:
+                - cell "其他" [ref=e162]
+                - cell "18" [ref=e163]
+                - cell "1498.7" [ref=e164]
+              - row [ref=e165]:
+                - cell "UED" [ref=e166]
+                - cell "11" [ref=e167]
+                - cell "1095.0" [ref=e168]
+              - row [ref=e169]:
+                - cell "开发-KK" [ref=e170]
+                - cell "6" [ref=e171]
+                - cell "673.0" [ref=e172]
+              - row [ref=e173]:
+                - cell "八爪鱼" [ref=e174]
+                - cell "1" [ref=e175]
+                - cell "117.7" [ref=e176]

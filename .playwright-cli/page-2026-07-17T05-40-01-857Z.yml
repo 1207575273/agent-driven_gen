@@ -1,0 +1,393 @@
+- generic [ref=f2e5]:
+  - complementary [ref=f2e6]:
+    - generic [ref=f2e7]: 产能分析
+    - navigation [ref=f2e10]:
+      - link "仪表盘" [ref=f2e11] [cursor=pointer]:
+        - /url: /
+      - link "项目看板" [ref=f2e12] [cursor=pointer]:
+        - /url: /projects
+      - link "部门看板" [ref=f2e13] [cursor=pointer]:
+        - /url: /departments
+      - link "角色分析" [ref=f2e14] [cursor=pointer]:
+        - /url: /roles
+    - generic [ref=f2e15]: monorepo · 母版
+  - main [ref=f2e16]:
+    - generic [ref=f2e18]:
+      - generic [ref=f2e19]:
+        - heading "部门看板" [level=1] [ref=f2e20]
+        - paragraph [ref=f2e21]: 部门人力投入概览、人员排行榜与偏离度分析, 点击人员下钻查看项目明细。
+      - generic [ref=f2e22]:
+        - generic [ref=f2e23]: 选择部门
+        - generic [ref=f2e24]:
+          - button "产研办公室" [ref=f2e25]
+          - button "凌脑创新部" [ref=f2e26]
+          - button "境知产品部" [ref=f2e27]
+          - button "应用产品部" [active] [ref=f2e28]
+          - button "技术架构部" [ref=f2e29]
+          - button "流造产品部" [ref=f2e30]
+          - button "研发治理部" [ref=f2e31]
+      - generic [ref=f2e32]:
+        - generic [ref=f2e33]: 部门概况
+        - generic [ref=f2e34]:
+          - generic [ref=f2e38]:
+            - generic [ref=f2e39]:
+              - generic [ref=f2e40]: 总人天
+              - generic [ref=f2e41]:
+                - generic [ref=f2e42]: 4,390.2
+                - generic [ref=f2e43]: 人天
+            - generic [ref=f2e44]:
+              - generic [ref=f2e45]: 人均人天
+              - generic [ref=f2e46]:
+                - generic [ref=f2e47]: "107.1"
+                - generic [ref=f2e48]: 人天
+            - generic [ref=f2e49]:
+              - generic [ref=f2e50]: 人数
+              - generic [ref=f2e51]:
+                - generic [ref=f2e52]: "41"
+                - generic [ref=f2e53]: 人
+          - generic [ref=f2e54]:
+            - generic [ref=f2e55]:
+              - text: "Top 3 集中度:"
+              - generic [ref=f2e56]: 37.0%
+            - generic [ref=f2e57]:
+              - text: "Top 5 集中度:"
+              - generic [ref=f2e58]: 52.7%
+          - generic [ref=f2e59]:
+            - generic [ref=f2e60]: 项目分布
+            - img [ref=f2e63]:
+              - generic [ref=f2e65]:
+                - generic [ref=f2e137]: 2026Q1快服务项...
+                - generic [ref=f2e138]: 15.2%
+                - generic [ref=f2e139]: 2026Q1快交付项...
+                - generic [ref=f2e140]: 12.0%
+                - generic [ref=f2e141]: 2026Q2快服务项...
+                - generic [ref=f2e142]: 9.8%
+                - generic [ref=f2e143]: 2026Q2快交付项...
+                - generic [ref=f2e144]: 8.0%
+                - generic [ref=f2e145]: 2026Q1其他工作
+                - generic [ref=f2e146]: 7.7%
+                - generic [ref=f2e147]: 2026Q2其他工作
+                - generic [ref=f2e148]: 3.9%
+                - generic [ref=f2e149]: 701组(EKP17...
+                - generic [ref=f2e150]: 1.9%
+                - generic [ref=f2e151]: 知识管理中台（一阶段...
+                - generic [ref=f2e152]: 1.4%
+                - generic [ref=f2e153]: 2026Q2临时会议
+                - generic [ref=f2e154]: 0.9%
+                - generic [ref=f2e155]: 2025Q4日常运营...
+                - generic [ref=f2e156]: 0.7%
+                - generic [ref=f2e157]: 202组(aiKM)...
+                - generic [ref=f2e158]: 0.3%
+                - generic [ref=f2e159]: 低代码上下左右中（二...
+                - generic [ref=f2e160]: 0.2%
+                - generic [ref=f2e161]: 401组(aiBPM...
+                - generic [ref=f2e162]: 0.2%
+                - generic [ref=f2e163]: 快交付-MK功能自动...
+                - generic [ref=f2e164]: 0.1%
+                - generic [ref=f2e165]: 201组（aiSpa...
+                - generic [ref=f2e166]: 0.1%
+                - generic [ref=f2e167]: 2026Q1配置组周...
+                - generic [ref=f2e168]: 0.0%
+                - generic [ref=f2e169]: 2026Q2配置组周...
+                - generic [ref=f2e170]: 0.0%
+                - generic [ref=f2e171]: 203组（APP端）...
+                - generic [ref=f2e172]: 0.0%
+      - generic [ref=f2e35]:
+        - generic [ref=f2e36]: 人员排行榜
+        - table [ref=f2e173]:
+          - rowgroup [ref=f2e174]:
+            - row [ref=f2e175]:
+              - columnheader "姓名" [ref=f2e176]
+              - columnheader "角色" [ref=f2e177]
+              - columnheader "部门" [ref=f2e178]
+              - columnheader "总人天" [ref=f2e179]
+              - columnheader "同级均值" [ref=f2e180]
+              - columnheader "偏离度" [ref=f2e181]
+          - rowgroup [ref=f2e182]:
+            - row [ref=f2e183] [cursor=pointer]:
+              - cell "潘永辉" [ref=f2e184]
+              - cell "开发-后端" [ref=f2e185]
+              - cell "应用产品部" [ref=f2e186]
+              - cell "132.9" [ref=f2e187]
+              - cell "107.1" [ref=f2e188]
+              - cell "+24%" [ref=f2e189]
+            - row [ref=f2e191] [cursor=pointer]:
+              - cell "叶正平" [ref=f2e192]
+              - cell "开发-后端" [ref=f2e193]
+              - cell "应用产品部" [ref=f2e194]
+              - cell "125.3" [ref=f2e195]
+              - cell "107.1" [ref=f2e196]
+              - cell "+17%" [ref=f2e197]
+            - row [ref=f2e199] [cursor=pointer]:
+              - cell "唐程润" [ref=f2e200]
+              - cell "开发-后端" [ref=f2e201]
+              - cell "应用产品部" [ref=f2e202]
+              - cell "125.0" [ref=f2e203]
+              - cell "107.1" [ref=f2e204]
+              - cell "+17%" [ref=f2e205]
+            - row [ref=f2e207] [cursor=pointer]:
+              - cell "谭昌香" [ref=f2e208]
+              - cell "开发-后端" [ref=f2e209]
+              - cell "应用产品部" [ref=f2e210]
+              - cell "123.8" [ref=f2e211]
+              - cell "107.1" [ref=f2e212]
+              - cell "+16%" [ref=f2e213]
+            - row [ref=f2e215] [cursor=pointer]:
+              - cell "郑鑫" [ref=f2e216]
+              - cell "开发-后端" [ref=f2e217]
+              - cell "应用产品部" [ref=f2e218]
+              - cell "122.3" [ref=f2e219]
+              - cell "107.1" [ref=f2e220]
+              - cell "+14%" [ref=f2e221]
+            - row [ref=f2e223] [cursor=pointer]:
+              - cell "邓春喜" [ref=f2e224]
+              - cell "产品" [ref=f2e225]
+              - cell "应用产品部" [ref=f2e226]
+              - cell "122.1" [ref=f2e227]
+              - cell "107.1" [ref=f2e228]
+              - cell "+14%" [ref=f2e229]
+            - row [ref=f2e231] [cursor=pointer]:
+              - cell "李博宇" [ref=f2e232]
+              - cell "UED" [ref=f2e233]
+              - cell "应用产品部" [ref=f2e234]
+              - cell "122.0" [ref=f2e235]
+              - cell "107.1" [ref=f2e236]
+              - cell "+14%" [ref=f2e237]
+            - row [ref=f2e239] [cursor=pointer]:
+              - cell "刘娜" [ref=f2e240]
+              - cell "开发-后端" [ref=f2e241]
+              - cell "应用产品部" [ref=f2e242]
+              - cell "121.8" [ref=f2e243]
+              - cell "107.1" [ref=f2e244]
+              - cell "+14%" [ref=f2e245]
+            - row [ref=f2e247] [cursor=pointer]:
+              - cell "徐文辉" [ref=f2e248]
+              - cell "开发-后端" [ref=f2e249]
+              - cell "应用产品部" [ref=f2e250]
+              - cell "121.6" [ref=f2e251]
+              - cell "107.1" [ref=f2e252]
+              - cell "+14%" [ref=f2e253]
+            - row [ref=f2e255] [cursor=pointer]:
+              - cell "陈鑫康" [ref=f2e256]
+              - cell "开发-后端" [ref=f2e257]
+              - cell "应用产品部" [ref=f2e258]
+              - cell "121.0" [ref=f2e259]
+              - cell "107.1" [ref=f2e260]
+              - cell "+13%" [ref=f2e261]
+            - row [ref=f2e263] [cursor=pointer]:
+              - cell "谢星星" [ref=f2e264]
+              - cell "开发-后端" [ref=f2e265]
+              - cell "应用产品部" [ref=f2e266]
+              - cell "121.0" [ref=f2e267]
+              - cell "107.1" [ref=f2e268]
+              - cell "+13%" [ref=f2e269]
+            - row [ref=f2e271] [cursor=pointer]:
+              - cell "蒋业旺" [ref=f2e272]
+              - cell "开发-后端" [ref=f2e273]
+              - cell "应用产品部" [ref=f2e274]
+              - cell "121.0" [ref=f2e275]
+              - cell "107.1" [ref=f2e276]
+              - cell "+13%" [ref=f2e277]
+            - row [ref=f2e279] [cursor=pointer]:
+              - cell "洪健" [ref=f2e280]
+              - cell "开发-后端" [ref=f2e281]
+              - cell "应用产品部" [ref=f2e282]
+              - cell "120.0" [ref=f2e283]
+              - cell "107.1" [ref=f2e284]
+              - cell "+12%" [ref=f2e285]
+            - row [ref=f2e287] [cursor=pointer]:
+              - cell "黄永超" [ref=f2e288]
+              - cell "开发-后端" [ref=f2e289]
+              - cell "应用产品部" [ref=f2e290]
+              - cell "119.5" [ref=f2e291]
+              - cell "107.1" [ref=f2e292]
+              - cell "+12%" [ref=f2e293]
+            - row [ref=f2e295] [cursor=pointer]:
+              - cell "王兵" [ref=f2e296]
+              - cell "开发-后端" [ref=f2e297]
+              - cell "应用产品部" [ref=f2e298]
+              - cell "119.3" [ref=f2e299]
+              - cell "107.1" [ref=f2e300]
+              - cell "+11%" [ref=f2e301]
+            - row [ref=f2e303] [cursor=pointer]:
+              - cell "蔡海练" [ref=f2e304]
+              - cell "开发-前端" [ref=f2e305]
+              - cell "应用产品部" [ref=f2e306]
+              - cell "119.0" [ref=f2e307]
+              - cell "107.1" [ref=f2e308]
+              - cell "+11%" [ref=f2e309]
+            - row [ref=f2e311] [cursor=pointer]:
+              - cell "童张玉" [ref=f2e312]
+              - cell "UED" [ref=f2e313]
+              - cell "应用产品部" [ref=f2e314]
+              - cell "119.0" [ref=f2e315]
+              - cell "107.1" [ref=f2e316]
+              - cell "+11%" [ref=f2e317]
+            - row [ref=f2e319] [cursor=pointer]:
+              - cell "王逍" [ref=f2e320]
+              - cell "开发-后端" [ref=f2e321]
+              - cell "应用产品部" [ref=f2e322]
+              - cell "119.0" [ref=f2e323]
+              - cell "107.1" [ref=f2e324]
+              - cell "+11%" [ref=f2e325]
+            - row [ref=f2e327] [cursor=pointer]:
+              - cell "李海瑞" [ref=f2e328]
+              - cell "产品" [ref=f2e329]
+              - cell "应用产品部" [ref=f2e330]
+              - cell "119.0" [ref=f2e331]
+              - cell "107.1" [ref=f2e332]
+              - cell "+11%" [ref=f2e333]
+            - row [ref=f2e335] [cursor=pointer]:
+              - cell "朱朋祥" [ref=f2e336]
+              - cell "开发-前端" [ref=f2e337]
+              - cell "应用产品部" [ref=f2e338]
+              - cell "119.0" [ref=f2e339]
+              - cell "107.1" [ref=f2e340]
+              - cell "+11%" [ref=f2e341]
+            - row [ref=f2e343] [cursor=pointer]:
+              - cell "周才伟" [ref=f2e344]
+              - cell "UED" [ref=f2e345]
+              - cell "应用产品部" [ref=f2e346]
+              - cell "119.0" [ref=f2e347]
+              - cell "107.1" [ref=f2e348]
+              - cell "+11%" [ref=f2e349]
+            - row [ref=f2e351] [cursor=pointer]:
+              - cell "熊金华" [ref=f2e352]
+              - cell "开发-前端" [ref=f2e353]
+              - cell "应用产品部" [ref=f2e354]
+              - cell "118.9" [ref=f2e355]
+              - cell "107.1" [ref=f2e356]
+              - cell "+11%" [ref=f2e357]
+            - row [ref=f2e359] [cursor=pointer]:
+              - cell "陈丹萍" [ref=f2e360]
+              - cell "开发-前端" [ref=f2e361]
+              - cell "应用产品部" [ref=f2e362]
+              - cell "118.7" [ref=f2e363]
+              - cell "107.1" [ref=f2e364]
+              - cell "+11%" [ref=f2e365]
+            - row [ref=f2e367] [cursor=pointer]:
+              - cell "陈火旺" [ref=f2e368]
+              - cell "开发-后端" [ref=f2e369]
+              - cell "应用产品部" [ref=f2e370]
+              - cell "118.6" [ref=f2e371]
+              - cell "107.1" [ref=f2e372]
+              - cell "+11%" [ref=f2e373]
+            - row [ref=f2e375] [cursor=pointer]:
+              - cell "马彦研" [ref=f2e376]
+              - cell "开发-前端" [ref=f2e377]
+              - cell "应用产品部" [ref=f2e378]
+              - cell "117.9" [ref=f2e379]
+              - cell "107.1" [ref=f2e380]
+              - cell "+10%" [ref=f2e381]
+            - row [ref=f2e383] [cursor=pointer]:
+              - cell "陈浩" [ref=f2e384]
+              - cell "开发-前端" [ref=f2e385]
+              - cell "应用产品部" [ref=f2e386]
+              - cell "117.0" [ref=f2e387]
+              - cell "107.1" [ref=f2e388]
+              - cell "+9%" [ref=f2e389]
+            - row [ref=f2e391] [cursor=pointer]:
+              - cell "陈正坤" [ref=f2e392]
+              - cell "开发-后端" [ref=f2e393]
+              - cell "应用产品部" [ref=f2e394]
+              - cell "117.0" [ref=f2e395]
+              - cell "107.1" [ref=f2e396]
+              - cell "+9%" [ref=f2e397]
+            - row [ref=f2e399] [cursor=pointer]:
+              - cell "潘浩丹" [ref=f2e400]
+              - cell "UED" [ref=f2e401]
+              - cell "应用产品部" [ref=f2e402]
+              - cell "115.0" [ref=f2e403]
+              - cell "107.1" [ref=f2e404]
+              - cell "+7%" [ref=f2e405]
+            - row [ref=f2e407] [cursor=pointer]:
+              - cell "汪亮" [ref=f2e408]
+              - cell "开发-后端" [ref=f2e409]
+              - cell "应用产品部" [ref=f2e410]
+              - cell "114.0" [ref=f2e411]
+              - cell "107.1" [ref=f2e412]
+              - cell "+6%" [ref=f2e413]
+            - row [ref=f2e415] [cursor=pointer]:
+              - cell "欧宇" [ref=f2e416]
+              - cell "开发-后端" [ref=f2e417]
+              - cell "应用产品部" [ref=f2e418]
+              - cell "111.0" [ref=f2e419]
+              - cell "107.1" [ref=f2e420]
+              - cell "+4%" [ref=f2e421]
+            - row [ref=f2e423] [cursor=pointer]:
+              - cell "刘水明" [ref=f2e424]
+              - cell "开发-后端" [ref=f2e425]
+              - cell "应用产品部" [ref=f2e426]
+              - cell "110.4" [ref=f2e427]
+              - cell "107.1" [ref=f2e428]
+              - cell "+3%" [ref=f2e429]
+            - row [ref=f2e431] [cursor=pointer]:
+              - cell "郑操辉" [ref=f2e432]
+              - cell "开发-后端" [ref=f2e433]
+              - cell "应用产品部" [ref=f2e434]
+              - cell "110.0" [ref=f2e435]
+              - cell "107.1" [ref=f2e436]
+              - cell "+3%" [ref=f2e437]
+            - row [ref=f2e439] [cursor=pointer]:
+              - cell "吴世佳" [ref=f2e440]
+              - cell "产品" [ref=f2e441]
+              - cell "应用产品部" [ref=f2e442]
+              - cell "110.0" [ref=f2e443]
+              - cell "107.1" [ref=f2e444]
+              - cell "+3%" [ref=f2e445]
+            - row [ref=f2e447] [cursor=pointer]:
+              - cell "顾凌斐" [ref=f2e448]
+              - cell "UED" [ref=f2e449]
+              - cell "应用产品部" [ref=f2e450]
+              - cell "100.0" [ref=f2e451]
+              - cell "107.1" [ref=f2e452]
+              - cell "-7%" [ref=f2e453]
+            - row [ref=f2e455] [cursor=pointer]:
+              - cell "张建忠" [ref=f2e456]
+              - cell "开发-后端" [ref=f2e457]
+              - cell "应用产品部" [ref=f2e458]
+              - cell "90.0" [ref=f2e459]
+              - cell "107.1" [ref=f2e460]
+              - cell "-16%" [ref=f2e461]
+            - row [ref=f2e463] [cursor=pointer]:
+              - cell "孙丝语" [ref=f2e464]
+              - cell "产品" [ref=f2e465]
+              - cell "应用产品部" [ref=f2e466]
+              - cell "81.1" [ref=f2e467]
+              - cell "107.1" [ref=f2e468]
+              - cell "-24%" [ref=f2e469]
+            - row [ref=f2e471] [cursor=pointer]:
+              - cell "谢幸" [ref=f2e472]
+              - cell "开发-前端" [ref=f2e473]
+              - cell "应用产品部" [ref=f2e474]
+              - cell "69.1" [ref=f2e475]
+              - cell "107.1" [ref=f2e476]
+              - cell "-35%" [ref=f2e477]
+            - row [ref=f2e479] [cursor=pointer]:
+              - cell "杨太双" [ref=f2e480]
+              - cell "UED" [ref=f2e481]
+              - cell "应用产品部" [ref=f2e482]
+              - cell "46.0" [ref=f2e483]
+              - cell "107.1" [ref=f2e484]
+              - cell "-57%" [ref=f2e485]
+            - row [ref=f2e487] [cursor=pointer]:
+              - cell "刘水生" [ref=f2e488]
+              - cell "开发-前端" [ref=f2e489]
+              - cell "应用产品部" [ref=f2e490]
+              - cell "36.9" [ref=f2e491]
+              - cell "107.1" [ref=f2e492]
+              - cell "-66%" [ref=f2e493]
+            - row [ref=f2e495] [cursor=pointer]:
+              - cell "蒋林" [ref=f2e496]
+              - cell "开发-前端" [ref=f2e497]
+              - cell "应用产品部" [ref=f2e498]
+              - cell "32.0" [ref=f2e499]
+              - cell "107.1" [ref=f2e500]
+              - cell "-70%" [ref=f2e501]
+            - row [ref=f2e503] [cursor=pointer]:
+              - cell "郑晓婷" [ref=f2e504]
+              - cell "开发-后端" [ref=f2e505]
+              - cell "应用产品部" [ref=f2e506]
+              - cell "4.0" [ref=f2e507]
+              - cell "107.1" [ref=f2e508]
+              - cell "-96%" [ref=f2e509]

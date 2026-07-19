@@ -9,13 +9,19 @@ export function useItems() {
   };
 
   const list = useQuery({ queryKey: ["items"], queryFn: itemsApi.list });
-  const create = useMutation({ mutationFn: itemsApi.create, onSuccess: invalidate });
+  const create = useMutation({
+    mutationFn: itemsApi.create,
+    onSuccess: invalidate,
+  });
   const update = useMutation({
     mutationFn: ({ id, payload }: { id: number; payload: ItemUpdate }) =>
       itemsApi.update(id, payload),
     onSuccess: invalidate,
   });
-  const remove = useMutation({ mutationFn: itemsApi.remove, onSuccess: invalidate });
+  const remove = useMutation({
+    mutationFn: itemsApi.remove,
+    onSuccess: invalidate,
+  });
 
   return { list, create, update, remove };
 }

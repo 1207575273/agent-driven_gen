@@ -6,7 +6,10 @@ interface Capability {
 }
 
 const CAPS: Capability[] = [
-  { title: "只用 GET / POST", desc: "两种方法走天下, 更新/删除走 POST 子路径, 心智极简。" },
+  {
+    title: "只用 GET / POST",
+    desc: "两种方法走天下, 更新/删除走 POST 子路径, 心智极简。",
+  },
   {
     title: "SQLModel 全家桶",
     desc: "Base / Table / Create / Update / Public, 表结构与 API 契约解耦。",
@@ -15,9 +18,18 @@ const CAPS: Capability[] = [
     title: "mypy strict · 编译期替身",
     desc: "Python 没编译期, 靠严格类型 + Ruff 在提交前拦住低级错误。",
   },
-  { title: "覆盖率 ≥ 80%", desc: "Ruff + mypy + pytest 三道防线, 一键 pnpm check 自查。" },
-  { title: "同源单进程", desc: "pnpm build + start, 一个 uvicorn 同时托管前端页面与 API。" },
-  { title: "端口自动探测", desc: "ports.json 候选端口, 被占用自动跳下一个, 不用手改配置。" },
+  {
+    title: "覆盖率 ≥ 80%",
+    desc: "Ruff + mypy + pytest 三道防线, 一键 pnpm check 自查。",
+  },
+  {
+    title: "同源单进程",
+    desc: "pnpm build + start, 一个 uvicorn 同时托管前端页面与 API。",
+  },
+  {
+    title: "端口自动探测",
+    desc: "ports.json 候选端口, 被占用自动跳下一个, 不用手改配置。",
+  },
 ];
 
 export function CapabilityGrid() {

@@ -1,0 +1,106 @@
+[     388ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[     454ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:21548
+[     495ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[     496ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[     497ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[  214198ms] [ERROR] Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:177
+[  214200ms] [ERROR] Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:177
+[  214206ms] TypeError: Cannot read properties of null (reading 'useCallback')
+    at Object.useCallback (http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:1132:29)
+    at useStore (http://localhost:8911/node_modules/.vite/deps/zustand.js?v=66a1a80b:36:26)
+    at useBoundStore (http://localhost:8911/node_modules/.vite/deps/zustand.js?v=66a1a80b:44:39)
+    at ItemsPanel (http://localhost:8911/src/components/ItemsPanel.tsx:169:23)
+    at renderWithHooks (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:11546:26)
+    at mountIndeterminateComponent (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:14924:21)
+    at beginWork (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:15912:22)
+    at HTMLUnknownElement.callCallback2 (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:3672:22)
+    at Object.invokeGuardedCallbackDev (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:3697:24)
+    at invokeGuardedCallback (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:3731:39)
+[  214217ms] [ERROR] Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:177
+[  214218ms] [ERROR] Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:177
+[  214219ms] TypeError: Cannot read properties of null (reading 'useCallback')
+    at Object.useCallback (http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:1132:29)
+    at useStore (http://localhost:8911/node_modules/.vite/deps/zustand.js?v=66a1a80b:36:26)
+    at useBoundStore (http://localhost:8911/node_modules/.vite/deps/zustand.js?v=66a1a80b:44:39)
+    at ItemsPanel (http://localhost:8911/src/components/ItemsPanel.tsx:169:23)
+    at renderWithHooks (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:11546:26)
+    at mountIndeterminateComponent (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:14924:21)
+    at beginWork (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:15912:22)
+    at HTMLUnknownElement.callCallback2 (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:3672:22)
+    at Object.invokeGuardedCallbackDev (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:3697:24)
+    at invokeGuardedCallback (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:3731:39)
+[  214220ms] [ERROR] The above error occurred in the <ItemsPanel> component:
+
+    at ItemsPanel (http://localhost:8911/src/components/ItemsPanel.tsx:168:28)
+    at main
+    at div
+    at HomePage
+    at RenderedRoute (http://localhost:8911/node_modules/.vite/deps/react-router-dom.js?v=15350330:6667:26)
+    at Outlet (http://localhost:8911/node_modules/.vite/deps/react-router-dom.js?v=15350330:7532:26)
+    at div
+    at div
+    at AppLayout
+    at RenderedRoute (http://localhost:8911/node_modules/.vite/deps/react-router-dom.js?v=15350330:6667:26)
+    at Routes (http://localhost:8911/node_modules/.vite/deps/react-router-dom.js?v=15350330:7602:3)
+    at Suspense
+    at Router (http://localhost:8911/node_modules/.vite/deps/react-router-dom.js?v=15350330:7541:13)
+    at BrowserRouter (http://localhost:8911/node_modules/.vite/deps/react-router-dom.js?v=15350330:10857:3)
+    at App
+    at QueryClientProvider (http://localhost:8911/node_modules/.vite/deps/@tanstack_react-query.js?v=15350330:3237:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:14029
+[  214220ms] TypeError: Cannot read properties of null (reading 'useCallback')
+    at Object.useCallback (http://localhost:8911/node_modules/.vite/deps/chunk-PCGJ2KZD.js?v=c9828e4c:1132:29)
+    at useStore (http://localhost:8911/node_modules/.vite/deps/zustand.js?v=66a1a80b:36:26)
+    at useBoundStore (http://localhost:8911/node_modules/.vite/deps/zustand.js?v=66a1a80b:44:39)
+    at ItemsPanel (http://localhost:8911/src/components/ItemsPanel.tsx:169:23)
+    at renderWithHooks (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:11546:26)
+    at mountIndeterminateComponent (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:14924:21)
+    at beginWork (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:15912:22)
+    at beginWork$1 (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:19751:22)
+    at performUnitOfWork (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:19196:20)
+    at workLoopSync (http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=15350330:19135:13)
+[  214513ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[  235746ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/@fs/D:/work_space/agent-driven_gen/apps/web/src/components/QuantityChart.tsx?t=1784279642112:0
+[  235747ms] [ERROR] [hmr] Failed to reload /@fs/D:\work_space\agent-driven_gen\apps\web\src\components\QuantityChart.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235773ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642112:0
+[  235773ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235777ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642113:0
+[  235778ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235780ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642115:0
+[  235780ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235782ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642116:0
+[  235782ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235784ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/@fs/D:/work_space/agent-driven_gen/apps/web/src/components/ResourceCard.tsx?t=1784279642116:0
+[  235784ms] [ERROR] [hmr] Failed to reload /@fs/D:\work_space\agent-driven_gen\apps\web\src\components\ResourceCard.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235786ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/@fs/D:/work_space/agent-driven_gen/apps/web/src/components/ItemsPanel.tsx?t=1784279642116:0
+[  235786ms] [ERROR] [hmr] Failed to reload /@fs/D:\work_space\agent-driven_gen\apps\web\src\components\ItemsPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235791ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/@fs/D:/work_space/agent-driven_gen/apps/web/src/components/layout/AppLayout.tsx?t=1784279642117:0
+[  235792ms] [ERROR] [hmr] Failed to reload /@fs/D:\work_space\agent-driven_gen\apps\web\src\components\layout\AppLayout.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235794ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642117:0
+[  235795ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235798ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642118:0
+[  235798ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235799ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642122:0
+[  235800ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235802ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Request) @ http://localhost:8911/src/index.css?t=1784279642164:0
+[  235803ms] [ERROR] [hmr] Failed to reload /src/index.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:8911/@vite/client:175
+[  235843ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:8911/@vite/client:559
+[  236298ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548

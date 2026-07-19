@@ -1,10 +1,8 @@
-"""Employee 仓储层(Repository / DAO): 封装花名册数据的查询。
-
-持有 AsyncSession, 只做数据访问, 不包含业务逻辑。
-"""
+"""Employee 仓储层(DAO): 花名册数据访问。"""
 
 from collections.abc import Sequence
 
+from sqlalchemy.sql.elements import ColumnElement
 from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -15,56 +13,59 @@ class EmployeeRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    async def list_departments(self, level: int = 2) -> list[str]:
-        """获取部门列表(distinct level2 或 level3 部门)。"""
-        dept_col = getattr(Employee, f"level{level}_dept")
-        query = select(dept_col).where(dept_col.isnot(None)).where(dept_col != "").distinct().order_by(dept_col)
-        result = await self._session.exec(query)
-        rows = result.all()
-        return [str(r) for r in rows if r]
+    async def list_all(self) -> Sequence[Employee]:
+        result = await self._session.exec(select(Employee).order_by(col(Employee.id)))
+        return result.all()
 
-    async def list_roles(self) -> list[str]:
-        """获取角色列表(distinct)。"""
-        query = (
-            select(Employee.role)
-            .where(col(Employee.role).isnot(None))
-            .where(col(Employee.role) != "")
-            .distinct()
-            .order_by(Employee.role)
+    async def list_active_normal(self) -> Sequence[Employee]:
+        stmt = (
+            select(Employee)
+            .where(Employee.is_excluded == False)  # noqa: E712
+            .where(Employee.employee_status != "离职")
+            .order_by(col(Employee.id))
         )
-        result = await self._session.exec(query)
-        rows = result.all()
-        return [str(r) for r in rows if r]
+        result = await self._session.exec(stmt)
+        return result.all()
 
-    async def list_personnel_types(self) -> list[str]:
-        """获取人员类型列表(在编/外部人力资源 两个固定选项)。"""
-        return ["在编", "外部人力资源"]
+    async def list_departments(self, level: int = 2) -> Sequence[str]:
+        dept_col: ColumnElement[str] | None = _dept_col(Employee, level)
+        safe_col: ColumnElement[str] = dept_col if dept_col is not None else Employee.level2_dept  # type: ignore[assignment,return-value]
+        stmt = select(safe_col).where(safe_col.isnot(None)).distinct().order_by(safe_col)  # type: ignore[arg-type]
+        result = await self._session.exec(stmt)
+        return [r for r in result.all() if r is not None]
 
-    async def list_employee_statuses(self) -> list[str]:
-        """获取员工状态列表(distinct)。"""
-        query = (
-            select(Employee.employee_status)
-            .where(col(Employee.employee_status).isnot(None))
-            .where(col(Employee.employee_status) != "")
-            .distinct()
-            .order_by(Employee.employee_status)
-        )
-        result = await self._session.exec(query)
-        rows = result.all()
-        return [str(r) for r in rows if r]
+    async def list_roles(self) -> Sequence[str]:
+        stmt = select(Employee.role).where(Employee.role.isnot(None)).distinct().order_by(Employee.role)  # type: ignore[union-attr,arg-type]
+        result = await self._session.exec(stmt)
+        return [r for r in result.all() if r is not None]
 
-    async def list_by_department(self, department: str, level: int = 2) -> Sequence[Employee]:
-        """按部门获取人员列表。"""
-        dept_col = getattr(Employee, f"level{level}_dept")
-        query = select(Employee).where(dept_col == department).order_by(Employee.name)
-        result = await self._session.exec(query)
+    async def list_by_department(self, dept_level: int, dept_name: str) -> Sequence[Employee]:
+        dept_col: ColumnElement[str] | None = _dept_col(Employee, dept_level)
+        if dept_col is None:
+            dept_col = Employee.level2_dept  # type: ignore[assignment]
+        stmt = select(Employee).where(dept_col == dept_name).order_by(col(Employee.id))  # type: ignore[arg-type]
+        result = await self._session.exec(stmt)
         return result.all()
 
     async def get(self, employee_id: int) -> Employee | None:
-        """按 ID 获取员工。"""
         return await self._session.get(Employee, employee_id)
 
-    async def list_all(self) -> Sequence[Employee]:
-        """获取全部员工。"""
-        result = await self._session.exec(select(Employee).order_by(col(Employee.id)))
-        return result.all()
+    async def get_by_employee_id_str(self, employee_id_str: str) -> Employee | None:
+        stmt = select(Employee).where(Employee.employee_id == employee_id_str)
+        result = await self._session.exec(stmt)
+        return result.first()
+
+    async def get_by_name(self, name: str) -> Employee | None:
+        stmt = select(Employee).where(Employee.name == name)
+        result = await self._session.exec(stmt)
+        return result.first()
+
+
+def _dept_col(model: type[Employee], level: int) -> ColumnElement[str] | None:
+    mapping: dict[int, ColumnElement[str]] = {
+        1: model.level1_dept,  # type: ignore[dict-item]
+        2: model.level2_dept,  # type: ignore[dict-item]
+        3: model.level3_dept,  # type: ignore[dict-item]
+        4: model.level4_dept,  # type: ignore[dict-item]
+    }
+    return mapping.get(level)

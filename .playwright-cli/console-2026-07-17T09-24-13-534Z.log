@@ -1,0 +1,21 @@
+[     385ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[     418ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[    6811ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[    6895ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[    6896ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8911/favicon.ico:0
+[ 2109351ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:8911/@vite/client:559
+[ 2109370ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/:0
+[ 2245176ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/:0
+[ 2251106ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/api/v1/system/stats:0
+[ 5436093ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[ 6316849ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:8911/@vite/client:559
+[ 6316870ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/:0
+[10051061ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/:0
+[10052925ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[10055650ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/api/v1/items:0
+[10056666ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:8911/@vite/client:559
+[10056666ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/api/v1/health:0
+[10056667ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/api/v1/system/stats:0
+[10056667ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8911/:0
+[16226616ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8911/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[16317365ms] [ERROR] Failed to load resource: net::ERR_NETWORK_CHANGED @ http://localhost:8911/api/v1/health:0

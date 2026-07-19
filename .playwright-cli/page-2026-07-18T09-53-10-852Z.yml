@@ -1,0 +1,45 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: monorepo . 母版
+      - generic "当前后端进程占用" [ref=e9]:
+        - generic "本进程占整机 CPU" [ref=e10]:
+          - generic [ref=e11]: CPU
+          - generic [ref=e13]: 0%
+        - generic "本进程常驻内存 96.3 MB · 占系统内存 0.60% · 系统共 15.7 GB" [ref=e81]:
+          - generic [ref=e16]: MEM
+          - generic [ref=e17]: 96 MB
+          - generic [ref=e65]: 0.60%
+  - complementary [ref=e18]:
+    - navigation [ref=e19]:
+      - list [ref=e20]:
+        - listitem [ref=e21]:
+          - link "产能填报审计" [ref=e22] [cursor=pointer]:
+            - /url: /capacity/audit
+        - listitem [ref=e23]:
+          - link "产能交叉维度分析" [ref=e24] [cursor=pointer]:
+            - /url: /capacity/analysis
+        - listitem [ref=e25]:
+          - link "数据管理" [active] [ref=e26] [cursor=pointer]:
+            - /url: /capacity/admin
+  - main [ref=e27]:
+    - generic [ref=e82]:
+      - heading "数据管理" [level=1] [ref=e83]
+      - paragraph [ref=e84]: 上传 Excel 文件进行全量数据导入（清空旧数据后重新导入）。三快计划 Excel 为可选。
+      - generic [ref=e85]:
+        - generic [ref=e87] [cursor=pointer]:
+          - generic [ref=e88]: 工时明细 Excel
+          - generic [ref=e89]: 拖拽文件到此处或点击选择
+        - generic [ref=e91] [cursor=pointer]:
+          - generic [ref=e92]: 花名册 Excel
+          - generic [ref=e93]: 拖拽文件到此处或点击选择
+        - generic [ref=e95] [cursor=pointer]:
+          - generic [ref=e96]: 项目分类&项目清单 Excel
+          - generic [ref=e97]: 拖拽文件到此处或点击选择
+        - generic [ref=e99] [cursor=pointer]:
+          - generic [ref=e100]: 企业节假日 Excel
+          - generic [ref=e101]: 拖拽文件到此处或点击选择
+        - generic [ref=e103] [cursor=pointer]:
+          - generic [ref=e104]: 三快产能计划分配 Excel(可选)
+          - generic [ref=e105]: 拖拽文件到此处或点击选择
+      - button "开始导入" [ref=e107]

@@ -1,50 +1,56 @@
-"""筛选器服务层: 提供前端下拉框选项数据。
+"""筛选器服务: 返回所有可选筛选维度值(时间范围、部门、角色、分类)。"""
 
-不碰 session/SQL, 依赖 EmployeeRepository + WorkHourRepository。
-"""
-
-from datetime import date
-from typing import Any
+from collections.abc import Sequence
 
 from app.repositories.employee_repository import EmployeeRepository
-from app.repositories.work_hour_repository import WorkHourRepository
+from app.repositories.project_category_repository import ProjectCategoryRepository
+
+
+def _list2seq(items: Sequence[str]) -> list[str]:
+    return [str(item) for item in items]
 
 
 class FilterService:
-    def __init__(self, wh_repo: WorkHourRepository, emp_repo: EmployeeRepository) -> None:
-        self._wh_repo = wh_repo
-        self._emp_repo = emp_repo
+    """筛选器选项服务: 返回前端筛选项的数据来源。"""
 
-    async def get_filter_options(self) -> dict[str, Any]:
-        """返回所有可用筛选维度值。"""
-        departments = await self._emp_repo.list_departments(level=2)
-        roles = await self._emp_repo.list_roles()
-        personnel_types = await self._emp_repo.list_personnel_types()
-        employee_statuses = await self._emp_repo.list_employee_statuses()
+    def __init__(
+        self,
+        employee_repo: EmployeeRepository,
+        category_repo: ProjectCategoryRepository,
+    ) -> None:
+        self._emp_repo = employee_repo
+        self._cat_repo = category_repo
 
-        project_rows = await self._wh_repo.aggregate_by_project()
-        projects = [row[0] for row in project_rows]
+    async def get_options(self) -> dict[str, object]:
+        """获取所有筛选维度可选项。"""
+        # 时间范围
+        time_range: dict[str, object] = {
+            "min_month": "2026-01",
+            "max_month": "2026-06",
+            "available_quarters": ["2026-Q1", "2026-Q2"],
+            "available_halfs": ["2026-H1"],
+        }
 
-        month_rows = await self._wh_repo.aggregate_by_month()
-        if month_rows:
-            min_month = month_rows[0][0]
-            max_month = month_rows[-1][0]
-            date_range = {
-                "min": f"{min_month}-01",
-                "max": f"{max_month}-28",
-            }
-        else:
-            today = date.today()
-            date_range = {
-                "min": today.replace(day=1).isoformat(),
-                "max": today.isoformat(),
-            }
+        # 部门
+        departments: dict[str, list[str]] = {
+            "level1": _list2seq(await self._emp_repo.list_departments(1)),
+            "level2": _list2seq(await self._emp_repo.list_departments(2)),
+            "level3": _list2seq(await self._emp_repo.list_departments(3)),
+            "level4": _list2seq(await self._emp_repo.list_departments(4)),
+        }
+
+        # 角色
+        roles = _list2seq(await self._emp_repo.list_roles())
+
+        # 项目分类(树形)
+        majors = await self._cat_repo.get_major_categories()
+        categories: dict[str, object] = {  # type: ignore[assignment]
+            "level1": majors,
+        }
 
         return {
+            "time_range": time_range,
             "departments": departments,
             "roles": roles,
-            "personnel_types": personnel_types,
-            "employee_statuses": employee_statuses,
-            "projects": projects,
-            "date_range": date_range,
+            "categories": categories,
         }

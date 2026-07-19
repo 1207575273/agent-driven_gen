@@ -1,0 +1,64 @@
+[    9444ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[    9564ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8914/favicon.ico:0
+[    9723ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/summary?time_period=2026-H1&dept_level=2:0
+[   10784ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/summary?time_period=2026-H1&dept_level=2:0
+[   12856ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/summary?time_period=2026-H1&dept_level=2:0
+[   17221ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/summary?time_period=2026-H1&dept_level=2:0
+[  185492ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/zero-filling?time_period=2026-H1&dept_level=2:0
+[  188484ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/zero-filling?time_period=2026-H1&dept_level=2:0
+[  189815ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/zero-filling?time_period=2026-H1&dept_level=2:0
+[  192139ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/capacity-audit/zero-filling?time_period=2026-H1&dept_level=2:0
+[  195075ms] TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:125:30
+    at Array.map (<anonymous>)
+    at DeptCategoryPanel (http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:107:59)
+    at renderWithHooks (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:11546:26)
+    at updateFunctionComponent (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:14580:28)
+    at beginWork (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:15922:22)
+    at HTMLUnknownElement.callCallback2 (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:3672:22)
+    at Object.invokeGuardedCallbackDev (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:3697:24)
+    at invokeGuardedCallback (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:3731:39)
+    at beginWork$1 (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:19763:15)
+[  195076ms] TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:125:30
+    at Array.map (<anonymous>)
+    at DeptCategoryPanel (http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:107:59)
+    at renderWithHooks (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:11546:26)
+    at updateFunctionComponent (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:14580:28)
+    at beginWork (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:15922:22)
+    at HTMLUnknownElement.callCallback2 (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:3672:22)
+    at Object.invokeGuardedCallbackDev (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:3697:24)
+    at invokeGuardedCallback (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:3731:39)
+    at beginWork$1 (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:19763:15)
+[  195077ms] [ERROR] The above error occurred in the <DeptCategoryPanel> component:
+
+    at DeptCategoryPanel (http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:23:40)
+    at div
+    at div
+    at CrossAnalysisPage (http://localhost:8914/src/pages/CrossAnalysisPage.tsx:34:37)
+    at RenderedRoute (http://localhost:8914/node_modules/.vite/deps/react-router-dom.js?v=c9828e4c:6667:26)
+    at Outlet (http://localhost:8914/node_modules/.vite/deps/react-router-dom.js?v=c9828e4c:7532:26)
+    at div
+    at main
+    at div
+    at AppLayout
+    at RenderedRoute (http://localhost:8914/node_modules/.vite/deps/react-router-dom.js?v=c9828e4c:6667:26)
+    at Routes (http://localhost:8914/node_modules/.vite/deps/react-router-dom.js?v=c9828e4c:7602:3)
+    at Router (http://localhost:8914/node_modules/.vite/deps/react-router-dom.js?v=c9828e4c:7541:13)
+    at BrowserRouter (http://localhost:8914/node_modules/.vite/deps/react-router-dom.js?v=c9828e4c:10857:3)
+    at App
+    at QueryClientProvider (http://localhost:8914/node_modules/.vite/deps/@tanstack_react-query.js?v=c9828e4c:3237:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. @ http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:14029
+[  195077ms] TypeError: Cannot read properties of undefined (reading 'toFixed')
+    at http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:125:30
+    at Array.map (<anonymous>)
+    at DeptCategoryPanel (http://localhost:8914/src/components/capacity/DeptCategoryPanel.tsx:107:59)
+    at renderWithHooks (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:11546:26)
+    at updateFunctionComponent (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:14580:28)
+    at beginWork (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:15922:22)
+    at beginWork$1 (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:19751:22)
+    at performUnitOfWork (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:19196:20)
+    at workLoopSync (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:19135:13)
+    at renderRootSync (http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:19114:15)

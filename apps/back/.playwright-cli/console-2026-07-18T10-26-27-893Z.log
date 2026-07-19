@@ -1,0 +1,50 @@
+[     516ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[     638ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8914/favicon.ico:0
+[ 1382362ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:8914/@vite/client:559
+[ 1382373ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:8914/:0
+[ 3902717ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8914/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[ 3926434ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 3928455ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 3930474ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 4248077ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 4250086ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5070543ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5072557ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5074566ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5076579ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5078593ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5080632ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5082646ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5084669ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5086693ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5088713ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5090724ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5092739ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5094759ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5096771ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5098781ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5100803ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5102820ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5104832ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5106841ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5108856ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5110889ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5112904ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5114911ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5116927ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5118949ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5120967ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5122986ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5124998ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5127016ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5129022ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5131032ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5133046ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5135058ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5137073ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5139082ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5141095ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5143114ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5145126ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5147140ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0
+[ 5149156ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8914/api/v1/system/stats:0

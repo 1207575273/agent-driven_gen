@@ -1,45 +1,35 @@
 import { NavLink } from "react-router-dom";
 
 const NAV_ITEMS = [
-  { to: "/", label: "仪表盘" },
-  { to: "/projects", label: "项目看板" },
-  { to: "/departments", label: "部门看板" },
-  { to: "/roles", label: "角色分析" },
-] as const;
+  { path: "/capacity/audit", label: "产能填报审计", exact: true },
+  { path: "/capacity/analysis", label: "产能交叉维度分析" },
+  { path: "/capacity/admin", label: "数据管理" },
+];
 
 export function Sidebar() {
   return (
-    <aside className="fixed left-0 top-0 z-20 flex h-full w-52 flex-col border-r border-neutral-900 bg-[#0a0a0a]">
-      {/* Logo */}
-      <div className="flex items-center gap-2 border-b border-neutral-900 px-5 py-4">
-        <span className="h-2.5 w-2.5 rounded-sm bg-accent" />
-        <span className="font-mono text-sm text-neutral-200">产能分析</span>
-      </div>
-
-      {/* Nav items */}
-      <nav className="flex-1 px-3 py-4">
-        {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === "/"}
-            className={({ isActive }) =>
-              `mb-1 flex items-center rounded-md px-3 py-2 text-sm transition-colors ${
-                isActive
-                  ? "bg-neutral-800 text-neutral-100"
-                  : "text-neutral-500 hover:bg-neutral-900 hover:text-neutral-300"
-              }`
-            }
-          >
-            {item.label}
-          </NavLink>
-        ))}
+    <aside className="fixed left-0 top-12 bottom-0 w-48 border-r border-neutral-800/50 bg-[#060b14]/95 backdrop-blur flex flex-col z-20">
+      <nav className="flex-1 py-4">
+        <ul className="space-y-0.5 px-2">
+          {NAV_ITEMS.map((item) => (
+            <li key={item.path}>
+              <NavLink
+                to={item.path}
+                end={item.exact}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
+                    isActive
+                      ? "bg-accent/10 text-accent border-l-2 border-accent"
+                      : "text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/30 border-l-2 border-transparent"
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </nav>
-
-      {/* Footer */}
-      <div className="border-t border-neutral-900 px-5 py-3">
-        <span className="font-mono text-[11px] text-neutral-600">monorepo · 母版</span>
-      </div>
     </aside>
   );
 }

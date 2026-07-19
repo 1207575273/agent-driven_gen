@@ -1,0 +1,6 @@
+[    1276ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:8916/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[    1398ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:8916/favicon.ico:0
+[    1406ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[    2418ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[    4435ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0
+[    8764ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:8916/api/v1/capacity-audit/monthly-trend?time_period=2026-H1&dept_level=2:0

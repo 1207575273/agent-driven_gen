@@ -6,7 +6,11 @@
 from sqlmodel import SQLModel
 
 from app.models.employee import Employee  # noqa: F401  仅为注册元数据
+from app.models.holiday import Holiday  # noqa: F401  仅为注册元数据
 from app.models.item import Item  # noqa: F401  仅为注册元数据
+from app.models.project_category import ProjectCategory  # noqa: F401  仅为注册元数据
+from app.models.should_be_capacity import ShouldBeCapacity  # noqa: F401  仅为注册元数据
+from app.models.three_fast_plan import ThreeFastPlan  # noqa: F401  仅为注册元数据
 from app.models.work_hour import WorkHour  # noqa: F401  仅为注册元数据
 
 metadata = SQLModel.metadata

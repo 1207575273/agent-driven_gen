@@ -1,0 +1,72 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: monorepo . 母版
+      - generic "当前后端进程占用" [ref=e9]:
+        - generic "本进程占整机 CPU" [ref=e10]:
+          - generic [ref=e11]: CPU
+          - generic [ref=e13]: 0.50%
+        - generic "本进程常驻内存 33.8 MB · 占系统内存 0.21% · 系统共 15.7 GB" [ref=e1817]:
+          - generic [ref=e16]: MEM
+          - generic [ref=e17]: 34 MB
+          - generic [ref=e65]: 0.21%
+  - complementary [ref=e18]:
+    - navigation [ref=e19]:
+      - list [ref=e20]:
+        - listitem [ref=e21]:
+          - link "产能填报审计" [ref=e22] [cursor=pointer]:
+            - /url: /capacity/audit
+        - listitem [ref=e23]:
+          - link "产能交叉维度分析" [active] [ref=e24] [cursor=pointer]:
+            - /url: /capacity/analysis
+        - listitem [ref=e25]:
+          - link "数据管理" [ref=e26] [cursor=pointer]:
+            - /url: /capacity/admin
+  - main [ref=e27]:
+    - generic [ref=e1818]:
+      - heading "产能交叉维度分析" [level=1] [ref=e1819]
+      - generic [ref=e1820]:
+        - generic [ref=e1821]:
+          - generic [ref=e1822]: 粒度
+          - generic [ref=e1823]:
+            - button "月" [ref=e1824]
+            - button "季" [ref=e1825]
+            - button "半年" [ref=e1826]
+        - generic [ref=e1827]:
+          - generic [ref=e1828]: 时段
+          - combobox "时段" [ref=e1829]:
+            - option "2026H1" [selected]
+            - option "2026Q1"
+            - option "2026Q2"
+        - generic [ref=e1830]:
+          - generic [ref=e1831]: 部门层级
+          - combobox "部门层级" [ref=e1832]:
+            - option "一级"
+            - option "二级" [selected]
+            - option "三级"
+            - option "四级"
+        - generic [ref=e1833]:
+          - generic [ref=e1834]: 部门
+          - textbox "部门" [ref=e1835]:
+            - /placeholder: 全部部门
+        - generic [ref=e1836]:
+          - generic [ref=e1837]: 角色
+          - textbox "角色" [ref=e1838]:
+            - /placeholder: 全部角色
+        - generic [ref=e1839]:
+          - generic [ref=e1840]: 分类层级
+          - combobox "分类层级" [ref=e1841]:
+            - option "大类" [selected]
+            - option "分类"
+            - option "细分"
+        - button "重置" [ref=e1842]
+      - generic [ref=e1843]:
+        - button "时间x分类" [ref=e1844]
+        - button "部门x分类" [ref=e1845]
+        - button "角色x分类" [ref=e1846]
+        - button "人员" [ref=e1847]
+        - button "三快计划vs实际" [ref=e1848]
+      - generic [ref=e1851]:
+        - heading "大类占比分布" [level=3] [ref=e1852]
+        - img [ref=e1856]:
+          - generic [ref=e1858]: 100%
