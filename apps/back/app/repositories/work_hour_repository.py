@@ -682,6 +682,7 @@ class WorkHourRepository:
         end_date: date | None = None,
         project_name: str | None = None,
         category_id: int | None = None,
+        employee_ids: list[int] | None = None,
         limit: int = 500,
     ) -> Sequence[WorkHour]:
         """通用工时明细记录查询。"""
@@ -689,6 +690,8 @@ class WorkHourRepository:
         base = self._apply_date_range(base, start_date, end_date)
         if employee_id is not None:
             base = base.where(WorkHour.employee_id == employee_id)
+        if employee_ids:
+            base = base.where(col(WorkHour.employee_id).in_(employee_ids))
         if project_name:
             base = base.where(WorkHour.project_name == project_name)
         if category_id is not None:
@@ -724,6 +727,108 @@ class WorkHourRepository:
                 "project_name": str(r[0]),
                 "person_days": round(float(str(r[1] or 0)), 1),
                 "person_count": int(float(str(r[2] or 0))),
+            }
+            for r in rows
+        ]
+
+    # ------------------------------------------------------------------
+    # 下钻: 月度人员明细 (月+部门+角色 -> 人员列表)
+    # ------------------------------------------------------------------
+    async def aggregate_monthly_persons(
+        self,
+        month: str,
+        dept_level: int | None = None,
+        dept_name: str | None = None,
+        role: str | None = None,
+    ) -> list[dict[str, object]]:
+        """某个月份下的人员产能明细(应有 vs 实际 + 偏差)。"""
+        cols: list[Any] = [
+            WorkHour.employee_id,
+            func.max(Employee.name).label("name"),
+            func.max(Employee.level2_dept).label("dept_name"),
+            func.max(Employee.role).label("role"),
+            func.sum(WorkHour.hours).label("actual_days"),
+        ]
+        base: Any = select(*cols).where(WorkHour.employee_id == Employee.id)  # type: ignore[call-overload]
+        base = base.where(func.strftime("%Y-%m", WorkHour.report_date) == month)
+        if dept_level and dept_name:
+            _dept_col_map: dict[int, str] = {1: "level1_dept", 2: "level2_dept", 3: "level3_dept", 4: "level4_dept"}
+            dept_col_name = _dept_col_map.get(dept_level, "level2_dept")
+            emp_dept_col = getattr(Employee, dept_col_name)
+            base = base.where(emp_dept_col == dept_name)
+        if role:
+            base = base.where(Employee.role == role)
+        base = base.group_by(WorkHour.employee_id)
+        rows = (await self._session.exec(base)).all()
+        return [
+            {
+                "employee_id": int(float(str(r[0] or 0))),
+                "name": str(r[1] or ""),
+                "dept_name": str(r[2] or ""),
+                "role": str(r[3] or ""),
+                "actual_days": round(float(str(r[4] or 0)), 1),
+            }
+            for r in rows
+        ]
+
+    # ------------------------------------------------------------------
+    # 下钻: 交叉单元格人员明细 (部门/角色 + 分类 -> 人员列表)
+    # ------------------------------------------------------------------
+    async def aggregate_cell_persons(
+        self,
+        start_date: date | None = None,
+        end_date: date | None = None,
+        category_id: int | None = None,
+        dept_level: int | None = None,
+        dept_name: str | None = None,
+        role: str | None = None,
+    ) -> list[dict[str, object]]:
+        """部门/角色 + 分类维度下的人员投入明细。"""
+        cols: list[Any] = [
+            WorkHour.employee_id,
+            func.max(Employee.name).label("name"),
+            func.max(Employee.level2_dept).label("dept_name"),
+            func.max(Employee.role).label("role"),
+            func.sum(WorkHour.hours).label("category_days"),
+        ]
+        base: Any = select(*cols).where(WorkHour.employee_id == Employee.id)  # type: ignore[call-overload]
+        base = self._apply_date_range(base, start_date, end_date)
+        if category_id is not None:
+            base = base.where(WorkHour.category_id == category_id)
+        if dept_level and dept_name:
+            _dept_col_map: dict[int, str] = {1: "level1_dept", 2: "level2_dept", 3: "level3_dept", 4: "level4_dept"}
+            dept_col_name = _dept_col_map.get(dept_level, "level2_dept")
+            emp_dept_col = getattr(Employee, dept_col_name)
+            base = base.where(emp_dept_col == dept_name)
+        if role:
+            base = base.where(Employee.role == role)
+        base = base.group_by(WorkHour.employee_id).order_by(func.sum(WorkHour.hours).desc())
+        rows = (await self._session.exec(base)).all()
+
+        # Compute total days per person for percentage
+        total_map: dict[int, float] = {}
+        if rows:
+            emp_ids = [int(float(str(r[0] or 0))) for r in rows]
+            total_base: Any = (
+                select(WorkHour.employee_id, func.sum(WorkHour.hours).label("total"))
+                .where(col(WorkHour.employee_id).in_(emp_ids))
+            )
+            total_base = self._apply_date_range(total_base, start_date, end_date)
+            total_base = total_base.group_by(WorkHour.employee_id)
+            total_rows = (await self._session.exec(total_base)).all()
+            total_map = {int(float(str(tr[0] or 0))): float(str(tr[1] or 0)) for tr in total_rows}
+
+        return [
+            {
+                "employee_id": int(float(str(r[0] or 0))),
+                "name": str(r[1] or ""),
+                "dept_name": str(r[2] or ""),
+                "role": str(r[3] or ""),
+                "category_days": round(float(str(r[4] or 0)), 1),
+                "total_days": round(total_map.get(int(float(str(r[0] or 0))), 0), 1),
+                "percentage": round(
+                    float(str(r[4] or 0)) / total_map.get(int(float(str(r[0] or 0))), 1) * 100, 1
+                ) if total_map.get(int(float(str(r[0] or 0))), 0) > 0 else 0,
             }
             for r in rows
         ]

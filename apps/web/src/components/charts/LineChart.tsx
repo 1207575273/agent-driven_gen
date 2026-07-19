@@ -9,6 +9,13 @@ export interface LineSeries {
   yAxisIndex?: number;
 }
 
+export interface LineClickPayload {
+  category: string;
+  seriesName: string;
+  value: number;
+  dataIndex: number;
+}
+
 interface LineChartProps {
   categories: string[];
   series: LineSeries[];
@@ -20,6 +27,7 @@ interface LineChartProps {
     end: number; // category index
     color?: string;
   }>;
+  onPointClick?: (payload: LineClickPayload) => void;
 }
 
 const DARK_COLORS = ["#38bdf8", "#818cf8", "#f97316", "#22d3ee", "#a78bfa"];
@@ -30,6 +38,7 @@ export function LineChart({
   height = 300,
   showLegend = true,
   markAreas,
+  onPointClick,
 }: LineChartProps) {
   if (categories.length === 0) {
     return (
@@ -150,6 +159,30 @@ export function LineChart({
       style={{ height, width: "100%" }}
       opts={{ renderer: "svg" }}
       notMerge
+      {...(onPointClick
+        ? {
+            onEvents: {
+              click: (params: {
+                componentType?: string;
+                seriesName?: string;
+                name?: string;
+                value?: unknown;
+                dataIndex?: number;
+              }) => {
+                if (params.componentType === "series" && params.dataIndex !== undefined) {
+                  const cat = categories[params.dataIndex];
+                  if (cat === undefined) return;
+                  onPointClick({
+                    category: cat,
+                    seriesName: params.seriesName ?? "",
+                    value: Number(params.value ?? 0),
+                    dataIndex: params.dataIndex,
+                  });
+                }
+              },
+            },
+          }
+        : {})}
     />
   );
 }

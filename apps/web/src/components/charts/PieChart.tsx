@@ -1,11 +1,18 @@
 import type { EChartsOption } from "echarts";
 import ReactECharts from "echarts-for-react";
 
+export interface PieClickPayload {
+  name: string;
+  value: number;
+  percent: number;
+}
+
 interface PieChartProps {
   data: Array<{ name: string; value: number }>;
   height?: number;
   innerRadius?: string; // "0" = pie, "40%" = ring
   showLabel?: boolean;
+  onSliceClick?: (payload: PieClickPayload) => void;
 }
 
 const DARK_COLORS = ["#38bdf8", "#818cf8", "#6366f1", "#475569", "#1e293b", "#0ea5e9", "#a78bfa"];
@@ -15,6 +22,7 @@ export function PieChart({
   height = 300,
   innerRadius = "40%",
   showLabel = true,
+  onSliceClick,
 }: PieChartProps) {
   if (data.length === 0) {
     return (
@@ -88,6 +96,26 @@ export function PieChart({
       style={{ height, width: "100%" }}
       opts={{ renderer: "svg" }}
       notMerge
+      {...(onSliceClick
+        ? {
+            onEvents: {
+              click: (params: {
+                componentType?: string;
+                name?: string;
+                value?: unknown;
+                percent?: number;
+              }) => {
+                if (params.componentType === "series") {
+                  onSliceClick({
+                    name: params.name ?? "",
+                    value: Number(params.value ?? 0),
+                    percent: Number(params.percent ?? 0),
+                  });
+                }
+              },
+            },
+          }
+        : {})}
     />
   );
 }

@@ -1,17 +1,33 @@
 import type { EChartsOption } from "echarts";
 import ReactECharts from "echarts-for-react";
 
+export interface HeatmapCellClickPayload {
+  xLabel: string;
+  yLabel: string;
+  value: number;
+  xIndex: number;
+  yIndex: number;
+}
+
 interface HeatmapProps {
   xLabels: string[];
   yLabels: string[];
   data: number[][];
   height?: number;
   unit?: string;
+  onCellClick?: (payload: HeatmapCellClickPayload) => void;
 }
 
 const HEAT_COLORS = ["#060b14", "#1e3a5f", "#2563eb", "#38bdf8", "#7dd3fc"];
 
-export function Heatmap({ xLabels, yLabels, data, height = 360, unit = "人天" }: HeatmapProps) {
+export function Heatmap({
+  xLabels,
+  yLabels,
+  data,
+  height = 360,
+  unit = "人天",
+  onCellClick,
+}: HeatmapProps) {
   if (xLabels.length === 0 || yLabels.length === 0) {
     return (
       <div
@@ -122,6 +138,31 @@ export function Heatmap({ xLabels, yLabels, data, height = 360, unit = "人天" 
       style={{ height, width: "100%" }}
       opts={{ renderer: "svg" }}
       notMerge
+      {...(onCellClick
+        ? {
+            onEvents: {
+              click: (params: {
+                componentType?: string;
+                componentSubType?: string;
+                value?: unknown;
+              }) => {
+                if (params.componentSubType === "heatmap" && Array.isArray(params.value)) {
+                  const v = params.value as [number, number, number];
+                  const xl = xLabels[v[0]];
+                  const yl = yLabels[v[1]];
+                  if (xl === undefined || yl === undefined) return;
+                  onCellClick({
+                    xLabel: xl,
+                    yLabel: yl,
+                    value: v[2],
+                    xIndex: v[0],
+                    yIndex: v[1],
+                  });
+                }
+              },
+            },
+          }
+        : {})}
     />
   );
 }

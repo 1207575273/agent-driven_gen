@@ -1,14 +1,31 @@
+import { useCallback, useState } from "react";
 import type { PersonCategoryItem } from "../../api/capacity";
 import { usePersonCategory } from "../../hooks/useCapacity";
 import { useFilterStore } from "../../stores/useFilterStore";
 import { BarChart } from "../charts/BarChart";
 import { PieChart } from "../charts/PieChart";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
+import { DrillDownModal } from "./DrillDownModal";
+import { PersonDetailContent } from "./PersonDetailContent";
 
 export function PersonCategoryPanel() {
   const { data, isLoading, isError } = usePersonCategory();
+  const timePeriod = useFilterStore((s) => s.timePeriod);
   const deptName = useFilterStore((s) => s.deptName);
   const role = useFilterStore((s) => s.role);
+
+  const [drillPerson, setDrillPerson] = useState<{
+    employeeId: number;
+    name: string;
+  } | null>(null);
+
+  const handlePersonClick = useCallback((record: PersonCategoryItem) => {
+    setDrillPerson({ employeeId: record.employee_id, name: record.name });
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setDrillPerson(null);
+  }, []);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError || !data || data.length === 0) {
@@ -77,7 +94,26 @@ export function PersonCategoryPanel() {
       )}
 
       {/* 人员x分类交叉表 */}
-      <PersonCategoryCrossTable data={items} categoryList={categoryList} />
+      <PersonCategoryCrossTable
+        data={items}
+        categoryList={categoryList}
+        onPersonClick={handlePersonClick}
+      />
+
+      {drillPerson && (
+        <DrillDownModal
+          open={Boolean(drillPerson)}
+          onClose={handleCloseModal}
+          title={`人员维度 > ${drillPerson.name}`}
+          breadcrumbs={[{ label: drillPerson.name }]}
+        >
+          <PersonDetailContent
+            employeeId={drillPerson.employeeId}
+            employeeName={drillPerson.name}
+            timePeriod={timePeriod ?? undefined}
+          />
+        </DrillDownModal>
+      )}
     </div>
   );
 }
@@ -85,9 +121,11 @@ export function PersonCategoryPanel() {
 function PersonCategoryCrossTable({
   data,
   categoryList,
+  onPersonClick,
 }: {
   data: PersonCategoryItem[];
   categoryList: string[];
+  onPersonClick: (record: PersonCategoryItem) => void;
 }) {
   return (
     <div>
@@ -125,7 +163,11 @@ function PersonCategoryCrossTable({
             {data.map((item) => (
               <tr
                 key={item.employee_id}
-                className="border-t border-neutral-800/50 hover:bg-neutral-800/20 transition-colors"
+                onClick={() => onPersonClick(item)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onPersonClick(item);
+                }}
+                className="border-t border-neutral-800/50 hover:bg-neutral-800/20 transition-colors cursor-pointer"
               >
                 <td className="px-3 py-2.5 text-sm text-neutral-200 whitespace-nowrap">
                   {item.name}

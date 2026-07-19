@@ -215,7 +215,25 @@ export interface DrillDownRecord {
   employee_id: number;
 }
 
-// ── 下钻: 子部门 ──
+// ── 下钻: 月度人员 ──
+export interface MonthlyPersonItem {
+  employee_id: number;
+  name: string;
+  dept_name: string;
+  role: string;
+  actual_days: number;
+}
+
+// ── 下钻: 交叉单元格人员 ──
+export interface CellPersonItem {
+  employee_id: number;
+  name: string;
+  dept_name: string;
+  role: string;
+  category_days: number;
+  total_days: number;
+  percentage: number;
+}
 export interface DeptChildren {
   dept_name: string;
   dept_path: string;
@@ -380,6 +398,12 @@ export const drillDownApi = {
 
   getCategoryProjects: (params: Record<string, string | number | boolean | null | undefined>) =>
     request<CategoryProjectItem[]>(`/drill-down/category-projects?${buildParams(params)}`),
+
+  getMonthlyPersons: (params: Record<string, string | number | boolean | null | undefined>) =>
+    request<MonthlyPersonItem[]>(`/drill-down/monthly-persons?${buildParams(params)}`),
+
+  getCellPersons: (params: Record<string, string | number | boolean | null | undefined>) =>
+    request<CellPersonItem[]>(`/drill-down/cell-persons?${buildParams(params)}`),
 };
 
 // ── 筛选器 API ──

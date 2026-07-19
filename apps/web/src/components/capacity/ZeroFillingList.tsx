@@ -1,10 +1,27 @@
+import { useCallback, useState } from "react";
 import type { ZeroFillingPerson } from "../../api/capacity";
 import { useZeroFillingList } from "../../hooks/useCapacity";
+import { useFilterStore } from "../../stores/useFilterStore";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { type Column, SortableTable } from "../shared/SortableTable";
+import { DrillDownModal } from "./DrillDownModal";
+import { PersonDetailContent } from "./PersonDetailContent";
 
 export function ZeroFillingList() {
+  const [drillPerson, setDrillPerson] = useState<{
+    employeeId: number;
+    name: string;
+  } | null>(null);
+  const { timePeriod } = useFilterStore();
   const { data, isLoading, isError } = useZeroFillingList();
+
+  const handleRowClick = useCallback((record: ZeroFillingPerson) => {
+    setDrillPerson({ employeeId: record.employee_id, name: record.name });
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setDrillPerson(null);
+  }, []);
 
   const columns: Column<ZeroFillingPerson>[] = [
     { key: "name", title: "姓名", dataIndex: "name", sortable: true },
@@ -34,13 +51,31 @@ export function ZeroFillingList() {
   }
 
   return (
-    <SortableTable
-      columns={columns}
-      data={data ?? []}
-      rowKey={(r) => String(r.employee_id)}
-      emptyMessage="暂无零填报人员"
-      defaultSortKey="should_be_days"
-      defaultSortDir="desc"
-    />
+    <>
+      <SortableTable
+        columns={columns}
+        data={data ?? []}
+        rowKey={(r) => String(r.employee_id)}
+        onRowClick={handleRowClick}
+        emptyMessage="暂无零填报人员"
+        defaultSortKey="should_be_days"
+        defaultSortDir="desc"
+      />
+
+      {drillPerson && (
+        <DrillDownModal
+          open={Boolean(drillPerson)}
+          onClose={handleCloseModal}
+          title={`零填报 > 人员: ${drillPerson.name}`}
+          breadcrumbs={[{ label: drillPerson.name }]}
+        >
+          <PersonDetailContent
+            employeeId={drillPerson.employeeId}
+            employeeName={drillPerson.name}
+            timePeriod={timePeriod ?? undefined}
+          />
+        </DrillDownModal>
+      )}
+    </>
   );
 }

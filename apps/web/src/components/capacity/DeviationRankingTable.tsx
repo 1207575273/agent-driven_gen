@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { PersonDeviation } from "../../api/capacity";
 import { useDeviationRanking } from "../../hooks/useCapacity";
+import { useFilterStore } from "../../stores/useFilterStore";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { type Column, SortableTable } from "../shared/SortableTable";
+import { DrillDownModal } from "./DrillDownModal";
+import { PersonDetailContent } from "./PersonDetailContent";
 
 const DIRECTION_OPTIONS = [
   { value: "all", label: "全部" },
@@ -13,6 +16,11 @@ const DIRECTION_OPTIONS = [
 export function DeviationRankingTable() {
   const [direction, setDirection] = useState("all");
   const [abnormalOnly, setAbnormalOnly] = useState(false);
+  const [drillPerson, setDrillPerson] = useState<{
+    employeeId: number;
+    name: string;
+  } | null>(null);
+  const { timePeriod } = useFilterStore();
 
   const { data, isLoading, isError } = useDeviationRanking({
     deviationDirection: direction,
@@ -20,6 +28,14 @@ export function DeviationRankingTable() {
     sortDir: "desc",
     isAbnormalOnly: abnormalOnly,
   });
+
+  const handleRowClick = useCallback((record: PersonDeviation) => {
+    setDrillPerson({ employeeId: record.employee_id, name: record.name });
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setDrillPerson(null);
+  }, []);
 
   const columns: Column<PersonDeviation>[] = [
     { key: "name", title: "姓名", dataIndex: "name", sortable: true },
@@ -132,10 +148,26 @@ export function DeviationRankingTable() {
         rowKey={(r) => String(r.employee_id)}
         highlightRow={(r) => r.is_abnormal}
         highlightClass="bg-red-900/20"
+        onRowClick={handleRowClick}
         emptyMessage="暂无比对数据"
         defaultSortKey="deviation"
         defaultSortDir="desc"
       />
+
+      {drillPerson && (
+        <DrillDownModal
+          open={Boolean(drillPerson)}
+          onClose={handleCloseModal}
+          title={`偏差排行 > 人员: ${drillPerson.name}`}
+          breadcrumbs={[{ label: drillPerson.name }]}
+        >
+          <PersonDetailContent
+            employeeId={drillPerson.employeeId}
+            employeeName={drillPerson.name}
+            timePeriod={timePeriod ?? undefined}
+          />
+        </DrillDownModal>
+      )}
     </div>
   );
 }

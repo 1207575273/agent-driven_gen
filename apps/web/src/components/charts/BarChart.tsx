@@ -9,12 +9,20 @@ export interface BarChartSeries {
   yAxisIndex?: number;
 }
 
+export interface BarClickPayload {
+  category: string;
+  seriesName: string;
+  value: number;
+  dataIndex: number;
+}
+
 interface BarChartProps {
   categories: string[];
   series: BarChartSeries[];
   height?: number;
   stacked?: boolean;
   showLegend?: boolean;
+  onBarClick?: (payload: BarClickPayload) => void;
 }
 
 const DARK_COLORS = ["#38bdf8", "#818cf8", "#6366f1", "#475569", "#1e293b", "#0ea5e9"];
@@ -25,6 +33,7 @@ export function BarChart({
   height = 300,
   stacked = false,
   showLegend = true,
+  onBarClick,
 }: BarChartProps) {
   if (categories.length === 0) {
     return (
@@ -119,6 +128,30 @@ export function BarChart({
       style={{ height, width: "100%" }}
       opts={{ renderer: "svg" }}
       notMerge
+      {...(onBarClick
+        ? {
+            onEvents: {
+              click: (params: {
+                componentType?: string;
+                seriesName?: string;
+                name?: string;
+                value?: unknown;
+                dataIndex?: number;
+              }) => {
+                if (params.componentType === "series" && params.dataIndex !== undefined) {
+                  const cat = categories[params.dataIndex];
+                  if (cat === undefined) return;
+                  onBarClick({
+                    category: cat,
+                    seriesName: params.seriesName ?? "",
+                    value: Number(params.value ?? 0),
+                    dataIndex: params.dataIndex,
+                  });
+                }
+              },
+            },
+          }
+        : {})}
     />
   );
 }

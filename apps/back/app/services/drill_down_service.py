@@ -28,6 +28,8 @@ class DrillDownService:
         time_period: str | None = None,
         category_id: int | None = None,
         dept_path: str | None = None,
+        dept_level: int | None = None,
+        role: str | None = None,
         limit: int = 500,
     ) -> list[dict[str, object]]:
         """通用下钻: 工时明细记录。至少提供一个筛选条件。"""
@@ -37,12 +39,30 @@ class DrillDownService:
             year_months = _parse_year_months(time_period)
             start_date, end_date = _year_month_to_date_range(year_months)
 
+        # dept_path -> resolve employee_ids
+        employee_ids: list[int] | None = None
+        if dept_path and dept_level:
+            # dept_path like "产品研发中心/前端组", split and get last segment as dept_name
+            parts = [p.strip() for p in dept_path.split("/") if p.strip()]
+            dept_name = parts[-1] if parts else dept_path
+            employees = await self._emp_repo.list_by_department(dept_level, dept_name)
+            employee_ids = [e.id for e in employees if e.id is not None]
+        elif role:
+            # Resolve by role
+            employees = await self._emp_repo.list_active_normal()
+            employee_ids = [e.id for e in employees if e.role == role and e.id is not None]
+        elif dept_level and not dept_path:
+            # Just dept_level filter without dept_name: use the filter options approach
+            # This case is mostly covered by role-only filter above
+            pass
+
         records = await self._wh_repo.get_records(
             employee_id=employee_id,
             start_date=start_date,
             end_date=end_date,
             project_name=project_name,
             category_id=category_id,
+            employee_ids=employee_ids,
             limit=limit,
         )
 
@@ -105,6 +125,45 @@ class DrillDownService:
 
         result.sort(key=lambda x: float(str(x["total_actual_days"])), reverse=True)  # type: ignore[arg-type]
         return result
+
+    async def get_monthly_persons(
+        self,
+        month: str | None = None,
+        dept_level: int | None = None,
+        dept_name: str | None = None,
+        role: str | None = None,
+    ) -> list[dict[str, object]]:
+        """月度人员明细下钻: 筛选某月下的人员列表。"""
+        if not month:
+            return []
+        return await self._wh_repo.aggregate_monthly_persons(
+            month=month,
+            dept_level=dept_level,
+            dept_name=dept_name,
+            role=role,
+        )
+
+    async def get_cell_persons(
+        self,
+        time_period: str | None = None,
+        category_id: int | None = None,
+        dept_level: int | None = None,
+        dept_name: str | None = None,
+        role: str | None = None,
+    ) -> list[dict[str, object]]:
+        """交叉单元格下钻: 部门+分类/角色+分类 -> 人员列表。"""
+        if not category_id:
+            return []
+        year_months = _parse_year_months(time_period)
+        start_date, end_date = _year_month_to_date_range(year_months)
+        return await self._wh_repo.aggregate_cell_persons(
+            start_date=start_date,
+            end_date=end_date,
+            category_id=category_id,
+            dept_level=dept_level,
+            dept_name=dept_name,
+            role=role,
+        )
 
     async def get_category_projects(
         self,

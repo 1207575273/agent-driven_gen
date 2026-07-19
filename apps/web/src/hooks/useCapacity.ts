@@ -361,6 +361,46 @@ export function useCategoryProjects(params: {
   });
 }
 
+export function useMonthlyPersons(params: {
+  month?: string | null;
+  deptLevel?: number | null;
+  deptName?: string | null;
+  role?: string | null;
+}) {
+  return useQuery({
+    queryKey: ["monthly-persons", params],
+    queryFn: () =>
+      drillDownApi.getMonthlyPersons({
+        month: params.month ?? null,
+        dept_level: params.deptLevel ?? null,
+        dept_name: params.deptName ?? null,
+        role: params.role ?? null,
+      }),
+    enabled: Boolean(params.month),
+  });
+}
+
+export function useCellPersons(params: {
+  timePeriod?: string | null;
+  categoryId?: number | null;
+  deptLevel?: number | null;
+  deptName?: string | null;
+  role?: string | null;
+}) {
+  return useQuery({
+    queryKey: ["cell-persons", params],
+    queryFn: () =>
+      drillDownApi.getCellPersons({
+        time_period: params.timePeriod ?? null,
+        category_id: params.categoryId ?? null,
+        dept_level: params.deptLevel ?? null,
+        dept_name: params.deptName ?? null,
+        role: params.role ?? null,
+      }),
+    enabled: Boolean(params.categoryId),
+  });
+}
+
 // ── 筛选器选项 hook ──
 
 export function useFilterOptions() {

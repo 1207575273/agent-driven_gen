@@ -17,6 +17,8 @@ async def get_records(
     time_period: str | None = Query(default=None, description="时间范围"),
     category_id: int | None = Query(default=None, description="分类ID"),
     dept_path: str | None = Query(default=None, description="部门路径"),
+    dept_level: int | None = Query(default=None, description="部门层级"),
+    role: str | None = Query(default=None, description="角色"),
     limit: int = Query(default=500, description="返回记录上限"),
 ) -> list[dict[str, Any]]:
     return await service.get_records(
@@ -25,6 +27,8 @@ async def get_records(
         time_period=time_period,
         category_id=category_id,
         dept_path=dept_path,
+        dept_level=dept_level,
+        role=role,
         limit=limit,
     )
 
@@ -53,6 +57,42 @@ async def get_category_projects(
     role: str | None = Query(default=None, description="角色筛选"),
 ) -> list[dict[str, Any]]:
     return await service.get_category_projects(
+        time_period=time_period,
+        category_id=category_id,
+        dept_level=dept_level,
+        dept_name=dept_name,
+        role=role,
+    )
+
+
+@router.get("/monthly-persons")
+async def get_monthly_persons(
+    service: DrillDownServiceDep,
+    month: str = Query(..., description="月份, 如 2026-01"),
+    dept_level: int | None = Query(default=None, description="部门层级"),
+    dept_name: str | None = Query(default=None, description="部门名称"),
+    role: str | None = Query(default=None, description="角色"),
+) -> list[dict[str, Any]]:
+    """月度人员明细: 筛选某月下的人员列表(实际人天)。"""
+    return await service.get_monthly_persons(
+        month=month,
+        dept_level=dept_level,
+        dept_name=dept_name,
+        role=role,
+    )
+
+
+@router.get("/cell-persons")
+async def get_cell_persons(
+    service: DrillDownServiceDep,
+    time_period: str | None = Query(default=None, description="时间范围"),
+    category_id: int = Query(..., description="分类ID(必需)"),
+    dept_level: int | None = Query(default=None, description="部门层级"),
+    dept_name: str | None = Query(default=None, description="部门名称"),
+    role: str | None = Query(default=None, description="角色"),
+) -> list[dict[str, Any]]:
+    """交叉单元格人员明细: 部门/角色 + 分类维度下的人员列表。"""
+    return await service.get_cell_persons(
         time_period=time_period,
         category_id=category_id,
         dept_level=dept_level,

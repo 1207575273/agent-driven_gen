@@ -1,12 +1,83 @@
-import type { TimeCategoryItem } from "../../api/capacity";
-import { useTimeCategory } from "../../hooks/useCapacity";
-import { BarChart } from "../charts/BarChart";
-import { LineChart } from "../charts/LineChart";
-import { PieChart } from "../charts/PieChart";
+import { useCallback, useState } from "react";
+import type { CategoryProjectItem, DrillDownRecord, TimeCategoryItem } from "../../api/capacity";
+import { useCategoryProjects, useDrillDownRecords, useTimeCategory } from "../../hooks/useCapacity";
+import { useFilterStore } from "../../stores/useFilterStore";
+import { BarChart, type BarClickPayload } from "../charts/BarChart";
+import { LineChart, type LineClickPayload } from "../charts/LineChart";
+import { PieChart, type PieClickPayload } from "../charts/PieChart";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
+import { type Column, SortableTable } from "../shared/SortableTable";
+import { DrillDownModal } from "./DrillDownModal";
+import { PersonDetailContent } from "./PersonDetailContent";
 
 export function TimeCategoryPanel() {
   const { data, isLoading, isError } = useTimeCategory();
+  const { timePeriod, deptLevel, deptName, role } = useFilterStore();
+
+  // Drill state: 2-level drill (category -> project -> person)
+  const [drillState, setDrillState] = useState<{
+    categoryName: string;
+    categoryId: number;
+    timeLabel?: string;
+    projectName?: string | null;
+    personId?: number | null;
+    personName?: string | null;
+  } | null>(null);
+
+  const { data: categoryProjects, isLoading: projLoading } = useCategoryProjects({
+    timePeriod,
+    categoryId: drillState?.categoryId ?? null,
+    deptLevel,
+    deptName,
+    role,
+  });
+
+  const { data: personRecords, isLoading: recLoading } = useDrillDownRecords(
+    drillState?.projectName
+      ? {
+          project_name: drillState.projectName,
+          time_period: timePeriod,
+          limit: 100,
+        }
+      : {},
+  );
+
+  const handleSliceClick = useCallback(
+    (payload: PieClickPayload, catIdxMap: Record<string, number>) => {
+      setDrillState({
+        categoryName: payload.name,
+        categoryId: (catIdxMap[payload.name] ?? 0) + 1,
+      });
+    },
+    [],
+  );
+
+  const handleBarOrLineClick = useCallback(
+    (payload: BarClickPayload | LineClickPayload, catIdxMap: Record<string, number>) => {
+      setDrillState({
+        categoryName: payload.seriesName,
+        categoryId: (catIdxMap[payload.seriesName] ?? 0) + 1,
+        timeLabel: payload.category,
+      });
+    },
+    [],
+  );
+
+  const handleProjectClick = useCallback((record: CategoryProjectItem) => {
+    setDrillState((prev) =>
+      prev ? { ...prev, projectName: record.project_name, personId: null, personName: null } : null,
+    );
+  }, []);
+
+  const handlePersonClick = useCallback((record: DrillDownRecord) => {
+    setDrillState((prev) =>
+      prev ? { ...prev, personId: record.employee_id, personName: record.reporter } : null,
+    );
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setDrillState(null);
+  }, []);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError || !data || data.length === 0) {
@@ -53,13 +124,95 @@ export function TimeCategoryPanel() {
     }),
   }));
 
+  // Build category index map for id resolution
+  const catIdxMap: Record<string, number> = {};
+  allCatNames.forEach((cat, idx) => {
+    catIdxMap[cat] = idx;
+  });
+
+  const projectColumns: Column<CategoryProjectItem>[] = [
+    { key: "project_name", title: "项目名称", dataIndex: "project_name" },
+    {
+      key: "person_days",
+      title: "人天",
+      dataIndex: "person_days",
+      align: "right",
+      render: (v) => {
+        const num = Number(v);
+        return Number.isNaN(num) ? "-" : num.toFixed(1);
+      },
+    },
+    {
+      key: "person_count",
+      title: "人数",
+      dataIndex: "person_count",
+      align: "right",
+    },
+    {
+      key: "percentage",
+      title: "占比",
+      dataIndex: "percentage",
+      align: "right",
+      render: (v) => {
+        const num = Number(v);
+        return Number.isNaN(num) ? "-" : `${num.toFixed(1)}%`;
+      },
+    },
+  ];
+
+  const recordColumns: Column<DrillDownRecord>[] = [
+    { key: "reporter", title: "姓名", dataIndex: "reporter" },
+    { key: "reporter_department", title: "部门", dataIndex: "reporter_department" },
+    { key: "project_name", title: "项目", dataIndex: "project_name" },
+    {
+      key: "hours",
+      title: "工时(h)",
+      dataIndex: "hours",
+      align: "right",
+      render: (v) => {
+        const num = Number(v);
+        return Number.isNaN(num) ? "-" : num.toFixed(1);
+      },
+    },
+    { key: "report_date", title: "日期", dataIndex: "report_date" },
+  ];
+
+  const breadcrumbs = [];
+  if (drillState) {
+    const catLabel = drillState.timeLabel
+      ? `${drillState.categoryName} (${drillState.timeLabel})`
+      : drillState.categoryName;
+    breadcrumbs.push({
+      label: catLabel,
+      onClick: () =>
+        setDrillState((prev) =>
+          prev ? { ...prev, projectName: null, personId: null, personName: null } : null,
+        ),
+    });
+    if (drillState.projectName) {
+      breadcrumbs.push({
+        label: drillState.projectName,
+        onClick: () =>
+          setDrillState((prev) => (prev ? { ...prev, personId: null, personName: null } : null)),
+      });
+    }
+    if (drillState.personName) {
+      breadcrumbs.push({ label: drillState.personName });
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* 饼图 */}
       <div>
         <h3 className="text-sm font-medium text-neutral-400 mb-3">大类占比分布</h3>
         <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
-          <PieChart data={pieData} height={320} innerRadius="50%" />
+          <PieChart
+            data={pieData}
+            height={320}
+            innerRadius="50%"
+            onSliceClick={(payload) => handleSliceClick(payload, catIdxMap)}
+          />
         </div>
       </div>
 
@@ -68,7 +221,13 @@ export function TimeCategoryPanel() {
         <div>
           <h3 className="text-sm font-medium text-neutral-400 mb-3">各时段分类投入对比</h3>
           <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
-            <BarChart categories={timeLabels} series={stackedSeries} stacked height={320} />
+            <BarChart
+              categories={timeLabels}
+              series={stackedSeries}
+              stacked
+              height={320}
+              onBarClick={(payload) => handleBarOrLineClick(payload, catIdxMap)}
+            />
           </div>
         </div>
       )}
@@ -78,9 +237,58 @@ export function TimeCategoryPanel() {
         <div>
           <h3 className="text-sm font-medium text-neutral-400 mb-3">大类投入趋势</h3>
           <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
-            <LineChart categories={timeLabels} series={trendSeries} height={300} />
+            <LineChart
+              categories={timeLabels}
+              series={trendSeries}
+              height={300}
+              onPointClick={(payload) => handleBarOrLineClick(payload, catIdxMap)}
+            />
           </div>
         </div>
+      )}
+
+      {drillState && (
+        <DrillDownModal
+          open={Boolean(drillState)}
+          onClose={handleCloseModal}
+          title={
+            drillState.personId
+              ? `时间×分类 > ${drillState.categoryName} > ${drillState.projectName ?? ""} > 人员: ${drillState.personName ?? ""}`
+              : drillState.projectName
+                ? `时间×分类 > ${drillState.categoryName} > ${drillState.projectName}`
+                : `时间×分类 > ${drillState.categoryName}`
+          }
+          breadcrumbs={breadcrumbs}
+          loading={projLoading || recLoading}
+        >
+          {drillState.personId ? (
+            <PersonDetailContent
+              employeeId={drillState.personId}
+              employeeName={drillState.personName ?? ""}
+              timePeriod={timePeriod ?? undefined}
+            />
+          ) : drillState.projectName ? (
+            <SortableTable
+              columns={recordColumns}
+              data={personRecords ?? []}
+              rowKey={(r) => String(r.id)}
+              onRowClick={handlePersonClick}
+              emptyMessage="暂无人员工时"
+              defaultSortKey="hours"
+              defaultSortDir="desc"
+            />
+          ) : (
+            <SortableTable
+              columns={projectColumns}
+              data={categoryProjects ?? []}
+              rowKey={(r) => r.project_name}
+              onRowClick={handleProjectClick}
+              emptyMessage="该项目分类下暂无项目"
+              defaultSortKey="person_days"
+              defaultSortDir="desc"
+            />
+          )}
+        </DrillDownModal>
       )}
     </div>
   );
