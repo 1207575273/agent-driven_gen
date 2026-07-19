@@ -22,6 +22,7 @@ DEPT_COL_NAMES: dict[int, str] = {2: "level2_dept", 3: "level3_dept"}
 class WorkHourRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
+        self._ancestor_cache: dict[tuple[int, int | None], dict[int, tuple[str, int]]] = {}
 
     # ------------------------------------------------------------------
     # 聚合查询: 按项目分组
@@ -686,7 +687,6 @@ class WorkHourRepository:
             {"month": m, "category_name": c, "person_days": round(v[0], 1), "category_id": v[1]}
             for m, cats in sorted(result_map.items())
             for c, v in sorted(cats.items())
-            for c, d in sorted(cats.items())
         ]
 
     # ------------------------------------------------------------------
@@ -868,6 +868,10 @@ class WorkHourRepository:
         self, target_level: int, parent_category_id: int | None = None
     ) -> dict[int, tuple[str, int]]:
         """构建 {L3叶子category_id: (target_level祖先名, target_level祖先id)} 映射。"""
+        cache_key = (target_level, parent_category_id)
+        if cache_key in self._ancestor_cache:
+            return self._ancestor_cache[cache_key]
+
         all_cats = (await self._session.exec(select(ProjectCategory))).all()
         # 先构建 id->node 映射
         cat_by_id: dict[int, ProjectCategory] = {}
@@ -893,6 +897,7 @@ class WorkHourRepository:
                     ancestor_map[leaf_id] = ("未分类", 0)
             else:
                 ancestor_map[leaf_id] = ("未分类", 0)
+        self._ancestor_cache[cache_key] = ancestor_map
         return ancestor_map
 
     # ------------------------------------------------------------------

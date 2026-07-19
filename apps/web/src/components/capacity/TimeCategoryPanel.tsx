@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { CategoryProjectItem, DrillDownRecord, TimeCategoryItem } from "../../api/capacity";
 import { useCategoryProjects, useDrillDownRecords, useTimeCategory } from "../../hooks/useCapacity";
 import { useFilterStore } from "../../stores/useFilterStore";
@@ -42,8 +42,19 @@ export function TimeCategoryPanel() {
       : {},
   );
 
+  // Compute early (before useCallbacks)
+  const items: TimeCategoryItem[] = (data ?? []) as TimeCategoryItem[];
+  const firstItem = items[0];
+
+  const catIdMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const c of firstItem?.categories || []) {
+      if (c.category_id) map[c.category_name] = c.category_id;
+    }
+    return map;
+  }, [firstItem]);
+
   const handleSliceClick = useCallback((payload: PieClickPayload) => {
-    // category_id is passed via the PieChart data items (we embed it)
     setDrillState({
       categoryName: payload.name,
       categoryId: Number((payload as unknown as Record<string, unknown>).category_id ?? 0),
@@ -59,7 +70,7 @@ export function TimeCategoryPanel() {
         timeLabel: payload.category,
       });
     },
-    [],
+    [catIdMap],
   );
 
   const handleProjectClick = useCallback((record: CategoryProjectItem) => {
@@ -87,11 +98,7 @@ export function TimeCategoryPanel() {
     );
   }
 
-  // API returns array of {time_label, person_days, categories: [{category_name, total_days, percentage}]}
-  const items: TimeCategoryItem[] = data;
-  const firstItem = items[0];
-
-  // pieData from nested categories — embed category_id for drill
+  // pieData from nested categories -- embed category_id for drill
   const pieData = (firstItem?.categories || []).map((c) => ({
     name: c.category_name,
     value: c.total_days,
@@ -106,7 +113,7 @@ export function TimeCategoryPanel() {
     ...new Set(items.flatMap((d) => (d.categories || []).map((c) => c.category_name))),
   ];
 
-  // 堆叠柱状图: each series is a category, each data point is total_days per time period
+  // stacked bar: each series is a category, each data point is total_days per time period
   const stackedSeries = allCatNames.map((catName) => ({
     name: catName,
     data: items.map((d) => {
@@ -115,7 +122,6 @@ export function TimeCategoryPanel() {
     }),
   }));
 
-  // 趋势折线图
   const trendSeries = allCatNames.map((catName) => ({
     name: catName,
     data: items.map((d) => {
@@ -124,16 +130,11 @@ export function TimeCategoryPanel() {
     }),
   }));
 
-  // Build category index map for id resolution — also store category_id from data
+  // Build category index map for id resolution
   const catIdxMap: Record<string, number> = {};
   allCatNames.forEach((cat, idx) => {
     catIdxMap[cat] = idx;
   });
-  // Build category name -> id from the first item's categories
-  const catIdMap: Record<string, number> = {};
-  for (const c of firstItem?.categories || []) {
-    if (c.category_id) catIdMap[c.category_name] = c.category_id;
-  }
 
   const projectColumns: Column<CategoryProjectItem>[] = [
     { key: "project_name", title: "项目名称", dataIndex: "project_name" },
@@ -208,7 +209,6 @@ export function TimeCategoryPanel() {
 
   return (
     <div className="space-y-6">
-      {/* 饼图 */}
       <div>
         <h3 className="text-sm font-medium text-neutral-400 mb-3">大类占比分布</h3>
         <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
@@ -221,7 +221,6 @@ export function TimeCategoryPanel() {
         </div>
       </div>
 
-      {/* 堆叠柱状图 */}
       {timeLabels.length > 1 && (
         <div>
           <h3 className="text-sm font-medium text-neutral-400 mb-3">各时段分类投入对比</h3>
@@ -237,7 +236,6 @@ export function TimeCategoryPanel() {
         </div>
       )}
 
-      {/* 趋势折线图 */}
       {timeLabels.length > 2 && (
         <div>
           <h3 className="text-sm font-medium text-neutral-400 mb-3">大类投入趋势</h3>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { CellPersonItem, RoleCategoryItem } from "../../api/capacity";
 import { useCellPersons, useRoleCategory } from "../../hooks/useCapacity";
 import { useFilterStore } from "../../stores/useFilterStore";
@@ -30,16 +30,51 @@ export function RoleCategoryPanel() {
     role: drillCell?.role ?? null,
   });
 
-  const handleBarClick = useCallback((payload: BarClickPayload) => {
-    const catId =
-      categoryIdMap[payload.seriesName] ?? (categoryIdxMap[payload.seriesName] ?? 0) + 1;
-    setDrillCell({
-      role: payload.category,
-      categoryName: payload.seriesName,
-      categoryId: catId,
+  // Build maps BEFORE useCallback that references them
+  const items: RoleCategoryItem[] = data ?? [];
+  const categoryList = useMemo(() => {
+    const cats = new Set<string>();
+    for (const item of items) {
+      for (const catName of Object.keys(item.category_distribution)) {
+        cats.add(catName);
+      }
+    }
+    return [...cats];
+  }, [items]);
+
+  const categoryIdMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const item of items) {
+      if (item.category_ids) {
+        for (const [catName, catId] of Object.entries(item.category_ids)) {
+          map[catName] = catId;
+        }
+      }
+    }
+    return map;
+  }, [items]);
+
+  const categoryIdxMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    categoryList.forEach((cat, idx) => {
+      map[cat] = idx;
     });
-    setDrillPerson(null);
-  }, []);
+    return map;
+  }, [categoryList]);
+
+  const handleBarClick = useCallback(
+    (payload: BarClickPayload) => {
+      const catId =
+        categoryIdMap[payload.seriesName] ?? (categoryIdxMap[payload.seriesName] ?? 0) + 1;
+      setDrillCell({
+        role: payload.category,
+        categoryName: payload.seriesName,
+        categoryId: catId,
+      });
+      setDrillPerson(null);
+    },
+    [categoryIdMap, categoryIdxMap],
+  );
 
   const handlePersonClick = useCallback((record: CellPersonItem) => {
     setDrillPerson({ employeeId: record.employee_id, name: record.name });
@@ -49,67 +84,6 @@ export function RoleCategoryPanel() {
     setDrillCell(null);
     setDrillPerson(null);
   }, []);
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError || !data || data.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
-        暂无角色x分类数据
-      </div>
-    );
-  }
-
-  const items: RoleCategoryItem[] = data;
-
-  // 提取所有类别
-  const allCategories = new Set<string>();
-  for (const item of items) {
-    for (const catName of Object.keys(item.category_distribution)) {
-      allCategories.add(catName);
-    }
-  }
-  const categoryList = [...allCategories];
-
-  // 饼图: 全部角色按分类汇总
-  const pieMap: Record<string, number> = {};
-  for (const item of items) {
-    for (const [cat, days] of Object.entries(item.category_distribution)) {
-      pieMap[cat] = (pieMap[cat] || 0) + days;
-    }
-  }
-  const pieData = Object.entries(pieMap)
-    .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value);
-
-  const roleNames = items.map((d) => d.role);
-
-  // Build a mapping from category name to id from API data
-  const categoryIdMap: Record<string, number> = {};
-  for (const item of items) {
-    if (item.category_ids) {
-      for (const [catName, catId] of Object.entries(item.category_ids)) {
-        categoryIdMap[catName] = catId;
-      }
-    }
-  }
-
-  const stackedSeries = categoryList.map((catName) => ({
-    name: catName,
-    data: items.map((d) => d.category_distribution[catName] ?? 0),
-  }));
-
-  // Build a mapping from category name to index for id resolution in drill
-  const categoryIdxMap: Record<string, number> = {};
-  categoryList.forEach((cat, idx) => {
-    categoryIdxMap[cat] = idx;
-  });
-
-  // 人均产能柱状图
-  const personAvgSeries = {
-    name: "人均产能",
-    data: items.map((d) => d.avg_days_per_person),
-    color: "#38bdf8",
-  };
 
   const personColumns: Column<CellPersonItem>[] = [
     { key: "name", title: "姓名", dataIndex: "name" },
@@ -137,9 +111,41 @@ export function RoleCategoryPanel() {
     },
   ];
 
+  if (isLoading) return <LoadingSpinner />;
+  if (isError || !data || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
+        暂无角色x分类数据
+      </div>
+    );
+  }
+
+  // Chart data derivations
+  const pieMap: Record<string, number> = {};
+  for (const item of items) {
+    for (const [cat, days] of Object.entries(item.category_distribution)) {
+      pieMap[cat] = (pieMap[cat] || 0) + days;
+    }
+  }
+  const pieData = Object.entries(pieMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const roleNames = items.map((d) => d.role);
+
+  const stackedSeries = categoryList.map((catName) => ({
+    name: catName,
+    data: items.map((d) => d.category_distribution[catName] ?? 0),
+  }));
+
+  const personAvgSeries = {
+    name: "人均产能",
+    data: items.map((d) => d.avg_days_per_person),
+    color: "#38bdf8",
+  };
+
   return (
     <div className="space-y-6">
-      {/* 饼图: 分类产能占比 */}
       {pieData.length > 0 && (
         <div>
           <h3 className="text-sm font-medium text-neutral-400 mb-3">分类产能占比分布</h3>
@@ -149,7 +155,6 @@ export function RoleCategoryPanel() {
         </div>
       )}
 
-      {/* 堆叠柱状图 */}
       <div>
         <h3 className="text-sm font-medium text-neutral-400 mb-3">各角色分类投入分布</h3>
         <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
@@ -163,7 +168,6 @@ export function RoleCategoryPanel() {
         </div>
       </div>
 
-      {/* 人均产能柱状图 */}
       <div>
         <h3 className="text-sm font-medium text-neutral-400 mb-3">各角色人均产能</h3>
         <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
@@ -171,7 +175,6 @@ export function RoleCategoryPanel() {
         </div>
       </div>
 
-      {/* 交叉表 */}
       <RoleCategoryCrossTable
         data={items}
         categoryList={categoryList}
