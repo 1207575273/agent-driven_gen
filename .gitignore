@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 apps/back/dev.db
 apps/back/dev.db-*
+apps/back/logs/
 .mypy_cache/
 .ruff_cache/
 .pytest_cache/
@@ -18,6 +19,9 @@ apps/back/static/
 
 # ---- 环境 / 密钥 ----
 .env
+# 例外: 母版默认配置(仅无密钥默认值)随仓库提交, 便于非专家 fork 后开箱即用。
+# 真实密钥 / 生产专属值一律走环境变量注入, 禁止写进这个已提交的 .env。
+!apps/back/.env
 *.local
 
 # ---- OS / IDE ----

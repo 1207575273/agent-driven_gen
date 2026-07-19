@@ -5,11 +5,10 @@
 - 团队的业务规则(校验、状态流转、跨实体编排)都写在这一层。
 """
 
-from collections.abc import Sequence
-
 from app.core.exceptions import NotFoundError
 from app.core.time import utcnow
 from app.models.item import Item, ItemCreate, ItemUpdate
+from app.models.pagination import Page
 from app.repositories.item_repository import ItemRepository
 
 
@@ -27,8 +26,13 @@ class ItemService:
             raise NotFoundError(resource="Item", identifier=item_id)
         return item
 
-    async def list(self) -> Sequence[Item]:
-        return await self._repository.list()
+    async def list_page(self, limit: int, offset: int) -> Page[Item]:
+        items = list(await self._repository.list(limit, offset))
+        total = await self._repository.count()
+        return Page(items=items, total=total, limit=limit, offset=offset)
+
+    async def count(self) -> int:
+        return await self._repository.count()
 
     async def update(self, item_id: int, payload: ItemUpdate) -> Item:
         item = await self.get(item_id)

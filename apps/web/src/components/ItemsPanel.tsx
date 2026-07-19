@@ -1,6 +1,6 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import type { Item } from "../api/client";
-import { useHealth, useItems } from "../hooks/useItems";
+import { useHealth, useItemMutations, useItemsQuery } from "../hooks/useItems";
 import { useUiStore } from "../stores/useUiStore";
 import { DynamicForm, type FieldConfig, type FormValues } from "./DynamicForm";
 
@@ -8,6 +8,8 @@ import { DynamicForm, type FieldConfig, type FormValues } from "./DynamicForm";
 const QuantityChart = lazy(() =>
   import("./QuantityChart").then((m) => ({ default: m.QuantityChart })),
 );
+
+const PAGE_SIZE = 8;
 
 const ITEM_FIELDS: FieldConfig[] = [
   { name: "name", label: "名称", type: "text", required: true, placeholder: "必填" },
@@ -33,7 +35,7 @@ function StatusDot() {
 }
 
 function ItemRow({ item }: { item: Item }) {
-  const { update, remove } = useItems();
+  const { update, remove } = useItemMutations();
   const setQuantity = (next: number) => {
     update.mutate({ id: item.id, payload: { quantity: Math.max(0, next) } });
   };
@@ -85,11 +87,24 @@ function ItemRow({ item }: { item: Item }) {
 }
 
 export function ItemsPanel() {
-  const { list, create } = useItems();
+  const [offset, setOffset] = useState(0);
+  const listQuery = useItemsQuery(PAGE_SIZE, offset);
+  const { create } = useItemMutations();
   const lastMessage = useUiStore((s) => s.lastMessage);
   const setLastMessage = useUiStore((s) => s.setLastMessage);
   // 提交成功后换 key 重挂表单以清空输入。
   const [formKey, setFormKey] = useState(0);
+
+  const page = listQuery.data;
+  const items = page?.items ?? [];
+  const total = page?.total ?? 0;
+
+  // 删除导致本页越界(offset 超过 total)时, 回退到最后一个有效页。
+  useEffect(() => {
+    if (offset > 0 && offset >= total && total >= 0 && listQuery.isSuccess) {
+      setOffset(Math.max(0, (Math.ceil(total / PAGE_SIZE) - 1) * PAGE_SIZE));
+    }
+  }, [total, offset, listQuery.isSuccess]);
 
   const handleSubmit = (values: FormValues) => {
     create.mutate(
@@ -107,10 +122,13 @@ export function ItemsPanel() {
     );
   };
 
-  const items = list.data ?? [];
+  const canPrev = offset > 0;
+  const canNext = offset + PAGE_SIZE < total;
+  const from = total === 0 ? 0 : offset + 1;
+  const to = Math.min(offset + PAGE_SIZE, total);
 
   return (
-    <section className="border-t border-neutral-900 py-16">
+    <section className="py-12">
       <div className="mb-8 flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold text-neutral-100">活的示例 · Item CRUD</h2>
@@ -137,32 +155,56 @@ export function ItemsPanel() {
         </div>
 
         <div className="grid grid-cols-1 gap-0 lg:grid-cols-[1fr_340px]">
-          {/* 列表 */}
-          <div className="min-w-0">
+          {/* 列表 + 分页 */}
+          <div className="flex min-w-0 flex-col">
             <div className="flex items-center justify-between px-4 py-3 text-xs text-neutral-500">
-              <span>列表 · GET /items</span>
-              <span className="font-mono">{items.length} 条</span>
+              <span>列表 · GET /items?limit&amp;offset</span>
+              <span className="font-mono">共 {total} 条</span>
             </div>
-            {list.isLoading ? (
-              <p className="px-4 py-8 text-sm text-neutral-500">加载中…</p>
-            ) : list.isError ? (
-              <p className="px-4 py-8 text-sm text-red-400">加载失败, 请确认后端已启动。</p>
-            ) : items.length === 0 ? (
-              <p className="px-4 py-8 text-sm text-neutral-600">
-                还没有数据, 用上面的表单新增一条。
-              </p>
-            ) : (
-              <div>
-                {items.map((item) => (
-                  <ItemRow key={item.id} item={item} />
-                ))}
+
+            <div className="min-w-0 flex-1">
+              {listQuery.isLoading ? (
+                <p className="px-4 py-8 text-sm text-neutral-500">加载中…</p>
+              ) : listQuery.isError ? (
+                <p className="px-4 py-8 text-sm text-red-400">加载失败, 请确认后端已启动。</p>
+              ) : items.length === 0 ? (
+                <p className="px-4 py-8 text-sm text-neutral-600">
+                  还没有数据, 用上面的表单新增一条。
+                </p>
+              ) : (
+                items.map((item) => <ItemRow key={item.id} item={item} />)
+              )}
+            </div>
+
+            {/* 翻页 */}
+            <div className="flex items-center justify-between border-t border-neutral-900 px-4 py-3">
+              <span className="font-mono text-xs text-neutral-500">
+                {from}–{to} / {total}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={!canPrev}
+                  onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
+                  className="rounded-md border border-neutral-700 px-3 py-1 text-xs text-neutral-300 transition hover:border-neutral-500 disabled:opacity-40"
+                >
+                  上一页
+                </button>
+                <button
+                  type="button"
+                  disabled={!canNext}
+                  onClick={() => setOffset(offset + PAGE_SIZE)}
+                  className="rounded-md border border-neutral-700 px-3 py-1 text-xs text-neutral-300 transition hover:border-neutral-500 disabled:opacity-40"
+                >
+                  下一页
+                </button>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* 图表: 与列表同源, 实时联动 */}
+          {/* 图表: 当前页数据, 实时联动 */}
           <div className="border-t border-neutral-900 p-4 lg:border-t-0 lg:border-l">
-            <div className="mb-3 text-xs text-neutral-500">各 Item 数量</div>
+            <div className="mb-3 text-xs text-neutral-500">当前页 · 各 Item 数量</div>
             <Suspense
               fallback={
                 <div className="flex h-[240px] items-center justify-center text-sm text-neutral-600">

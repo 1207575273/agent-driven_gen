@@ -32,6 +32,8 @@
 | 后端质量 | Ruff(lint/format) + mypy(strict, 编译期替身) + pytest(覆盖率闸门) |
 | 前端 | Vite + React + TypeScript(strict) + Zustand + React Query + ECharts |
 | 前端质量 | Biome(lint/format) + tsc + Vitest |
+| 后端基座 | 定时任务 APScheduler(进程内) · 日志 structlog(控制台人读 + 文件 JSONL) · 配置 pydantic-settings(env + .env, 12-factor) |
+| 前端路由 | react-router(声明式);生产同源由后端 SPA 兜底 |
 | 质量自查 | `pnpm check`(手动一键);pre-commit + CI 为未来可选(见方案文档附录) |
 
 后端预置常用包:`httpx / orjson / structlog / tenacity / python-multipart / email-validator / pandas / openpyxl`(按需删减)。
@@ -165,12 +167,20 @@ ORM 映射在 `models/`(`Item(table=True)` = `@Entity`),SQL 操作在 `repositor
 全项目只用两种方法。更新、删除走 POST 子路径,不用 PATCH/PUT/DELETE:
 
 ```
-GET  /api/v1/items            列表
+GET  /api/v1/items?limit&offset  分页列表(返回 {items,total,limit,offset})
 GET  /api/v1/items/{id}       详情
 POST /api/v1/items            新增
 POST /api/v1/items/{id}/update  更新
 POST /api/v1/items/{id}/delete  删除
 ```
+
+## 后端基座能力
+
+- **列表分页**:`GET /items?limit&offset` 返回 `{items,total,limit,offset}`;`limit` 1~100(默认 20)、`offset>=0`,越界 422。通用 `Page[T]`(`app/models/pagination.py`)团队新实体照抄。
+- **定时任务**:进程内 APScheduler,随 `lifespan` 起停(单进程,不另起 worker)。`app/core/scheduler.py` 的 `register_jobs` 加 job;job 经 `session_scope()` + service 访问数据、守三层。多副本会重复触发(母版单 worker 无碍;多副本需外部调度 / 分布式锁,不预置)。
+- **生产日志**:structlog 双出口 —— 控制台人读、文件 `logs/app.jsonl`(JSONL / UTC / 固定字段 `timestamp·level·logger·message` / 结构化异常);**8 小时滚动、留 10 天自动清理**。格式与滚动 / 留存由 `APP_LOGGING__*` 环境变量控制(见 `apps/back/.env`)。
+- **配置服务**:pydantic-settings,优先级 `环境变量 > .env > 默认`(12-factor,无 YAML);K8s ConfigMap / Nacos 挂成 env 注入即可。`app/core/config.reload_settings()` 是热更 seam,供未来接配置中心 watcher。`apps/back/.env` 已随母版提交(仅无密钥默认值,fork 后开箱即用、想改直接改它);真实密钥 / 生产值一律用环境变量注入,勿写进已提交的 `.env`。
+- **前端路由 + SPA 同源**:react-router 客户端路由;生产由后端 `SpaStaticFiles` 兜底(深链刷新回 `index.html`,不 404),仍单进程、无 nginx。
 
 ## 加一个新功能的标准动作(以实体 Foo 为例)
 

@@ -16,8 +16,14 @@ const CAPS: Capability[] = [
     desc: "Python 没编译期, 靠严格类型 + Ruff 在提交前拦住低级错误。",
   },
   { title: "覆盖率 ≥ 80%", desc: "Ruff + mypy + pytest 三道防线, 一键 pnpm check 自查。" },
-  { title: "同源单进程", desc: "pnpm build + start, 一个 uvicorn 同时托管前端页面与 API。" },
+  {
+    title: "同源单进程",
+    desc: "pnpm build + start, 一个 uvicorn 托管前端(含 SPA 深链兜底)+ API。",
+  },
   { title: "端口自动探测", desc: "ports.json 候选端口, 被占用自动跳下一个, 不用手改配置。" },
+  { title: "定时任务 · 进程内", desc: "APScheduler 随应用起停, 单进程不另起 worker, job 守三层。" },
+  { title: "生产日志 · JSONL", desc: "控制台人读 + 文件 JSONL, 8 小时滚动、留 10 天自动清理。" },
+  { title: "12-factor 配置", desc: "env + .env 覆盖, 预留配置中心热更 seam(Nacos / ConfigMap)。" },
 ];
 
 export function CapabilityGrid() {
