@@ -30,18 +30,16 @@ export function RoleCategoryPanel() {
     role: drillCell?.role ?? null,
   });
 
-  const handleBarClick = useCallback(
-    (payload: BarClickPayload, categoryIdxMap: Record<string, number>) => {
-      const catIdx = categoryIdxMap[payload.seriesName] ?? -1;
-      setDrillCell({
-        role: payload.category,
-        categoryName: payload.seriesName,
-        categoryId: catIdx + 1, // 1-based id
-      });
-      setDrillPerson(null);
-    },
-    [],
-  );
+  const handleBarClick = useCallback((payload: BarClickPayload) => {
+    const catId =
+      categoryIdMap[payload.seriesName] ?? (categoryIdxMap[payload.seriesName] ?? 0) + 1;
+    setDrillCell({
+      role: payload.category,
+      categoryName: payload.seriesName,
+      categoryId: catId,
+    });
+    setDrillPerson(null);
+  }, []);
 
   const handlePersonClick = useCallback((record: CellPersonItem) => {
     setDrillPerson({ employeeId: record.employee_id, name: record.name });
@@ -84,6 +82,16 @@ export function RoleCategoryPanel() {
     .sort((a, b) => b.value - a.value);
 
   const roleNames = items.map((d) => d.role);
+
+  // Build a mapping from category name to id from API data
+  const categoryIdMap: Record<string, number> = {};
+  for (const item of items) {
+    if (item.category_ids) {
+      for (const [catName, catId] of Object.entries(item.category_ids)) {
+        categoryIdMap[catName] = catId;
+      }
+    }
+  }
 
   const stackedSeries = categoryList.map((catName) => ({
     name: catName,
@@ -150,7 +158,7 @@ export function RoleCategoryPanel() {
             series={stackedSeries}
             stacked
             height={340}
-            onBarClick={(payload) => handleBarClick(payload, categoryIdxMap)}
+            onBarClick={handleBarClick}
           />
         </div>
       </div>
@@ -168,7 +176,8 @@ export function RoleCategoryPanel() {
         data={items}
         categoryList={categoryList}
         onCellClick={(role, categoryName, catIdx) => {
-          setDrillCell({ role, categoryName, categoryId: catIdx + 1 });
+          const catId = categoryIdMap[categoryName] ?? catIdx + 1;
+          setDrillCell({ role, categoryName, categoryId: catId });
           setDrillPerson(null);
         }}
       />

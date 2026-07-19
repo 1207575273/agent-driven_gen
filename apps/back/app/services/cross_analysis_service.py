@@ -49,8 +49,8 @@ class CrossAnalysisService:
             start_date, end_date, category_level, parent_category_id, emp_ids
         )
 
-        # 构建 {时间标签: {分类名: 人天}}
-        time_cat: dict[str, dict[str, float]] = {}
+        # 构建 {时间标签: {分类名: (人天, category_id)}}
+        time_cat: dict[str, dict[str, tuple[float, int]]] = {}
         for r in wh_monthly:
             month = str(r.get("month", ""))
             cat = str(r.get("category_name", ""))
@@ -63,13 +63,15 @@ class CrossAnalysisService:
                 label = month
             if label not in time_cat:
                 time_cat[label] = {}
-            time_cat[label][cat] = time_cat[label].get(cat, 0.0) + days
+            entry_cat = time_cat[label].get(cat, (0.0, 0))
+            time_cat[label][cat] = (entry_cat[0] + days, int(float(str(r.get("category_id", 0)))))  # type: ignore[arg-type]
 
         result: list[dict[str, object]] = []
         for label in sorted(time_cat.keys()):
             cats = time_cat[label]
-            entry: dict[str, object] = {"time_label": label, "person_days": sum(cats.values())}
-            entry["categories"] = [{"category_name": k, "total_days": round(v, 1), "percentage": round(v / sum(cats.values()) * 100, 1)} for k, v in sorted(cats.items(), key=lambda x: -x[1])]
+            total_cat = sum(v[0] for v in cats.values())  # type: ignore[misc]
+            entry: dict[str, object] = {"time_label": label, "person_days": total_cat}
+            entry["categories"] = [{"category_name": k, "category_id": v[1], "total_days": round(v[0], 1), "percentage": round(v[0] / total_cat * 100, 1) if total_cat > 0 else 0} for k, v in sorted(cats.items(), key=lambda x: -x[1][0])]  # type: ignore[arg-type,misc]
             result.append(entry)
         return result
 
@@ -145,6 +147,7 @@ class CrossAnalysisService:
 
         # 按部门分组
         dept_groups: dict[str, dict[str, object]] = {}
+        dept_cat_ids: dict[str, dict[str, int]] = {}
         for r in wh_dept:
             dept = str(r.get("dept_name", ""))
             if dept not in dept_groups:
@@ -154,12 +157,18 @@ class CrossAnalysisService:
                     "total_days": 0.0,
                     "category_distribution": {},
                 }
+                dept_cat_ids[dept] = {}
             days = float(str(r.get("person_days", 0)))
             cat = str(r.get("category_name", ""))
+            cat_id = int(float(str(r.get("category_id", 0))))
             dept_groups[dept]["total_days"] = dept_groups[dept]["total_days"] + days  # type: ignore[operator]
             dist = dept_groups[dept].get("category_distribution", {})
             if isinstance(dist, dict) and cat:
                 dist[cat] = dist.get(cat, 0.0) + days  # type: ignore[index]
+            dept_cat_ids[dept][cat] = cat_id
+        # Attach category_ids to each dept
+        for dept, cat_ids in dept_cat_ids.items():
+            dept_groups[dept]["category_ids"] = cat_ids  # type: ignore[index]
 
         return sorted(dept_groups.values(), key=lambda x: float(str(x["total_days"])), reverse=True)  # type: ignore[arg-type]
 
@@ -223,11 +232,13 @@ class CrossAnalysisService:
 
         # 按角色名合并, 填入分类分布
         role_groups: dict[str, dict[str, object]] = {}
+        role_cat_ids: dict[str, dict[str, int]] = {}
         for r in wh_role:
             role_name = str(r.get("role", ""))
             cat_name = str(r.get("category_name", ""))
             days = float(str(r.get("person_days", 0)))
             cnt = int(float(str(r.get("person_count", 0))))
+            cat_id = int(float(str(r.get("category_id", 0))))
             if role_name not in role_groups:
                 role_groups[role_name] = {
                     "role": role_name,
@@ -236,17 +247,20 @@ class CrossAnalysisService:
                     "avg_days_per_person": 0.0,
                     "category_distribution": {},
                 }
+                role_cat_ids[role_name] = {}
             grp = role_groups[role_name]
             grp["person_count"] = max(int(float(str(grp["person_count"]))), cnt)  # type: ignore[operator]
+            role_cat_ids[role_name][cat_name] = cat_id
             grp["total_days"] = grp["total_days"] + days  # type: ignore[operator]
             dist = grp.get("category_distribution", {})
             if isinstance(dist, dict) and cat_name:
                 dist[cat_name] = dist.get(cat_name, 0.0) + days  # type: ignore[index]
             # 人均在最后计算
-        for grp in role_groups.values():
+        for role_name, grp in role_groups.items():
             pc = max(1, int(float(str(grp.get("person_count", 1)))))
             td = float(str(grp.get("total_days", 0)))
             grp["avg_days_per_person"] = round(td / pc, 1)
+            grp["category_ids"] = role_cat_ids.get(role_name, {})  # type: ignore[index]
 
         return sorted(role_groups.values(), key=lambda x: float(str(x["total_days"])), reverse=True)  # type: ignore[arg-type]
 

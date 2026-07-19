@@ -42,21 +42,20 @@ export function TimeCategoryPanel() {
       : {},
   );
 
-  const handleSliceClick = useCallback(
-    (payload: PieClickPayload, catIdxMap: Record<string, number>) => {
-      setDrillState({
-        categoryName: payload.name,
-        categoryId: (catIdxMap[payload.name] ?? 0) + 1,
-      });
-    },
-    [],
-  );
+  const handleSliceClick = useCallback((payload: PieClickPayload) => {
+    // category_id is passed via the PieChart data items (we embed it)
+    setDrillState({
+      categoryName: payload.name,
+      categoryId: Number((payload as unknown as Record<string, unknown>).category_id ?? 0),
+    });
+  }, []);
 
   const handleBarOrLineClick = useCallback(
     (payload: BarClickPayload | LineClickPayload, catIdxMap: Record<string, number>) => {
+      const catId = catIdMap[payload.seriesName] ?? (catIdxMap[payload.seriesName] ?? 0) + 1;
       setDrillState({
         categoryName: payload.seriesName,
-        categoryId: (catIdxMap[payload.seriesName] ?? 0) + 1,
+        categoryId: catId,
         timeLabel: payload.category,
       });
     },
@@ -92,10 +91,11 @@ export function TimeCategoryPanel() {
   const items: TimeCategoryItem[] = data;
   const firstItem = items[0];
 
-  // pieData from nested categories
+  // pieData from nested categories — embed category_id for drill
   const pieData = (firstItem?.categories || []).map((c) => ({
     name: c.category_name,
     value: c.total_days,
+    category_id: c.category_id ?? 0,
   }));
 
   // time labels
@@ -124,11 +124,16 @@ export function TimeCategoryPanel() {
     }),
   }));
 
-  // Build category index map for id resolution
+  // Build category index map for id resolution — also store category_id from data
   const catIdxMap: Record<string, number> = {};
   allCatNames.forEach((cat, idx) => {
     catIdxMap[cat] = idx;
   });
+  // Build category name -> id from the first item's categories
+  const catIdMap: Record<string, number> = {};
+  for (const c of firstItem?.categories || []) {
+    if (c.category_id) catIdMap[c.category_name] = c.category_id;
+  }
 
   const projectColumns: Column<CategoryProjectItem>[] = [
     { key: "project_name", title: "项目名称", dataIndex: "project_name" },
@@ -211,7 +216,7 @@ export function TimeCategoryPanel() {
             data={pieData}
             height={320}
             innerRadius="50%"
-            onSliceClick={(payload) => handleSliceClick(payload, catIdxMap)}
+            onSliceClick={(payload) => handleSliceClick(payload)}
           />
         </div>
       </div>

@@ -33,14 +33,39 @@ export function DeptCategoryPanel() {
     deptName: drillCell?.deptName ?? null,
   });
 
-  const handleHeatmapClick = useCallback((payload: HeatmapCellClickPayload) => {
-    setDrillCell({
-      deptName: payload.yLabel,
-      categoryName: payload.xLabel,
-      categoryId: payload.xIndex + 1,
-    });
-    setDrillPerson(null);
-  }, []);
+  if (isLoading) return <LoadingSpinner />;
+  if (isError || !data || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
+        暂无部门x分类数据
+      </div>
+    );
+  }
+
+  const items: DeptCategoryItem[] = data;
+
+  // Build category name -> id mapping from dept data
+  const categoryIdMap: Record<string, number> = {};
+  for (const item of items) {
+    if (item.category_ids) {
+      for (const [catName, catId] of Object.entries(item.category_ids)) {
+        categoryIdMap[catName] = catId;
+      }
+    }
+  }
+
+  const handleHeatmapClick = useCallback(
+    (payload: HeatmapCellClickPayload) => {
+      const catId = categoryIdMap[payload.xLabel] ?? payload.xIndex + 1;
+      setDrillCell({
+        deptName: payload.yLabel,
+        categoryName: payload.xLabel,
+        categoryId: catId,
+      });
+      setDrillPerson(null);
+    },
+    [categoryIdMap],
+  );
 
   const handlePersonClick = useCallback((record: CellPersonItem) => {
     setDrillPerson({ employeeId: record.employee_id, name: record.name });
@@ -76,17 +101,6 @@ export function DeptCategoryPanel() {
       },
     },
   ];
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError || !data || data.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
-        暂无部门x分类数据
-      </div>
-    );
-  }
-
-  const items: DeptCategoryItem[] = data;
 
   // 提取所有类别名称
   const allCategories = new Set<string>();

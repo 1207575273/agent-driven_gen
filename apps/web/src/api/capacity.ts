@@ -106,6 +106,7 @@ export interface ChildCategory {
 
 export interface CategoryPieSlice {
   category_name: string;
+  category_id?: number;
   total_days: number;
   percentage: number;
 }
@@ -134,6 +135,7 @@ export interface DeptCategoryItem {
   dept_name: string;
   dept_path: string;
   category_distribution: DeptCategoryDistribution;
+  category_ids?: Record<string, number>;
   total_days: number;
   person_count: number;
   fill_rate: number;
@@ -154,6 +156,7 @@ export interface RoleCategoryItem {
   total_days: number;
   avg_days_per_person: number;
   category_distribution: DeptCategoryDistribution;
+  category_ids?: Record<string, number>;
 }
 
 // ── 角色月度趋势 ──
@@ -188,6 +191,7 @@ export interface PersonCategoryItem {
   total_days: number;
   project_count: number;
   category_distribution: DeptCategoryDistribution;
+  category_ids?: Record<string, number>;
 }
 
 // ── 三快计划对比 ──

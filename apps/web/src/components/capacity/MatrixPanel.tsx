@@ -30,14 +30,22 @@ export function MatrixPanel() {
     deptName: drillCell?.deptName ?? null,
   });
 
+  if (isLoading) return <LoadingSpinner />;
+  if (isError || !data) {
+    return (
+      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
+        暂无综合交叉矩阵数据
+      </div>
+    );
+  }
+
+  const matrixData: DeptCategoryMatrix = data;
+
   const handleCellClick = useCallback((payload: HeatmapCellClickPayload) => {
-    // We only have category name, not ID. For now use category name as-is.
-    // The backend cell-persons needs category_id; the Heatmap doesn't have it.
-    // We pass the category name to resolve on the backend or use idx as id.
     setDrillCell({
       deptName: payload.yLabel,
       categoryName: payload.xLabel,
-      categoryId: payload.xIndex + 1, // fallback: use index+1 as approximate id
+      categoryId: payload.xIndex + 1, // matrix only has label names, no category_id from API
     });
     setDrillPerson(null);
   }, []);
@@ -86,17 +94,6 @@ export function MatrixPanel() {
       },
     },
   ];
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError || !data) {
-    return (
-      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
-        暂无综合交叉矩阵数据
-      </div>
-    );
-  }
-
-  const matrixData: DeptCategoryMatrix = data;
 
   return (
     <div>

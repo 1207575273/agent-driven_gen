@@ -399,18 +399,20 @@ class WorkHourRepository:
         rows = (await self._session.exec(base)).all()
 
         # 祖先追溯 + 聚合
-        result_map: dict[str, dict[str, float]] = {}
+        result_map: dict[str, dict[str, tuple[float, int]]] = {}
         for r in rows:
             month = str(r[0])
             cat_id = int(float(str(r[1])))
             days = float(str(r[2] or 0))
-            ancestor_name = ancestor_map.get(cat_id, "未分类")
+            ancestor = ancestor_map.get(cat_id, ("未分类", 0))
+            ancestor_name, ancestor_id = ancestor
             if month not in result_map:
                 result_map[month] = {}
-            result_map[month][ancestor_name] = result_map[month].get(ancestor_name, 0.0) + days
+            entry = result_map[month].get(ancestor_name, (0.0, 0))
+            result_map[month][ancestor_name] = (entry[0] + days, ancestor_id)
 
         return [
-            {"month": m, "category_name": c, "person_days": round(d, 1)}
+            {"month": m, "category_name": c, "person_days": round(d[0], 1), "category_id": d[1]}
             for m, cats in sorted(result_map.items())
             for c, d in sorted(cats.items())
         ]
@@ -450,18 +452,20 @@ class WorkHourRepository:
         base = base.group_by(dept_col, WorkHour.category_id)
         rows = (await self._session.exec(base)).all()
 
-        result_map: dict[str, dict[str, float]] = {}
+        result_map: dict[str, dict[str, tuple[float, int]]] = {}
         for r in rows:
             dept = str(r[0] or "")
             cat_id = int(float(str(r[1])))
             days = float(str(r[2] or 0))
-            ancestor_name = ancestor_map.get(cat_id, "未分类")
+            ancestor = ancestor_map.get(cat_id, ("未分类", 0))
+            ancestor_name, ancestor_id = ancestor
             if dept not in result_map:
                 result_map[dept] = {}
-            result_map[dept][ancestor_name] = result_map[dept].get(ancestor_name, 0.0) + days
+            entry = result_map[dept].get(ancestor_name, (0.0, 0))
+            result_map[dept][ancestor_name] = (entry[0] + days, ancestor_id)
 
         return [
-            {"dept_name": d, "category_name": c, "person_days": round(v, 1)}
+            {"dept_name": d, "category_name": c, "person_days": round(v[0], 1), "category_id": v[1]}
             for d, cats in sorted(result_map.items())
             for c, v in sorted(cats.items())
         ]
@@ -498,29 +502,32 @@ class WorkHourRepository:
         base = base.group_by(Employee.role, WorkHour.category_id)
         rows = (await self._session.exec(base)).all()
 
-        result_map: dict[str, dict[str, object]] = {}  # role -> {cat: days, _pc_cat: cnt}
+        result_map: dict[str, dict[str, tuple[float, int]]] = {}  # role -> {cat: (days, cat_id)}
         role_pc_max: dict[str, dict[str, int]] = {}
         for r in rows:
             role = str(r[0] or "")
             cat_id = int(float(str(r[1])))
             days = float(str(r[2] or 0))
             cnt = int(float(str(r[3] or 0)))
-            ancestor_name = ancestor_map.get(cat_id, "未分类")
+            ancestor = ancestor_map.get(cat_id, ("未分类", 0))
+            ancestor_name, ancestor_id = ancestor
             if role not in result_map:
                 result_map[role] = {}
                 role_pc_max[role] = {}
-            cur = float(str(result_map[role].get(ancestor_name, 0.0)))
-            result_map[role][ancestor_name] = round(cur + days, 1)
+            entry = result_map[role].get(ancestor_name, (0.0, 0))
+            result_map[role][ancestor_name] = (round(entry[0] + days, 1), ancestor_id)
             role_pc_max[role][ancestor_name] = max(role_pc_max[role].get(ancestor_name, 0), cnt)
 
         result: list[dict[str, object]] = []
         for role in sorted(result_map.keys()):
             for cat in sorted(result_map[role].keys()):
+                cat_data = result_map[role][cat]
                 result.append({
                     "role": role,
                     "category_name": cat,
-                    "person_days": result_map[role][cat],
+                    "person_days": cat_data[0],
                     "person_count": role_pc_max[role].get(cat, 1),
+                    "category_id": cat_data[1],
                 })
         return result
 
@@ -565,7 +572,8 @@ class WorkHourRepository:
             eid = int(float(str(r[0] or 0)))
             cat_id = int(float(str(r[6])))
             days = float(str(r[7] or 0))
-            ancestor_name = ancestor_map.get(cat_id, "未分类")
+            ancestor = ancestor_map.get(cat_id, ("未分类", 0))
+            ancestor_name, ancestor_id = ancestor
             if eid not in person_map:
                 person_map[eid] = {
                     "employee_id": eid,
@@ -576,14 +584,18 @@ class WorkHourRepository:
                     "role": str(r[5] or ""),
                     "total_days": 0.0,
                     "project_count": 0,
-                    "category_distribution": {},
+                    "category_distribution": {},  # {category_name: days}
+                    "category_ids": {},  # {category_name: category_id}
                 }
             entry = person_map[eid]
             entry["total_days"] = float(str(entry["total_days"])) + days  # type: ignore[operator]
             entry["project_count"] = max(int(float(str(entry["project_count"]))), int(float(str(r[8] or 0))))  # type: ignore[operator]
             dist = entry.get("category_distribution", {})
+            cat_ids = entry.get("category_ids", {})
             if isinstance(dist, dict):
                 dist[ancestor_name] = dist.get(ancestor_name, 0.0) + days  # type: ignore[index]
+            if isinstance(cat_ids, dict):
+                cat_ids[ancestor_name] = ancestor_id  # type: ignore[index]
 
         # 四舍五入
         for entry in person_map.values():
@@ -592,6 +604,7 @@ class WorkHourRepository:
             if isinstance(dist, dict):
                 for k in list(dist.keys()):
                     dist[k] = round(float(str(dist[k])), 1)  # type: ignore[index]
+            # category_ids stays raw; keep it alongside
 
         return sorted(
             person_map.values(),
@@ -656,19 +669,23 @@ class WorkHourRepository:
         base = base.group_by(month_expr, WorkHour.category_id)
         rows = (await self._session.exec(base)).all()
 
-        result_map: dict[str, dict[str, float]] = {}
+        result_map: dict[str, dict[str, tuple[float, int]]] = {}
         for r in rows:
             month = str(r[0])
             cat_id = int(float(str(r[1])))
             days = float(str(r[2] or 0))
-            ancestor_name = ancestor_map.get(cat_id, "未分类")
+            name_and_id = ancestor_map.get(cat_id, ("未分类", 0))
+            ancestor_name = name_and_id[0]
+            ancestor_id = name_and_id[1]
             if month not in result_map:
                 result_map[month] = {}
-            result_map[month][ancestor_name] = result_map[month].get(ancestor_name, 0.0) + days
+            cur = result_map[month].get(ancestor_name, (0.0, 0))
+            result_map[month][ancestor_name] = (cur[0] + days, ancestor_id)
 
         return [
-            {"month": m, "category_name": c, "person_days": round(d, 1)}
+            {"month": m, "category_name": c, "person_days": round(v[0], 1), "category_id": v[1]}
             for m, cats in sorted(result_map.items())
+            for c, v in sorted(cats.items())
             for c, d in sorted(cats.items())
         ]
 
@@ -845,12 +862,12 @@ class WorkHourRepository:
         return [str(r) for r in result.all() if r]
 
     # ------------------------------------------------------------------
-    # 内部: 祖先追溯映射 L3叶子id -> target_level祖先名
+    # 内部: 祖先追溯映射 L3叶子id -> (target_level祖先名, target_level祖先id)
     # ------------------------------------------------------------------
     async def _build_ancestor_map(
         self, target_level: int, parent_category_id: int | None = None
-    ) -> dict[int, str]:
-        """构建 {L3叶子category_id: target_level祖先名} 映射。"""
+    ) -> dict[int, tuple[str, int]]:
+        """构建 {L3叶子category_id: (target_level祖先名, target_level祖先id)} 映射。"""
         all_cats = (await self._session.exec(select(ProjectCategory))).all()
         # 先构建 id->node 映射
         cat_by_id: dict[int, ProjectCategory] = {}
@@ -861,7 +878,7 @@ class WorkHourRepository:
         # 找到所有 L3 叶子
         leaf_ids = [c.id for c in all_cats if c.category_level == 3 and c.id is not None]
 
-        ancestor_map: dict[int, str] = {}
+        ancestor_map: dict[int, tuple[str, int]] = {}
         for leaf_id in leaf_ids:
             if leaf_id is None:
                 continue
@@ -871,11 +888,11 @@ class WorkHourRepository:
                 current = cat_by_id.get(current.parent_id) if current.parent_id else None  # type: ignore[arg-type]
             if current and current.category_level == target_level:
                 if parent_category_id is None or current.parent_id == parent_category_id:
-                    ancestor_map[leaf_id] = current.category_name
+                    ancestor_map[leaf_id] = (current.category_name, current.id if current.id is not None else 0)
                 else:
-                    ancestor_map[leaf_id] = "未分类"
+                    ancestor_map[leaf_id] = ("未分类", 0)
             else:
-                ancestor_map[leaf_id] = "未分类"
+                ancestor_map[leaf_id] = ("未分类", 0)
         return ancestor_map
 
     # ------------------------------------------------------------------
