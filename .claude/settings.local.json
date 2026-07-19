@@ -1,10 +1,37 @@
 {
   "permissions": {
+    "defaultMode": "acceptEdits",
     "allow": [
-      "Bash(git add *)",
-      "Bash(git commit -m 'docs\\(readme\\): 补充价值主张 + uv/pnpm 前置安装指引\\(附官方来源\\) *)",
-      "Bash(git push *)",
-      "Bash(git commit -m 'docs\\(readme\\): 新增'\\\\''单进程 Agent 团队\\(需求->测试\\)'\\\\''一节 *)"
+      "Bash(*)",
+      "BashOutput",
+      "KillBash",
+      "KillShell",
+      "Read(**)",
+      "Write(**)",
+      "Edit(**)",
+      "MultiEdit(**)",
+      "NotebookRead",
+      "NotebookEdit",
+      "Glob",
+      "Grep",
+      "LS",
+      "WebFetch",
+      "WebSearch",
+      "Task",
+      "TodoWrite",
+      "ExitPlanMode",
+      "Skill",
+      "SlashCommand"
+    ],
+    "ask": [
+      "Bash(rm:*)",
+      "Bash(rmdir:*)",
+      "Bash(unlink:*)",
+      "Bash(git rm:*)",
+      "Bash(del:*)",
+      "Bash(rd:*)",
+      "Bash(Remove-Item:*)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true
 }
