@@ -182,7 +182,7 @@ POST /api/v1/items/{id}/delete  删除
 - **配置服务**:pydantic-settings,优先级 `环境变量 > .env > 默认`(12-factor,无 YAML);K8s ConfigMap / Nacos 挂成 env 注入即可。`app/core/config.reload_settings()` 是热更 seam,供未来接配置中心 watcher。`apps/back/.env` 已随母版提交(仅无密钥默认值,fork 后开箱即用、想改直接改它);真实密钥 / 生产值一律用环境变量注入,勿写进已提交的 `.env`。
 - **前端路由 + SPA 同源**:react-router 客户端路由;生产由后端 `SpaStaticFiles` 兜底(深链刷新回 `index.html`,不 404),仍单进程、无 nginx。
 
-> 每项设计的"为什么 / 取舍"速查见 [架构决策记录](docs/架构决策记录.md)(ADR)。改母版前先看它,别无谓推翻已定权衡。
+> 每项设计的"为什么 / 取舍"速查见架构方案的[决策记录(ADR)](docs/20260715_通用monorepo母版架构方案.md#三决策记录adr)。改母版前先看它,别无谓推翻已定权衡。
 
 ## 加一个新功能的标准动作(以实体 Foo 为例)
 

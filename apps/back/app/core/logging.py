@@ -1,7 +1,7 @@
 """生产级日志配置(structlog + stdlib logging 双出口)。
 
-格式 / 滚动 / 留存由 config 的 logging 段**声明式控制**(见 core/config.LoggingSettings 与
-config/application.yml), 不写死在代码里 —— 改配置即可, 无需改码。
+格式 / 滚动 / 留存由 config 的 logging 段**声明式控制**(见 core/config.LoggingSettings),
+不写死在代码里 —— 改 APP_LOGGING__* 环境变量即可, 无需改码。
 
 - 控制台:人类可读(带颜色, 非 TTY 自动关色), 供开发 / 运维直接看。
 - 文件:**JSONL**, 字段固定且可预期:
