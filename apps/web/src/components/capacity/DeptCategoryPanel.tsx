@@ -26,27 +26,11 @@ export function DeptCategoryPanel() {
     name: string;
   } | null>(null);
 
-  const { data: cellPersons, isLoading: cellLoading } = useCellPersons({
-    timePeriod,
-    categoryId: drillCell?.categoryId ?? null,
-    deptLevel,
-    deptName: drillCell?.deptName ?? null,
-  });
-
-  if (isLoading) return <LoadingSpinner />;
-  if (isError || !data || data.length === 0) {
-    return (
-      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
-        暂无部门x分类数据
-      </div>
-    );
-  }
-
-  const items: DeptCategoryItem[] = data;
-
-  // Build category name -> id mapping from dept data
+  // Build categoryIdMap from data early (before early return — React renders data on success)
+  // When isLoading, data is undefined — use empty arr
+  const rawItems: DeptCategoryItem[] = data ?? [];
   const categoryIdMap: Record<string, number> = {};
-  for (const item of items) {
+  for (const item of rawItems) {
     if (item.category_ids) {
       for (const [catName, catId] of Object.entries(item.category_ids)) {
         categoryIdMap[catName] = catId;
@@ -54,6 +38,14 @@ export function DeptCategoryPanel() {
     }
   }
 
+  const { data: cellPersons, isLoading: cellLoading } = useCellPersons({
+    timePeriod,
+    categoryId: drillCell?.categoryId ?? null,
+    deptLevel,
+    deptName: drillCell?.deptName ?? null,
+  });
+
+  // ALL hooks must be BEFORE early return
   const handleHeatmapClick = useCallback(
     (payload: HeatmapCellClickPayload) => {
       const catId = categoryIdMap[payload.xLabel] ?? payload.xIndex + 1;
@@ -101,6 +93,17 @@ export function DeptCategoryPanel() {
       },
     },
   ];
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError || !data || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
+        暂无部门x分类数据
+      </div>
+    );
+  }
+
+  const items: DeptCategoryItem[] = data;
 
   // 提取所有类别名称
   const allCategories = new Set<string>();

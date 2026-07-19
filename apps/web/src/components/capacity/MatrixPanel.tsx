@@ -30,22 +30,12 @@ export function MatrixPanel() {
     deptName: drillCell?.deptName ?? null,
   });
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError || !data) {
-    return (
-      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
-        暂无综合交叉矩阵数据
-      </div>
-    );
-  }
-
-  const matrixData: DeptCategoryMatrix = data;
-
+  // ALL hooks and callbacks BEFORE early return
   const handleCellClick = useCallback((payload: HeatmapCellClickPayload) => {
     setDrillCell({
       deptName: payload.yLabel,
       categoryName: payload.xLabel,
-      categoryId: payload.xIndex + 1, // matrix only has label names, no category_id from API
+      categoryId: payload.xIndex + 1,
     });
     setDrillPerson(null);
   }, []);
@@ -94,6 +84,17 @@ export function MatrixPanel() {
       },
     },
   ];
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError || !data) {
+    return (
+      <div className="flex items-center justify-center py-12 text-sm text-neutral-600 border border-dashed border-neutral-800 rounded-lg">
+        暂无综合交叉矩阵数据
+      </div>
+    );
+  }
+
+  const matrixData: DeptCategoryMatrix = data;
 
   return (
     <div>
