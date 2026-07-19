@@ -55,6 +55,7 @@ class CrossAnalysisService:
             month = str(r.get("month", ""))
             cat = str(r.get("category_name", ""))
             days = float(str(r.get("person_days", 0)))
+            cat_id = int(float(str(r.get("category_id", 0))))
             if time_granularity == "quarter":
                 label = _month_to_quarter(month)
             elif time_granularity == "half":
@@ -64,14 +65,23 @@ class CrossAnalysisService:
             if label not in time_cat:
                 time_cat[label] = {}
             entry_cat = time_cat[label].get(cat, (0.0, 0))
-            time_cat[label][cat] = (entry_cat[0] + days, int(float(str(r.get("category_id", 0)))))  # type: ignore[arg-type]
+            time_cat[label][cat] = (entry_cat[0] + days, cat_id if cat_id > 0 else entry_cat[1])  # type: ignore[arg-type]
 
         result: list[dict[str, object]] = []
         for label in sorted(time_cat.keys()):
             cats = time_cat[label]
             total_cat = sum(v[0] for v in cats.values())  # type: ignore[misc]
             entry: dict[str, object] = {"time_label": label, "person_days": total_cat}
-            entry["categories"] = [{"category_name": k, "category_id": v[1], "total_days": round(v[0], 1), "percentage": round(v[0] / total_cat * 100, 1) if total_cat > 0 else 0} for k, v in sorted(cats.items(), key=lambda x: -x[1][0])]  # type: ignore[arg-type,misc]
+            cats_list: list[dict[str, object]] = [
+                {
+                    "category_name": k,
+                    "category_id": v[1],
+                    "total_days": round(v[0], 1),
+                    "percentage": round(v[0] / total_cat * 100, 1) if total_cat > 0 else 0.0,
+                }
+                for k, v in sorted(cats.items(), key=lambda x: -x[1][0])  # type: ignore[arg-type,misc]
+            ]
+            entry["categories"] = cats_list
             result.append(entry)
         return result
 
