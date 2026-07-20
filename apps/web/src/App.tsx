@@ -1,9 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
+import { RootLayout } from "./layouts/RootLayout";
 import { CapacityAuditPage } from "./pages/CapacityAuditPage";
 import { CrossAnalysisPage } from "./pages/CrossAnalysisPage";
 import { DataAdminPage } from "./pages/DataAdminPage";
-import { RootLayout } from "./layouts/RootLayout";
 import { HomePage } from "./pages/HomePage";
 import { ItemsPage } from "./pages/ItemsPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
