@@ -381,33 +381,10 @@ export function DeptCategoryPanel() {
         </div>
       )}
 
-      <div>
-        <h3 className="text-sm font-medium text-neutral-400 mb-3">部门填报率与人均产能</h3>
-        <div className="rounded-lg border border-neutral-800/50 overflow-hidden">
-          <table className="min-w-full">
-            <thead>
-              <tr className="bg-neutral-900/50">
-                <th className="px-3 py-3 text-left text-xs font-medium text-neutral-400 uppercase">
-                  部门
-                </th>
-                <th className="px-3 py-3 text-right text-xs font-medium text-neutral-400 uppercase">
-                  总人天
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.dept_path} className="border-t border-neutral-800/50">
-                  <td className="px-3 py-2.5 text-sm text-neutral-200">{item.dept_name}</td>
-                  <td className="px-3 py-2.5 text-sm text-neutral-200 text-right">
-                    {item.total_days.toFixed(1)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DeptCategoryCrossTable
+        data={items}
+        categoryList={categoryList}
+      />
 
       {showModal &&
         (() => {
@@ -490,6 +467,85 @@ export function DeptCategoryPanel() {
             </DrillDownModal>
           );
         })()}
+    </div>
+  );
+}
+
+function DeptCategoryCrossTable({
+  data,
+  categoryList,
+}: {
+  data: DeptCategoryItem[];
+  categoryList: string[];
+}) {
+  const [showPct, setShowPct] = useState(false);
+
+  const formatCell = (value: number, item: DeptCategoryItem) => {
+    if (showPct) {
+      return item.total_days > 0 ? `${((value / item.total_days) * 100).toFixed(1)}%` : "-";
+    }
+    return value.toFixed(1);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-neutral-400">部门x分类交叉表</h3>
+        <div className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer select-none">
+          <span className={!showPct ? "text-accent" : ""}>人天</span>
+          <button
+            type="button"
+            onClick={() => setShowPct(!showPct)}
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+              showPct ? "bg-accent/30" : "bg-neutral-700"
+            }`}
+          >
+            <span
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                showPct ? "translate-x-4" : "translate-x-1"
+              }`}
+            />
+          </button>
+          <span className={showPct ? "text-accent" : ""}>占比</span>
+        </div>
+      </div>
+      <div className="rounded-lg border border-neutral-800/50 overflow-x-auto">
+        <table className="min-w-full">
+          <thead>
+            <tr className="bg-neutral-900/50">
+              <th className="px-3 py-3 text-left text-xs font-medium text-neutral-400 uppercase">
+                部门
+              </th>
+              {categoryList.map((cat) => (
+                <th
+                  key={cat}
+                  className="px-3 py-3 text-right text-xs font-medium text-neutral-400 uppercase"
+                >
+                  {cat}
+                </th>
+              ))}
+              <th className="px-3 py-3 text-right text-xs font-medium text-neutral-400 uppercase">
+                合计
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.dept_path} className="border-t border-neutral-800/50">
+                <td className="px-3 py-2.5 text-sm text-neutral-200">{item.dept_name}</td>
+                {categoryList.map((cat) => (
+                  <td key={cat} className="px-3 py-2.5 text-sm text-neutral-300 text-right">
+                    {formatCell(item.category_distribution[cat] ?? 0, item)}
+                  </td>
+                ))}
+                <td className="px-3 py-2.5 text-sm text-neutral-100 text-right font-medium">
+                  {showPct ? "100%" : item.total_days.toFixed(1)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
