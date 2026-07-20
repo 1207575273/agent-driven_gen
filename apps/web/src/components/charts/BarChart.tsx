@@ -7,6 +7,8 @@ export interface BarChartSeries {
   type?: "bar" | "line";
   color?: string;
   yAxisIndex?: number;
+  /** 是否需要显示百分比标签(堆叠图常用) */
+  showPercentage?: boolean;
 }
 
 export interface BarClickPayload {
@@ -89,6 +91,20 @@ export function BarChart({
       backgroundColor: "rgba(15,23,42,0.9)",
       borderColor: "#1e293b",
       textStyle: { color: "#e2e8f0" },
+      formatter: (params: unknown) => {
+        const items = params as Array<{ seriesName: string; value: number; color: string; axisValue?: string }>;
+        if (!Array.isArray(items)) return "";
+        const total = items.reduce((sum, item) => sum + (item.value ?? 0), 0);
+        let html = `<div style="font-weight:600;margin-bottom:4px">${items[0]?.axisValue ?? ""}</div>`;
+        for (const item of items) {
+          const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : "0.0";
+          html += `<div style="display:flex;align-items:center;gap:6px;margin:2px 0">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${item.color}"></span>
+            ${item.seriesName}: ${item.value.toFixed(1)} 人天 (${pct}%)
+          </div>`;
+        }
+        return html;
+      },
     },
     legend: showLegend
       ? {
