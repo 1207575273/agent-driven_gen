@@ -42,7 +42,7 @@ class CrossAnalysisService:
         from app.services.capacity_audit_service import CapacityAuditService
 
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
-        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)  # type: ignore[attr-defined]
+        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)
 
         # 按时间聚合
         wh_monthly = await self._wh_repo.aggregate_by_time_and_category(
@@ -100,7 +100,6 @@ class CrossAnalysisService:
 
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
         emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, None)  # type: ignore[attr-defined]
-
         sbc_monthly = await self._cap_repo.aggregate_by_month(year_months, emp_ids)
         wh_monthly = await self._wh_repo.aggregate_by_time_and_category(start_date, end_date, 1, employee_ids=emp_ids)
 
@@ -151,7 +150,7 @@ class CrossAnalysisService:
         from app.services.capacity_audit_service import CapacityAuditService
 
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
-        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)  # type: ignore[attr-defined]
+        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)
 
         wh_dept = await self._wh_repo.aggregate_by_dept_and_category(
             start_date, end_date, dept_level, category_level, parent_category_id, emp_ids
@@ -229,6 +228,7 @@ class CrossAnalysisService:
         time_period: str | None = None,
         dept_level: int | None = None,
         dept_name: str | None = None,
+        role: str | None = None,
         category_level: int = 1,
         parent_category_id: int | None = None,
     ) -> list[dict[str, object]]:
@@ -239,7 +239,7 @@ class CrossAnalysisService:
         from app.services.capacity_audit_service import CapacityAuditService
 
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
-        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, None)  # type: ignore[attr-defined]
+        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)
 
         wh_role = await self._wh_repo.aggregate_by_role_and_category(start_date, end_date, category_level, parent_category_id, emp_ids)
 
@@ -329,7 +329,7 @@ class CrossAnalysisService:
         from app.services.capacity_audit_service import CapacityAuditService
 
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
-        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)  # type: ignore[attr-defined]
+        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)
 
         ranked = await self._wh_repo.rank_by_person(start_date, end_date, emp_ids, sort_by, sort_dir)
 
@@ -453,7 +453,7 @@ class CrossAnalysisService:
         if row_dimension == "dept":
             return await self.get_dept_category_matrix(time_period, 2, category_level)
         # role 维度
-        data = await self.get_role_category(time_period, None, None, category_level)
+        data = await self.get_role_category(time_period, None, None, None, category_level)
         roles = [str(r.get("role", "")) for r in data]
         categories = ["三快类", "研发类", "周期类"]
         matrix: list[list[float]] = []

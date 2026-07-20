@@ -87,6 +87,7 @@ async def get_role_category(
     time_period: str | None = Query(default=None, description="时间范围"),
     dept_level: int | None = Query(default=None, description="部门层级"),
     dept_name: str | None = Query(default=None, description="部门名称"),
+    role: str | None = Query(default=None, description="角色筛选"),
     category_level: int = Query(default=1, description="分类层级"),
     parent_category_id: int | None = Query(default=None, description="上级分类ID(下钻时)"),
 ) -> list[dict[str, Any]]:
@@ -94,6 +95,7 @@ async def get_role_category(
         time_period=time_period,
         dept_level=dept_level,
         dept_name=dept_name,
+        role=role,
         category_level=category_level,
         parent_category_id=parent_category_id,
     )
