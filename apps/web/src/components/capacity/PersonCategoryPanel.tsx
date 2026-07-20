@@ -376,9 +376,37 @@ function PersonCategoryCrossTable({
   categoryList: string[];
   onPersonClick: (record: PersonCategoryItem) => void;
 }) {
+  const [showPct, setShowPct] = useState(false);
+
+  const formatCell = (value: number, item: PersonCategoryItem) => {
+    if (showPct) {
+      return item.total_days > 0 ? `${((value / item.total_days) * 100).toFixed(1)}%` : "-";
+    }
+    return value !== undefined ? value.toFixed(1) : "-";
+  };
+
   return (
     <div>
-      <h3 className="text-sm font-medium text-neutral-400 mb-3">人员x分类交叉表</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-neutral-400">人员x分类交叉表</h3>
+        <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer select-none">
+          <span className={!showPct ? "text-accent" : ""}>人天</span>
+          <button
+            type="button"
+            onClick={() => setShowPct(!showPct)}
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+              showPct ? "bg-accent/30" : "bg-neutral-700"
+            }`}
+          >
+            <span
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                showPct ? "translate-x-4" : "translate-x-1"
+              }`}
+            />
+          </button>
+          <span className={showPct ? "text-accent" : ""}>占比</span>
+        </label>
+      </div>
       <div className="rounded-lg border border-neutral-800/50 overflow-x-auto">
         <table className="min-w-full">
           <thead>
@@ -433,12 +461,12 @@ function PersonCategoryCrossTable({
                 {categoryList.map((cat) => (
                   <td key={cat} className="px-3 py-2.5 text-sm text-neutral-300 text-right">
                     {item.category_distribution[cat] !== undefined
-                      ? (item.category_distribution[cat] ?? 0).toFixed(1)
+                      ? formatCell(item.category_distribution[cat] ?? 0, item)
                       : "-"}
                   </td>
                 ))}
                 <td className="px-3 py-2.5 text-sm text-neutral-100 text-right font-medium">
-                  {item.total_days.toFixed(1)}
+                  {showPct ? "100%" : item.total_days.toFixed(1)}
                 </td>
               </tr>
             ))}
