@@ -1,5 +1,6 @@
 """FastAPI 应用入口: 组装路由、异常处理、定时任务、前端静态托管(含 SPA 兜底)。"""
 
+import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -15,17 +16,16 @@ from app.api.v1 import api_router as v1_router
 from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
+from app.core.middleware import request_id_middleware
 from app.core.scheduler import register_jobs, scheduler
-from app.db.base import metadata
-from app.db.session import engine
+from app.db.migrate import run_migrations_to_head
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # pragma: no cover
-    # 母版起步用 create_all 建表, 便于开箱即跑;
-    # 生产环境请改用 Alembic 迁移(migrations/), 并移除这里的 create_all。
-    async with engine.begin() as conn:
-        await conn.run_sync(metadata.create_all)
+    # 建表统一走 Alembic 迁移(migrations/), 不用 create_all —— 见 db/migrate.py 的动机说明。
+    # env.py 在 online 模式自行 asyncio.run, 故放到独立线程避免与本事件循环嵌套。
+    await asyncio.to_thread(run_migrations_to_head)
     # 进程内定时任务: 随应用起停(单进程同源, 不另起 worker)。
     register_jobs()
     scheduler.start()
@@ -56,6 +56,8 @@ def create_app() -> FastAPI:
     configure_logging(settings.logging)
     app = FastAPI(title="通用母版 API", lifespan=lifespan)
     register_exception_handlers(app)
+    # 请求追踪: 每个请求绑定 request_id 贯穿日志 + 回写响应头(后添加者最外层, 包住整条链)。
+    app.middleware("http")(request_id_middleware)
     # CORS: 提前放行跨域。默认全放行(origins/methods/headers 皆 *);
     # 注意 allow_origins=["*"] 与 allow_credentials 不可同真(CORS 规范),
     # 若日后用 cookie 鉴权需带凭证, 改用 allow_origin_regex 指定来源。

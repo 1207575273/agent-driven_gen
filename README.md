@@ -181,6 +181,8 @@ POST /api/v1/items/{id}/delete  删除
 - **生产日志**:structlog 双出口 —— 控制台人读、文件 `logs/app.jsonl`(JSONL / UTC / 固定字段 `timestamp·level·logger·message` / 结构化异常);**8 小时滚动、留 10 天自动清理**。格式与滚动 / 留存由 `APP_LOGGING__*` 环境变量控制(见 `apps/back/.env`)。
 - **配置服务**:pydantic-settings,优先级 `环境变量 > .env > 默认`(12-factor,无 YAML);K8s ConfigMap / Nacos 挂成 env 注入即可。`app/core/config.reload_settings()` 是热更 seam,供未来接配置中心 watcher。`apps/back/.env` 已随母版提交(仅无密钥默认值,fork 后开箱即用、想改直接改它);真实密钥 / 生产值一律用环境变量注入,勿写进已提交的 `.env`。
 - **前端路由 + SPA 同源**:react-router 客户端路由;生产由后端 `SpaStaticFiles` 兜底(深链刷新回 `index.html`,不 404),仍单进程、无 nginx。
+- **请求追踪**:`core/middleware.py` 的 request-id 中间件 —— 入站带 `X-Request-ID` 则透传、否则生成,经 `structlog.contextvars` 自动注入本次请求的每条日志,并回写响应头。排障时一个 id 串起一次请求的全部日志。接分布式 trace 在此扩展(seam)。
+- **启动即迁移建表**:`lifespan` 启动跑 `alembic upgrade head`(`db/migrate.py`),**不用 `create_all`**(create_all 只建缺失表、不 alter 已有表,团队后续加字段会"默认即漏迁移")。初始迁移已随母版提交;团队加实体后 `alembic revision --autogenerate` 生成迁移即可。`alembic.ini` 保持 ASCII(configparser 按 OS locale 读,中文注释会在 zh-CN Windows 启动崩)。
 
 > 每项设计的"为什么 / 取舍"速查见架构方案的[决策记录(ADR)](docs/20260715_通用monorepo母版架构方案.md#三决策记录adr)。改母版前先看它,别无谓推翻已定权衡。
 
