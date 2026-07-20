@@ -9,7 +9,7 @@ export interface PieClickPayload {
 }
 
 interface PieChartProps {
-  data: Array<{ name: string; value: number }>;
+  data: Array<{ name: string; value: number; category_id?: number }>;
   height?: number;
   innerRadius?: string; // "0" = pie, "40%" = ring
   showLabel?: boolean;
@@ -105,12 +105,14 @@ export function PieChart({
                 name?: string;
                 value?: unknown;
                 percent?: number;
+                data?: Record<string, unknown>;
               }) => {
                 if (params.componentType === "series") {
                   onSliceClick({
                     name: params.name ?? "",
                     value: Number(params.value ?? 0),
                     percent: Number(params.percent ?? 0),
+                    category_id: params.data?.category_id as number | undefined,
                   });
                 }
               },
