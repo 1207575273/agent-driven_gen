@@ -10,42 +10,46 @@ import { type Column, SortableTable } from "../shared/SortableTable";
 import { DrillDownModal } from "./DrillDownModal";
 import { PersonDetailContent } from "./PersonDetailContent";
 
+interface DrillLevel {
+  categoryName: string;
+  categoryId: number;
+  categoryLevel: number;
+  parentCategoryId: number | null;
+}
+
 export function TimeCategoryPanel() {
-  const { data, isLoading, isError } = useTimeCategory();
   const { timePeriod, deptLevel, deptName, role } = useFilterStore();
 
-  // Drill state: 2-level drill (category -> project -> person)
-  const [drillState, setDrillState] = useState<{
-    categoryName: string;
-    categoryId: number;
-    timeLabel?: string;
-    projectName?: string | null;
-    personId?: number | null;
-    personName?: string | null;
-  } | null>(null);
+  // 分层下钻: 大类(1) -> 分类(2) -> 细分(3) -> 项目列表 -> 人员明细
+  const [drillStack, setDrillStack] = useState<DrillLevel[]>([]);
+  const currentDrill = drillStack.length > 0 ? drillStack[drillStack.length - 1] : null;
+  const currentLevel = currentDrill ? currentDrill.categoryLevel : 1;
+  const parentCategoryId = currentDrill ? currentDrill.categoryId : null;
+
+  // 每到一层都重新拉 time-category 数据 (category_level + parent_category_id)
+  const { data, isLoading, isError } = useTimeCategory(currentLevel, parentCategoryId ?? undefined);
+
+  // 分类项目列表 (仅当下钻到叶子层时)
+  const [showProjects, setShowProjects] = useState<{ categoryId: number; categoryName: string } | null>(null);
+  const [drillProject, setDrillProject] = useState<string | null>(null);
+  const [drillPerson, setDrillPerson] = useState<{ employeeId: number; name: string } | null>(null);
 
   const { data: categoryProjects, isLoading: projLoading } = useCategoryProjects({
     timePeriod,
-    categoryId: drillState?.categoryId ?? null,
+    categoryId: showProjects?.categoryId ?? null,
     deptLevel,
     deptName,
     role,
   });
 
   const { data: personRecords, isLoading: recLoading } = useDrillDownRecords(
-    drillState?.projectName
-      ? {
-          project_name: drillState.projectName,
-          time_period: timePeriod,
-          limit: 100,
-        }
+    drillProject
+      ? { project_name: drillProject, time_period: timePeriod, limit: 100 }
       : {},
   );
 
-  // Compute early (before useCallbacks)
   const items: TimeCategoryItem[] = (data ?? []) as TimeCategoryItem[];
   const firstItem = items[0];
-
   const catIdMap = useMemo(() => {
     const map: Record<string, number> = {};
     for (const c of firstItem?.categories || []) {
@@ -55,38 +59,55 @@ export function TimeCategoryPanel() {
   }, [firstItem]);
 
   const handleSliceClick = useCallback((payload: PieClickPayload) => {
-    setDrillState({
+    const existing = drillStack.concat({
       categoryName: payload.name,
-      categoryId: Number((payload as unknown as Record<string, unknown>).category_id ?? 0),
+      categoryId: payload.category_id ?? 0,
+      categoryLevel: currentLevel,
+      parentCategoryId: parentCategoryId,
     });
-  }, []);
+    setDrillStack(existing);
+    setShowProjects(null);
+    setDrillProject(null);
+    setDrillPerson(null);
+  }, [drillStack, currentLevel, parentCategoryId]);
 
   const handleBarOrLineClick = useCallback(
-    (payload: BarClickPayload | LineClickPayload, catIdxMap: Record<string, number>) => {
-      const catId = catIdMap[payload.seriesName] ?? (catIdxMap[payload.seriesName] ?? 0) + 1;
-      setDrillState({
-        categoryName: payload.seriesName,
-        categoryId: catId,
-        timeLabel: payload.category,
-      });
+    (payload: BarClickPayload | LineClickPayload) => {
+      const catId = catIdMap[payload.seriesName] ?? 0;
+      setShowProjects({ categoryId: catId, categoryName: payload.seriesName });
+      setDrillProject(null);
+      setDrillPerson(null);
     },
     [catIdMap],
   );
 
   const handleProjectClick = useCallback((record: CategoryProjectItem) => {
-    setDrillState((prev) =>
-      prev ? { ...prev, projectName: record.project_name, personId: null, personName: null } : null,
-    );
+    setDrillProject(record.project_name);
+    setDrillPerson(null);
   }, []);
 
   const handlePersonClick = useCallback((record: DrillDownRecord) => {
-    setDrillState((prev) =>
-      prev ? { ...prev, personId: record.employee_id, personName: record.reporter } : null,
-    );
+    setDrillPerson({ employeeId: record.employee_id ?? 0, name: record.reporter });
+  }, []);
+
+  const handleDrillLevelPop = useCallback((idx: number) => {
+    if (idx === -1) {
+      setDrillStack([]);
+      setShowProjects(null);
+      setDrillProject(null);
+      setDrillPerson(null);
+    } else {
+      setDrillStack((prev) => prev.slice(0, idx + 1));
+      setShowProjects(null);
+      setDrillProject(null);
+      setDrillPerson(null);
+    }
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setDrillState(null);
+    setShowProjects(null);
+    setDrillProject(null);
+    setDrillPerson(null);
   }, []);
 
   if (isLoading) return <LoadingSpinner />;
@@ -98,22 +119,17 @@ export function TimeCategoryPanel() {
     );
   }
 
-  // pieData from nested categories -- embed category_id for drill
   const pieData = (firstItem?.categories || []).map((c) => ({
     name: c.category_name,
     value: c.total_days,
     category_id: c.category_id ?? 0,
   }));
 
-  // time labels
   const timeLabels = items.map((d) => d.time_label);
-
-  // category names across all items
   const allCatNames = [
     ...new Set(items.flatMap((d) => (d.categories || []).map((c) => c.category_name))),
   ];
 
-  // stacked bar: each series is a category, each data point is total_days per time period
   const stackedSeries = allCatNames.map((catName) => ({
     name: catName,
     data: items.map((d) => {
@@ -130,7 +146,6 @@ export function TimeCategoryPanel() {
     }),
   }));
 
-  // Build category index map for id resolution
   const catIdxMap: Record<string, number> = {};
   allCatNames.forEach((cat, idx) => {
     catIdxMap[cat] = idx;
@@ -148,12 +163,7 @@ export function TimeCategoryPanel() {
         return Number.isNaN(num) ? "-" : num.toFixed(1);
       },
     },
-    {
-      key: "person_count",
-      title: "人数",
-      dataIndex: "person_count",
-      align: "right",
-    },
+    { key: "person_count", title: "人数", dataIndex: "person_count", align: "right" },
     {
       key: "percentage",
       title: "占比",
@@ -183,43 +193,91 @@ export function TimeCategoryPanel() {
     { key: "report_date", title: "日期", dataIndex: "report_date" },
   ];
 
-  const breadcrumbs = [];
-  if (drillState) {
-    const catLabel = drillState.timeLabel
-      ? `${drillState.categoryName} (${drillState.timeLabel})`
-      : drillState.categoryName;
-    breadcrumbs.push({
-      label: catLabel,
-      onClick: () =>
-        setDrillState((prev) =>
-          prev ? { ...prev, projectName: null, personId: null, personName: null } : null,
-        ),
-    });
-    if (drillState.projectName) {
+  const canDrillDeeper = currentLevel < 3;
+
+  const breadcrumbs: { label: string; onClick: () => void }[] = [];
+  if (drillStack.length > 0) {
+    breadcrumbs.push({ label: "时间×分类", onClick: () => handleDrillLevelPop(-1) });
+    for (let i = 0; i < drillStack.length; i++) {
+      const lvl = drillStack[i]!;
+      const cap = i === drillStack.length - 1;
       breadcrumbs.push({
-        label: drillState.projectName,
-        onClick: () =>
-          setDrillState((prev) => (prev ? { ...prev, personId: null, personName: null } : null)),
+        label: lvl.categoryName,
+        onClick: cap ? () => {} : () => handleDrillLevelPop(i),
       });
     }
-    if (drillState.personName) {
-      breadcrumbs.push({ label: drillState.personName });
+  }
+  if (showProjects) {
+    const sp = showProjects;
+    breadcrumbs.push({
+      label: sp.categoryName,
+      onClick: () => {},
+    });
+    if (drillProject) {
+      breadcrumbs.push({
+        label: drillProject,
+        onClick: drillPerson ? () => setDrillPerson(null) : () => {},
+      });
+      if (drillPerson) {
+        breadcrumbs.push({ label: drillPerson.name, onClick: () => {} });
+      }
     }
   }
 
+  const showModal = Boolean(showProjects);
+
   return (
     <div className="space-y-6">
+      {/* 下钻路径 */}
+      {drillStack.length > 0 && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-neutral-500">下钻:</span>
+          {drillStack.map((lvl, i) => (
+            <span key={lvl.categoryId} className="flex items-center gap-1">
+              {i > 0 && <span className="text-neutral-600">→</span>}
+              <button
+                type="button"
+                onClick={() => handleDrillLevelPop(i)}
+                className="text-accent hover:underline transition-colors"
+              >
+                {lvl.categoryName}
+              </button>
+            </span>
+          ))}
+          <button
+            type="button"
+            onClick={() => handleDrillLevelPop(-1)}
+            className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors ml-2"
+          >
+            ← 返回顶层
+          </button>
+        </div>
+      )}
+
       <div>
-        <h3 className="text-sm font-medium text-neutral-400 mb-3">大类占比分布</h3>
+        <h3 className="text-sm font-medium text-neutral-400 mb-3">
+          {currentLevel === 1 ? "大类占比" : currentLevel === 2 ? "分类占比" : "细分占比"}
+        </h3>
         <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
           <PieChart
             data={pieData}
             height={320}
             innerRadius="50%"
-            onSliceClick={(payload) => handleSliceClick(payload)}
+            onSliceClick={canDrillDeeper ? (payload) => handleSliceClick(payload) : undefined}
           />
         </div>
+        {canDrillDeeper && (
+          <p className="text-xs text-neutral-500 mt-1 text-center">
+            点击扇区可下钻到{currentLevel === 1 ? "分类" : "细分"}层级
+          </p>
+        )}
       </div>
+
+      {!canDrillDeeper && pieData.length > 0 && (
+        <p className="text-xs text-neutral-500 text-center -mt-2">
+          点击扇区查看分类下的项目列表
+        </p>
+      )}
 
       {timeLabels.length > 1 && (
         <div>
@@ -230,7 +288,7 @@ export function TimeCategoryPanel() {
               series={stackedSeries}
               stacked
               height={320}
-              onBarClick={(payload) => handleBarOrLineClick(payload, catIdxMap)}
+              onBarClick={(payload) => handleBarOrLineClick(payload)}
             />
           </div>
         </div>
@@ -244,33 +302,33 @@ export function TimeCategoryPanel() {
               categories={timeLabels}
               series={trendSeries}
               height={300}
-              onPointClick={(payload) => handleBarOrLineClick(payload, catIdxMap)}
+              onPointClick={(payload) => handleBarOrLineClick(payload)}
             />
           </div>
         </div>
       )}
 
-      {drillState && (
+      {showModal && (() => { const sp = showProjects!; return (
         <DrillDownModal
-          open={Boolean(drillState)}
+          open={showModal}
           onClose={handleCloseModal}
           title={
-            drillState.personId
-              ? `时间×分类 > ${drillState.categoryName} > ${drillState.projectName ?? ""} > 人员: ${drillState.personName ?? ""}`
-              : drillState.projectName
-                ? `时间×分类 > ${drillState.categoryName} > ${drillState.projectName}`
-                : `时间×分类 > ${drillState.categoryName}`
+            drillPerson
+              ? `时间×分类 > ${sp.categoryName} > ${drillProject ?? ""} > ${drillPerson.name}`
+              : drillProject
+                ? `时间×分类 > ${sp.categoryName} > ${drillProject}`
+                : `时间×分类 > ${sp.categoryName}`
           }
           breadcrumbs={breadcrumbs}
           loading={projLoading || recLoading}
         >
-          {drillState.personId ? (
+          {drillPerson ? (
             <PersonDetailContent
-              employeeId={drillState.personId}
-              employeeName={drillState.personName ?? ""}
+              employeeId={drillPerson.employeeId}
+              employeeName={drillPerson.name}
               timePeriod={timePeriod ?? undefined}
             />
-          ) : drillState.projectName ? (
+          ) : drillProject ? (
             <SortableTable
               columns={recordColumns}
               data={personRecords ?? []}
@@ -292,7 +350,7 @@ export function TimeCategoryPanel() {
             />
           )}
         </DrillDownModal>
-      )}
+      ); })()}
     </div>
   );
 }

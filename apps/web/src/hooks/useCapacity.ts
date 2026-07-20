@@ -137,9 +137,10 @@ export function usePersonProjects(employeeId: number | null, timePeriod?: string
 
 // ── 交叉分析 hooks ──
 
-export function useTimeCategory() {
-  const { timeGranularity, timePeriod, deptLevel, deptName, role, categoryLevel } =
+export function useTimeCategory(categoryLevel?: number, parentCategoryId?: number) {
+  const { timeGranularity, timePeriod, deptLevel, deptName, role } =
     useFilterStore();
+  const level = categoryLevel ?? 1;
   return useQuery({
     queryKey: [
       "time-category",
@@ -148,7 +149,8 @@ export function useTimeCategory() {
       deptLevel,
       deptName,
       role,
-      categoryLevel,
+      level,
+      parentCategoryId,
     ],
     queryFn: () =>
       crossAnalysisApi.getTimeCategory({
@@ -157,7 +159,8 @@ export function useTimeCategory() {
         dept_level: deptLevel,
         dept_name: deptName,
         role,
-        category_level: categoryLevel,
+        category_level: level,
+        parent_category_id: parentCategoryId ?? undefined,
       }),
     enabled: Boolean(timePeriod),
   });

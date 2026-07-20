@@ -5,6 +5,7 @@ export interface PieClickPayload {
   name: string;
   value: number;
   percent: number;
+  category_id?: number;
 }
 
 interface PieChartProps {
