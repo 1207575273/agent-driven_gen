@@ -1,28 +1,89 @@
-import { useCallback, useMemo, useState } from "react";
-import type { CellPersonItem, RoleCategoryItem } from "../../api/capacity";
-import { useCellPersons, useRoleCategory } from "../../hooks/useCapacity";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  CategoryProjectItem,
+  CellPersonItem,
+  DrillDownRecord,
+  RoleCategoryItem,
+} from "../../api/capacity";
+import {
+  useCategoryProjects,
+  useCellPersons,
+  useDrillDownRecords,
+  useRoleCategory,
+} from "../../hooks/useCapacity";
 import { useFilterStore } from "../../stores/useFilterStore";
 import { BarChart, type BarClickPayload } from "../charts/BarChart";
-import { PieChart } from "../charts/PieChart";
+import { PieChart, type PieClickPayload } from "../charts/PieChart";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { type Column, SortableTable } from "../shared/SortableTable";
 import { DrillDownModal } from "./DrillDownModal";
 import { PersonDetailContent } from "./PersonDetailContent";
 
-export function RoleCategoryPanel() {
-  const { data, isLoading, isError } = useRoleCategory();
-  const { timePeriod } = useFilterStore();
+interface DrillLevel {
+  categoryName: string;
+  categoryId: number;
+  categoryLevel: number;
+  parentCategoryId: number | null;
+}
 
-  // Drill state
+export function RoleCategoryPanel() {
+  const { timePeriod, deptLevel, deptName, categoryLevel: filterLevel } = useFilterStore();
+
+  // 筛选条件变化时自动重置下钻状态到筛选层级
+  const prevFilterRef = useRef({ timePeriod, deptLevel, deptName, categoryLevel: filterLevel });
+  useEffect(() => {
+    const prev = prevFilterRef.current;
+    if (
+      prev.timePeriod !== timePeriod ||
+      prev.deptLevel !== deptLevel ||
+      prev.deptName !== deptName ||
+      prev.categoryLevel !== filterLevel
+    ) {
+      setDrillStack([]);
+      setShowProjects(null);
+      setDrillProject(null);
+      setDrillPerson(null);
+      setDrillCell(null);
+      setCellPerson(null);
+      prevFilterRef.current = { timePeriod, deptLevel, deptName, categoryLevel: filterLevel };
+    }
+  });
+
+  // 分层下钻: 起始层级由筛选器 categoryLevel 决定
+  const [drillStack, setDrillStack] = useState<DrillLevel[]>([]);
+  const currentDrill = drillStack.length > 0 ? drillStack[drillStack.length - 1] : null;
+  const baseLevel = filterLevel;
+  const currentLevel = currentDrill ? currentDrill.categoryLevel : baseLevel;
+  const parentCategoryId = currentDrill ? currentDrill.categoryId : null;
+
+  const { data, isLoading, isError } = useRoleCategory(currentLevel, parentCategoryId ?? undefined);
+
+  // 末级项目/人员弹窗
+  const [showProjects, setShowProjects] = useState<{
+    categoryId: number;
+    categoryName: string;
+  } | null>(null);
+  const [drillProject, setDrillProject] = useState<string | null>(null);
+  const [drillPerson, setDrillPerson] = useState<{ employeeId: number; name: string } | null>(null);
+
+  const { data: categoryProjects, isLoading: projLoading } = useCategoryProjects({
+    timePeriod,
+    categoryId: showProjects?.categoryId ?? null,
+    deptLevel,
+    deptName,
+  });
+
+  const { data: personRecords, isLoading: recLoading } = useDrillDownRecords(
+    drillProject ? { project_name: drillProject, time_period: timePeriod, limit: 100 } : {},
+  );
+
+  // Bar click → cell persons drill
   const [drillCell, setDrillCell] = useState<{
     role: string;
     categoryName: string;
     categoryId: number;
   } | null>(null);
-  const [drillPerson, setDrillPerson] = useState<{
-    employeeId: number;
-    name: string;
-  } | null>(null);
+  const [cellPerson, setCellPerson] = useState<{ employeeId: number; name: string } | null>(null);
 
   const { data: cellPersons, isLoading: cellLoading } = useCellPersons({
     timePeriod,
@@ -30,29 +91,24 @@ export function RoleCategoryPanel() {
     role: drillCell?.role ?? null,
   });
 
-  // Build maps BEFORE useCallback that references them
-  const items: RoleCategoryItem[] = data ?? [];
+  const rawItems: RoleCategoryItem[] = data ?? [];
   const categoryList = useMemo(() => {
     const cats = new Set<string>();
-    for (const item of items) {
-      for (const catName of Object.keys(item.category_distribution)) {
-        cats.add(catName);
-      }
+    for (const item of rawItems) {
+      for (const catName of Object.keys(item.category_distribution)) cats.add(catName);
     }
     return [...cats];
-  }, [items]);
+  }, [rawItems]);
 
   const categoryIdMap = useMemo(() => {
     const map: Record<string, number> = {};
-    for (const item of items) {
+    for (const item of rawItems) {
       if (item.category_ids) {
-        for (const [catName, catId] of Object.entries(item.category_ids)) {
-          map[catName] = catId;
-        }
+        for (const [catName, catId] of Object.entries(item.category_ids)) map[catName] = catId;
       }
     }
     return map;
-  }, [items]);
+  }, [rawItems]);
 
   const categoryIdxMap = useMemo(() => {
     const map: Record<string, number> = {};
@@ -62,28 +118,110 @@ export function RoleCategoryPanel() {
     return map;
   }, [categoryList]);
 
+  const handleSliceClick = useCallback(
+    (payload: PieClickPayload) => {
+      const catId = payload.category_id ?? 0;
+      if (currentLevel >= 3) {
+        setShowProjects({ categoryId: catId, categoryName: payload.name });
+        setDrillProject(null);
+        setDrillPerson(null);
+      } else {
+        setDrillStack((prev) =>
+          prev.concat({
+            categoryName: payload.name,
+            categoryId: catId,
+            categoryLevel: currentLevel + 1,
+            parentCategoryId: parentCategoryId,
+          }),
+        );
+        setShowProjects(null);
+        setDrillProject(null);
+        setDrillPerson(null);
+      }
+    },
+    [currentLevel, parentCategoryId],
+  );
+
   const handleBarClick = useCallback(
     (payload: BarClickPayload) => {
       const catId =
         categoryIdMap[payload.seriesName] ?? (categoryIdxMap[payload.seriesName] ?? 0) + 1;
-      setDrillCell({
-        role: payload.category,
-        categoryName: payload.seriesName,
-        categoryId: catId,
-      });
-      setDrillPerson(null);
+      setDrillCell({ role: payload.category, categoryName: payload.seriesName, categoryId: catId });
+      setCellPerson(null);
     },
     [categoryIdMap, categoryIdxMap],
   );
 
-  const handlePersonClick = useCallback((record: CellPersonItem) => {
-    setDrillPerson({ employeeId: record.employee_id, name: record.name });
+  const handleCellPersonClick = useCallback((record: CellPersonItem) => {
+    setCellPerson({ employeeId: record.employee_id, name: record.name });
+  }, []);
+
+  const handleProjectClick = useCallback((record: CategoryProjectItem) => {
+    setDrillProject(record.project_name);
+    setDrillPerson(null);
+  }, []);
+
+  const handlePersonClick = useCallback((record: DrillDownRecord) => {
+    setDrillPerson({ employeeId: record.employee_id ?? 0, name: record.reporter });
+  }, []);
+
+  const handleDrillLevelPop = useCallback((idx: number) => {
+    if (idx === -1) setDrillStack([]);
+    else setDrillStack((prev) => prev.slice(0, idx + 1));
+    setShowProjects(null);
+    setDrillProject(null);
+    setDrillPerson(null);
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setDrillCell(null);
+    setShowProjects(null);
+    setDrillProject(null);
     setDrillPerson(null);
+    setDrillCell(null);
+    setCellPerson(null);
   }, []);
+
+  const projColumns: Column<CategoryProjectItem>[] = [
+    { key: "project_name", title: "项目名称", dataIndex: "project_name" },
+    {
+      key: "person_days",
+      title: "人天",
+      dataIndex: "person_days",
+      align: "right",
+      render: (v) => {
+        const num = Number(v);
+        return Number.isNaN(num) ? "-" : num.toFixed(1);
+      },
+    },
+    { key: "person_count", title: "人数", dataIndex: "person_count", align: "right" },
+    {
+      key: "percentage",
+      title: "占比",
+      dataIndex: "percentage",
+      align: "right",
+      render: (v) => {
+        const num = Number(v);
+        return Number.isNaN(num) ? "-" : `${num.toFixed(1)}%`;
+      },
+    },
+  ];
+
+  const drillRecordColumns: Column<DrillDownRecord>[] = [
+    { key: "reporter", title: "姓名", dataIndex: "reporter" },
+    { key: "reporter_department", title: "部门", dataIndex: "reporter_department" },
+    { key: "project_name", title: "项目", dataIndex: "project_name" },
+    {
+      key: "hours",
+      title: "工时(h)",
+      dataIndex: "hours",
+      align: "right",
+      render: (v) => {
+        const num = Number(v);
+        return Number.isNaN(num) ? "-" : num.toFixed(1);
+      },
+    },
+    { key: "report_date", title: "日期", dataIndex: "report_date" },
+  ];
 
   const personColumns: Column<CellPersonItem>[] = [
     { key: "name", title: "姓名", dataIndex: "name" },
@@ -120,7 +258,8 @@ export function RoleCategoryPanel() {
     );
   }
 
-  // Chart data derivations
+  const items: RoleCategoryItem[] = data;
+
   const pieMap: Record<string, number> = {};
   for (const item of items) {
     for (const [cat, days] of Object.entries(item.category_distribution)) {
@@ -128,30 +267,71 @@ export function RoleCategoryPanel() {
     }
   }
   const pieData = Object.entries(pieMap)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value]) => ({ name, value, category_id: categoryIdMap[name] ?? 0 }))
     .sort((a, b) => b.value - a.value);
 
   const roleNames = items.map((d) => d.role);
-
   const stackedSeries = categoryList.map((catName) => ({
     name: catName,
     data: items.map((d) => d.category_distribution[catName] ?? 0),
   }));
-
   const personAvgSeries = {
     name: "人均产能",
     data: items.map((d) => d.avg_days_per_person),
     color: "#38bdf8",
   };
 
+  const showModal = Boolean(showProjects) || Boolean(drillCell);
+
   return (
     <div className="space-y-6">
+      {drillStack.length > 0 && (
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-neutral-500">下钻:</span>
+          {drillStack.map((lvl, i) => (
+            <span key={lvl.categoryId} className="flex items-center gap-1">
+              {i > 0 && <span className="text-neutral-600">→</span>}
+              <button
+                type="button"
+                onClick={() => handleDrillLevelPop(i)}
+                className="text-accent hover:underline transition-colors"
+              >
+                {lvl.categoryName}
+              </button>
+            </span>
+          ))}
+          <button
+            type="button"
+            onClick={() => handleDrillLevelPop(-1)}
+            className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors ml-2"
+          >
+            ← 返回顶层
+          </button>
+        </div>
+      )}
+
       {pieData.length > 0 && (
         <div>
-          <h3 className="text-sm font-medium text-neutral-400 mb-3">分类产能占比分布</h3>
+          <h3 className="text-sm font-medium text-neutral-400 mb-3">
+            {currentLevel === 1 ? "大类占比" : currentLevel === 2 ? "分类占比" : "细分占比"}
+          </h3>
           <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
-            <PieChart data={pieData} height={320} innerRadius="50%" />
+            <PieChart
+              data={pieData}
+              height={320}
+              innerRadius="50%"
+              onSliceClick={handleSliceClick}
+            />
           </div>
+          {currentLevel < 3 ? (
+            <p className="text-xs text-neutral-500 mt-1 text-center">
+              点击扇区可下钻到{currentLevel === 1 ? "分类" : "细分"}层级
+            </p>
+          ) : (
+            <p className="text-xs text-neutral-500 mt-1 text-center">
+              点击扇区查看分类下的项目列表 → 人员工时明细
+            </p>
+          )}
         </div>
       )}
 
@@ -181,51 +361,91 @@ export function RoleCategoryPanel() {
         onCellClick={(role, categoryName, catIdx) => {
           const catId = categoryIdMap[categoryName] ?? catIdx + 1;
           setDrillCell({ role, categoryName, categoryId: catId });
-          setDrillPerson(null);
+          setCellPerson(null);
         }}
       />
 
-      {drillCell && (
-        <DrillDownModal
-          open={Boolean(drillCell)}
-          onClose={handleCloseModal}
-          title={
-            drillPerson
-              ? `角色×分类 > ${drillCell.role} × ${drillCell.categoryName} > 人员: ${drillPerson.name}`
+      {showModal &&
+        (() => {
+          const activeModal = showProjects || drillCell;
+          if (!activeModal) return null;
+          const title = drillCell
+            ? cellPerson
+              ? `角色×分类 > ${drillCell.role} × ${drillCell.categoryName} > ${cellPerson.name}`
               : `角色×分类 > ${drillCell.role} × ${drillCell.categoryName}`
-          }
-          breadcrumbs={
-            drillPerson
-              ? [
-                  {
-                    label: `${drillCell.role} × ${drillCell.categoryName}`,
-                    onClick: () => setDrillPerson(null),
-                  },
-                  { label: drillPerson.name },
-                ]
-              : [{ label: `${drillCell.role} × ${drillCell.categoryName}` }]
-          }
-          loading={cellLoading}
-        >
-          {drillPerson ? (
-            <PersonDetailContent
-              employeeId={drillPerson.employeeId}
-              employeeName={drillPerson.name}
-              timePeriod={timePeriod ?? undefined}
-            />
-          ) : (
-            <SortableTable
-              columns={personColumns}
-              data={cellPersons ?? []}
-              rowKey={(r) => String(r.employee_id)}
-              onRowClick={handlePersonClick}
-              emptyMessage="暂无人员数据"
-              defaultSortKey="category_days"
-              defaultSortDir="desc"
-            />
-          )}
-        </DrillDownModal>
-      )}
+            : drillPerson
+              ? `角色×分类 > ${activeModal.categoryName} > ${drillProject ?? ""} > ${drillPerson.name}`
+              : drillProject
+                ? `角色×分类 > ${activeModal.categoryName} > ${drillProject}`
+                : `角色×分类 > ${activeModal.categoryName}`;
+          return (
+            <DrillDownModal
+              open={showModal}
+              onClose={handleCloseModal}
+              title={title}
+              breadcrumbs={
+                drillCell
+                  ? cellPerson
+                    ? [
+                        {
+                          label: `${drillCell.role} × ${drillCell.categoryName}`,
+                          onClick: () => setCellPerson(null),
+                        },
+                        { label: cellPerson.name },
+                      ]
+                    : [{ label: `${drillCell.role} × ${drillCell.categoryName}` }]
+                  : []
+              }
+              loading={drillCell ? cellLoading : projLoading || recLoading}
+            >
+              {drillCell ? (
+                cellPerson ? (
+                  <PersonDetailContent
+                    employeeId={cellPerson.employeeId}
+                    employeeName={cellPerson.name}
+                    timePeriod={timePeriod ?? undefined}
+                  />
+                ) : (
+                  <SortableTable
+                    columns={personColumns}
+                    data={cellPersons ?? []}
+                    rowKey={(r) => String(r.employee_id)}
+                    onRowClick={handleCellPersonClick}
+                    emptyMessage="暂无人员数据"
+                    defaultSortKey="category_days"
+                    defaultSortDir="desc"
+                  />
+                )
+              ) : drillPerson ? (
+                <PersonDetailContent
+                  employeeId={drillPerson.employeeId}
+                  employeeName={drillPerson.name}
+                  timePeriod={timePeriod ?? undefined}
+                />
+              ) : drillProject ? (
+                <SortableTable
+                  columns={drillRecordColumns}
+                  data={personRecords ?? []}
+                  rowKey={(r) => String(r.id)}
+                  onRowClick={handlePersonClick}
+                  emptyMessage="暂无人员工时"
+                  defaultSortKey="hours"
+                  defaultSortDir="desc"
+                />
+              ) : (
+                <SortableTable
+                  columns={projColumns}
+                  data={categoryProjects ?? []}
+                  rowKey={(r) => r.project_name}
+                  onRowClick={handleProjectClick}
+                  emptyMessage="该项目分类下暂无项目"
+                  defaultSortKey="person_days"
+                  defaultSortDir="desc"
+                />
+              )}
+            </DrillDownModal>
+          );
+        })()}
     </div>
   );
 }

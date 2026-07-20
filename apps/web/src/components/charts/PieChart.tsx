@@ -83,10 +83,18 @@ export function PieChart({
           label: { show: true, fontSize: 14, fontWeight: "bold" },
           scaleSize: 8,
         },
-        data: data.map((item, idx) => ({
-          ...item,
-          itemStyle: { color: DARK_COLORS[idx % DARK_COLORS.length] },
-        })),
+        data: data.map((item, idx) => {
+          const isUncategorized = item.name === "未分类";
+          return {
+            ...item,
+            itemStyle: {
+              color: isUncategorized ? "#2a2a2a" : DARK_COLORS[idx % DARK_COLORS.length],
+              borderColor: isUncategorized ? "#555555" : "#060b14",
+              borderType: isUncategorized ? ("dashed" as const) : ("solid" as const),
+              borderWidth: isUncategorized ? 1.5 : 2,
+            },
+          };
+        }),
       },
     ],
   };

@@ -181,16 +181,18 @@ export function useShouldVsActual() {
   });
 }
 
-export function useDeptCategory() {
-  const { timePeriod, deptLevel, deptName, categoryLevel } = useFilterStore();
+export function useDeptCategory(categoryLevel?: number, parentCategoryId?: number) {
+  const { timePeriod, deptLevel, deptName } = useFilterStore();
+  const level = categoryLevel ?? 1;
   return useQuery({
-    queryKey: ["dept-category", timePeriod, deptLevel, deptName, categoryLevel],
+    queryKey: ["dept-category", timePeriod, deptLevel, deptName, level, parentCategoryId],
     queryFn: () =>
       crossAnalysisApi.getDeptCategory({
         time_period: timePeriod,
         dept_level: deptLevel,
         dept_name: deptName,
-        category_level: categoryLevel,
+        category_level: level,
+        parent_category_id: parentCategoryId ?? undefined,
       }),
     enabled: Boolean(timePeriod),
   });
@@ -210,16 +212,18 @@ export function useDeptCategoryMatrix() {
   });
 }
 
-export function useRoleCategory() {
-  const { timePeriod, deptLevel, deptName, categoryLevel } = useFilterStore();
+export function useRoleCategory(categoryLevel?: number, parentCategoryId?: number) {
+  const { timePeriod, deptLevel, deptName } = useFilterStore();
+  const level = categoryLevel ?? 1;
   return useQuery({
-    queryKey: ["role-category", timePeriod, deptLevel, deptName, categoryLevel],
+    queryKey: ["role-category", timePeriod, deptLevel, deptName, level, parentCategoryId],
     queryFn: () =>
       crossAnalysisApi.getRoleCategory({
         time_period: timePeriod,
         dept_level: deptLevel,
         dept_name: deptName,
-        category_level: categoryLevel,
+        category_level: level,
+        parent_category_id: parentCategoryId ?? undefined,
       }),
     enabled: Boolean(timePeriod),
   });
@@ -267,17 +271,19 @@ export function usePersonRanking(params: {
   });
 }
 
-export function usePersonCategory() {
-  const { timePeriod, deptLevel, deptName, role, categoryLevel } = useFilterStore();
+export function usePersonCategory(categoryLevel?: number, parentCategoryId?: number) {
+  const { timePeriod, deptLevel, deptName, role } = useFilterStore();
+  const level = categoryLevel ?? 1;
   return useQuery({
-    queryKey: ["person-category", timePeriod, deptLevel, deptName, role, categoryLevel],
+    queryKey: ["person-category", timePeriod, deptLevel, deptName, role, level, parentCategoryId],
     queryFn: () =>
       crossAnalysisApi.getPersonCategory({
         time_period: timePeriod,
         dept_level: deptLevel,
         dept_name: deptName,
         role,
-        category_level: categoryLevel,
+        category_level: level,
+        parent_category_id: parentCategoryId ?? undefined,
       }),
     enabled: Boolean(timePeriod),
   });

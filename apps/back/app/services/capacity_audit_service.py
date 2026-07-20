@@ -180,7 +180,7 @@ class CapacityAuditService:
         sbc_dept = await self._cap_repo.aggregate_by_dept_month(year_months, dept_level, emp_ids)
 
         # 实际产能按部门汇总
-        wh_dept = await self._wh_repo.aggregate_by_dept_and_category(start_date, end_date, dept_level, 1, emp_ids)
+        wh_dept = await self._wh_repo.aggregate_by_dept_and_category(start_date, end_date, dept_level, 1, employee_ids=emp_ids)
 
         # 合并
         sbc_map: dict[str, float] = {}

@@ -427,10 +427,11 @@ class WorkHourRepository:
         end_date: date | None = None,
         dept_level: int = 2,
         category_level: int = 1,
+        parent_category_id: int | None = None,
         employee_ids: list[int] | None = None,
     ) -> list[dict[str, object]]:
         """部门 x 分类 交叉聚合, 祖先追溯。"""
-        ancestor_map = await self._build_ancestor_map(category_level)
+        ancestor_map = await self._build_ancestor_map(category_level, parent_category_id)
         _dept_col_map: dict[int, str] = {1: "level1_dept", 2: "level2_dept", 3: "level3_dept", 4: "level4_dept"}
         dept_col_name = _dept_col_map.get(dept_level, "level2_dept")
         dept_col = getattr(Employee, dept_col_name)
@@ -479,10 +480,11 @@ class WorkHourRepository:
         start_date: date | None = None,
         end_date: date | None = None,
         category_level: int = 1,
+        parent_category_id: int | None = None,
         employee_ids: list[int] | None = None,
     ) -> list[dict[str, object]]:
         """角色 x 分类 交叉聚合, 祖先追溯。"""
-        ancestor_map = await self._build_ancestor_map(category_level)
+        ancestor_map = await self._build_ancestor_map(category_level, parent_category_id)
 
         cols: list[Any] = [
             Employee.role,
@@ -540,10 +542,11 @@ class WorkHourRepository:
         start_date: date | None = None,
         end_date: date | None = None,
         category_level: int = 1,
+        parent_category_id: int | None = None,
         employee_ids: list[int] | None = None,
     ) -> list[dict[str, object]]:
         """人员 x 分类 交叉聚合, 含祖先追溯。"""
-        ancestor_map = await self._build_ancestor_map(category_level)
+        ancestor_map = await self._build_ancestor_map(category_level, parent_category_id)
 
         cols: list[Any] = [
             WorkHour.employee_id,

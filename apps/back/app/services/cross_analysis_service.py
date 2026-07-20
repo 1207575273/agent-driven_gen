@@ -141,6 +141,7 @@ class CrossAnalysisService:
         dept_level: int = 2,
         parent_dept: str | None = None,
         category_level: int = 1,
+        parent_category_id: int | None = None,
     ) -> list[dict[str, object]]:
         """组织 x 项目分类交叉分析。"""
         year_months = _parse_year_months(time_period)
@@ -152,7 +153,7 @@ class CrossAnalysisService:
         emp_ids = await audit_svc._resolve_employee_ids(dept_level, parent_dept, None)  # type: ignore[attr-defined]
 
         wh_dept = await self._wh_repo.aggregate_by_dept_and_category(
-            start_date, end_date, dept_level, category_level, emp_ids
+            start_date, end_date, dept_level, category_level, parent_category_id, emp_ids
         )
 
         # 按部门分组
@@ -228,6 +229,7 @@ class CrossAnalysisService:
         dept_level: int | None = None,
         dept_name: str | None = None,
         category_level: int = 1,
+        parent_category_id: int | None = None,
     ) -> list[dict[str, object]]:
         """角色 x 项目分类交叉分析。"""
         year_months = _parse_year_months(time_period)
@@ -238,7 +240,7 @@ class CrossAnalysisService:
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
         emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, None)  # type: ignore[attr-defined]
 
-        wh_role = await self._wh_repo.aggregate_by_role_and_category(start_date, end_date, category_level, emp_ids)
+        wh_role = await self._wh_repo.aggregate_by_role_and_category(start_date, end_date, category_level, parent_category_id, emp_ids)
 
         # 按角色名合并, 填入分类分布
         role_groups: dict[str, dict[str, object]] = {}
@@ -424,6 +426,7 @@ class CrossAnalysisService:
         dept_name: str | None = None,
         role: str | None = None,
         category_level: int = 1,
+        parent_category_id: int | None = None,
     ) -> list[dict[str, object]]:
         """人员 x 分类 交叉, 每人按分类汇总分布。"""
         year_months = _parse_year_months(time_period)
@@ -435,7 +438,7 @@ class CrossAnalysisService:
         emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)
 
         return await self._wh_repo.aggregate_by_person_with_category(
-            start_date, end_date, category_level, emp_ids
+            start_date, end_date, category_level, parent_category_id, emp_ids
         )
 
     async def get_matrix(
