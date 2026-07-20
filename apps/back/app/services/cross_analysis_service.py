@@ -139,7 +139,8 @@ class CrossAnalysisService:
         self,
         time_period: str | None = None,
         dept_level: int = 2,
-        parent_dept: str | None = None,
+        dept_name: str | None = None,
+        role: str | None = None,
         category_level: int = 1,
         parent_category_id: int | None = None,
     ) -> list[dict[str, object]]:
@@ -150,7 +151,7 @@ class CrossAnalysisService:
         from app.services.capacity_audit_service import CapacityAuditService
 
         audit_svc = CapacityAuditService(self._emp_repo, self._wh_repo, self._cap_repo)
-        emp_ids = await audit_svc._resolve_employee_ids(dept_level, parent_dept, None)  # type: ignore[attr-defined]
+        emp_ids = await audit_svc._resolve_employee_ids(dept_level, dept_name, role)  # type: ignore[attr-defined]
 
         wh_dept = await self._wh_repo.aggregate_by_dept_and_category(
             start_date, end_date, dept_level, category_level, parent_category_id, emp_ids

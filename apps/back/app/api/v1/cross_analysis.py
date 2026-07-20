@@ -52,14 +52,16 @@ async def get_dept_category(
     service: CrossAnalysisServiceDep,
     time_period: str | None = Query(default=None, description="时间范围"),
     dept_level: int = Query(default=2, description="部门层级"),
-    parent_dept: str | None = Query(default=None, description="上级部门"),
+    dept_name: str | None = Query(default=None, description="部门名称筛选"),
+    role: str | None = Query(default=None, description="角色筛选"),
     category_level: int = Query(default=1, description="分类层级"),
     parent_category_id: int | None = Query(default=None, description="上级分类ID(下钻时)"),
 ) -> list[dict[str, Any]]:
     return await service.get_dept_category(
         time_period=time_period,
         dept_level=dept_level,
-        parent_dept=parent_dept,
+        dept_name=dept_name,
+        role=role,
         category_level=category_level,
         parent_category_id=parent_category_id,
     )

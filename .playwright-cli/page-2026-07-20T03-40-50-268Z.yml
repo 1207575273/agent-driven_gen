@@ -1,0 +1,94 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: monorepo·母版
+        - navigation [ref=e10]:
+          - link "主页" [ref=e11] [cursor=pointer]:
+            - /url: /
+          - link "示例" [ref=e12] [cursor=pointer]:
+            - /url: /items
+      - generic "当前后端进程占用" [ref=e13]:
+        - generic "本进程占整机 CPU" [ref=e14]:
+          - generic [ref=e15]: CPU
+          - generic [ref=e17]: —
+        - generic "本进程内存占用" [ref=e19]:
+          - generic [ref=e20]: MEM
+          - generic [ref=e21]: —
+  - main [ref=e22]:
+    - generic [ref=e23]:
+      - heading "能直接跑通, 又写不进烂代码的 全栈母版" [level=1] [ref=e24]: 能直接跑通, 又写不进烂代码的全栈母版
+      - paragraph [ref=e25]: FastAPI + SQLModel 的三层后端, React + TypeScript 的前端, 一条 pnpm 命令起飞。 给 PMO 与测试 fork 出去, 迭代自己的工具与系统 —— 母版只保证开箱能跑通 + 写不进烂代码。
+      - link "看实时 CRUD 示例 →" [ref=e26] [cursor=pointer]:
+        - /url: /items
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - heading "一次请求怎么流动" [level=2] [ref=e29]
+        - paragraph [ref=e30]:
+          - text: 完整三层, 禁跨层。依赖装配
+          - code [ref=e31]: session → repository → service → route
+          - text: 。
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - generic [ref=e35]: 浏览器 · React
+            - generic [ref=e37]: React Query / Zustand
+          - generic [ref=e38]: →
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: "1"
+              - generic [ref=e44]: route
+            - generic [ref=e45]: api/v1 · 薄控制器
+          - generic [ref=e46]: →
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]: "2"
+              - generic [ref=e52]: service
+            - generic [ref=e53]: 业务逻辑 · 抛业务异常
+          - generic [ref=e54]: →
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - generic [ref=e59]: "3"
+              - generic [ref=e60]: repository
+            - generic [ref=e61]: 数据访问 · SQLModel
+          - generic [ref=e62]: →
+        - generic [ref=e65]:
+          - generic [ref=e66]: SQLite · WAL
+          - generic [ref=e68]: 事务边界 get_session
+      - paragraph [ref=e69]: "// 全程只用 GET / POST —— 更新 POST /items/{id}/update,删除 POST /items/{id}/delete"
+    - generic [ref=e70]:
+      - generic [ref=e71]:
+        - heading "母版保证什么" [level=2] [ref=e72]
+        - paragraph [ref=e73]: 开箱能跑通, 写不进烂代码 —— 只做这两件事, 但做扎实。
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - generic [ref=e76]: 只用 GET / POST
+          - generic [ref=e77]: 两种方法走天下, 更新/删除走 POST 子路径, 心智极简。
+        - generic [ref=e78]:
+          - generic [ref=e79]: SQLModel 全家桶
+          - generic [ref=e80]: Base / Table / Create / Update / Public, 表结构与 API 契约解耦。
+        - generic [ref=e81]:
+          - generic [ref=e82]: mypy strict · 编译期替身
+          - generic [ref=e83]: Python 没编译期, 靠严格类型 + Ruff 在提交前拦住低级错误。
+        - generic [ref=e84]:
+          - generic [ref=e85]: 覆盖率 ≥ 80%
+          - generic [ref=e86]: Ruff + mypy + pytest 三道防线, 一键 pnpm check 自查。
+        - generic [ref=e87]:
+          - generic [ref=e88]: 同源单进程
+          - generic [ref=e89]: pnpm build + start, 一个 uvicorn 同时托管前端页面与 API。
+        - generic [ref=e90]:
+          - generic [ref=e91]: 端口自动探测
+          - generic [ref=e92]: ports.json 候选端口, 被占用自动跳下一个, 不用手改配置。
+        - generic [ref=e93]:
+          - generic [ref=e94]: 定时任务 · 进程内
+          - generic [ref=e95]: APScheduler 随应用起停, 单进程不另起 worker, job 守三层。
+        - generic [ref=e96]:
+          - generic [ref=e97]: 生产日志 · JSONL
+          - generic [ref=e98]: 控制台人读 + 文件 JSONL, 8 小时滚动、留 10 天自动清理。
+        - generic [ref=e99]:
+          - generic [ref=e100]: 12-factor 配置
+          - generic [ref=e101]: env + .env 覆盖, 预留配置中心热更 seam(Nacos / ConfigMap)。
+    - paragraph [ref=e103]: pnpm dev · pnpm build · pnpm start · pnpm check —— KISS & YAGNI

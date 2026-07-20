@@ -1,0 +1,16 @@
+[     505ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:9100/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[     641ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:9100/favicon.ico:0
+[  789884ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:9100/@vite/client:559
+[  789903ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:9100/:0
+[ 1192427ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:9100/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[ 5846533ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:9100/@vite/client:559
+[ 5846556ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:9100/:0
+[ 6821969ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:9100/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[11138313ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:9100/@fs/D:/work_space/agent-driven_gen/apps/web/src/components/capacity/TimeCategoryPanel.tsx?t=1784535630681:0
+[11138315ms] [ERROR] [hmr] Failed to reload /@fs/D:\work_space\agent-driven_gen\apps\web\src\components\capacity\TimeCategoryPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:9100/@vite/client:175
+[13972906ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:9100/@vite/client:559
+[13972918ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:9100/api/v1/system/stats:0
+[13972936ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:9100/:0
+[14134470ms] [ERROR] Failed to load resource: net::ERR_NETWORK_IO_SUSPENDED @ http://localhost:9100/:0
+[14136823ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:9100/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548
+[16484781ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:9100/node_modules/.vite/deps/chunk-SIQBRMQ2.js?v=c9828e4c:21548

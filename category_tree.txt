@@ -1,0 +1,28 @@
+=== Project Categories (San Kuai Neng Chan) ===
+
+Level 1 - Big Category (Da Lei):
+  id=1: 三快类       id=11: 研发类       id=16: 周期类
+
+Level 2 - Sub Category (Fen Lei) under each Big Category:
+  三快类(1):
+    id=2: 快服务      id=5: 快交付        id=8: 快营销
+  研发类(11):
+    id=12: 创新专项   id=14: 发版专项
+  周期类(16):
+    id=17: 配置组周期项目   id=19: 其他
+
+Level 3 - Detail (Xi Fen) under each Sub Category:
+  快服务(2):
+    id=3: 快服务迭代    id=4: 快服务子专项
+  快交付(5):
+    id=6: 快交付迭代    id=7: 快交付子专项
+  快营销(8):
+    id=9: 快营销迭代    id=10: 快营销子专项
+  创新专项(12):
+    id=13: 创新专项
+  发版专项(14):
+    id=15: 发版专项
+  配置组周期项目(17):
+    id=18: 配置组周期项目
+  其他(19):
+    id=20: 日常运营管理    id=21: 临时会议    id=22: 请休假    id=23: 其他工作
