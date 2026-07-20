@@ -138,8 +138,7 @@ export function usePersonProjects(employeeId: number | null, timePeriod?: string
 // ── 交叉分析 hooks ──
 
 export function useTimeCategory(categoryLevel?: number, parentCategoryId?: number) {
-  const { timeGranularity, timePeriod, deptLevel, deptName, role } =
-    useFilterStore();
+  const { timeGranularity, timePeriod, deptLevel, deptName, role } = useFilterStore();
   const level = categoryLevel ?? 1;
   return useQuery({
     queryKey: [
@@ -182,15 +181,16 @@ export function useShouldVsActual() {
 }
 
 export function useDeptCategory(categoryLevel?: number, parentCategoryId?: number) {
-  const { timePeriod, deptLevel, deptName } = useFilterStore();
+  const { timePeriod, deptLevel, deptName, role } = useFilterStore();
   const level = categoryLevel ?? 1;
   return useQuery({
-    queryKey: ["dept-category", timePeriod, deptLevel, deptName, level, parentCategoryId],
+    queryKey: ["dept-category", timePeriod, deptLevel, deptName, role, level, parentCategoryId],
     queryFn: () =>
       crossAnalysisApi.getDeptCategory({
         time_period: timePeriod,
         dept_level: deptLevel,
         dept_name: deptName,
+        role,
         category_level: level,
         parent_category_id: parentCategoryId ?? undefined,
       }),
@@ -213,15 +213,16 @@ export function useDeptCategoryMatrix() {
 }
 
 export function useRoleCategory(categoryLevel?: number, parentCategoryId?: number) {
-  const { timePeriod, deptLevel, deptName } = useFilterStore();
+  const { timePeriod, deptLevel, deptName, role } = useFilterStore();
   const level = categoryLevel ?? 1;
   return useQuery({
-    queryKey: ["role-category", timePeriod, deptLevel, deptName, level, parentCategoryId],
+    queryKey: ["role-category", timePeriod, deptLevel, deptName, role, level, parentCategoryId],
     queryFn: () =>
       crossAnalysisApi.getRoleCategory({
         time_period: timePeriod,
         dept_level: deptLevel,
         dept_name: deptName,
+        role,
         category_level: level,
         parent_category_id: parentCategoryId ?? undefined,
       }),

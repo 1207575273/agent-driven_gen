@@ -27,16 +27,23 @@ interface DrillLevel {
 }
 
 export function RoleCategoryPanel() {
-  const { timePeriod, deptLevel, deptName, categoryLevel: filterLevel } = useFilterStore();
+  const { timePeriod, deptLevel, deptName, role, categoryLevel: filterLevel } = useFilterStore();
 
   // 筛选条件变化时自动重置下钻状态到筛选层级
-  const prevFilterRef = useRef({ timePeriod, deptLevel, deptName, categoryLevel: filterLevel });
+  const prevFilterRef = useRef({
+    timePeriod,
+    deptLevel,
+    deptName,
+    role,
+    categoryLevel: filterLevel,
+  });
   useEffect(() => {
     const prev = prevFilterRef.current;
     if (
       prev.timePeriod !== timePeriod ||
       prev.deptLevel !== deptLevel ||
       prev.deptName !== deptName ||
+      prev.role !== role ||
       prev.categoryLevel !== filterLevel
     ) {
       setDrillStack([]);
@@ -45,7 +52,7 @@ export function RoleCategoryPanel() {
       setDrillPerson(null);
       setDrillCell(null);
       setCellPerson(null);
-      prevFilterRef.current = { timePeriod, deptLevel, deptName, categoryLevel: filterLevel };
+      prevFilterRef.current = { timePeriod, deptLevel, deptName, role, categoryLevel: filterLevel };
     }
   });
 
@@ -71,6 +78,7 @@ export function RoleCategoryPanel() {
     categoryId: showProjects?.categoryId ?? null,
     deptLevel,
     deptName,
+    role,
   });
 
   const { data: personRecords, isLoading: recLoading } = useDrillDownRecords(
