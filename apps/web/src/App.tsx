@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import { RootLayout } from "./layouts/RootLayout";
 import { CapacityAuditPage } from "./pages/CapacityAuditPage";
@@ -12,8 +12,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 // / 由 RootLayout.index(HomePage) 承接, /capacity 重定向到审计页。
 export function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
         <Route element={<RootLayout />}>
           <Route index element={<HomePage />} />
           <Route path="items" element={<ItemsPage />} />
@@ -26,6 +25,5 @@ export function App() {
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </BrowserRouter>
   );
 }
