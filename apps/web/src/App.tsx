@@ -13,17 +13,17 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 export function App() {
   return (
     <Routes>
-        <Route element={<RootLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="items" element={<ItemsPage />} />
-        </Route>
-        <Route element={<AppLayout />}>
-          <Route path="/capacity" element={<Navigate to="/capacity/audit" replace />} />
-          <Route path="/capacity/audit" element={<CapacityAuditPage />} />
-          <Route path="/capacity/analysis" element={<CrossAnalysisPage />} />
-          <Route path="/capacity/admin" element={<DataAdminPage />} />
-        </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Route element={<RootLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="items" element={<ItemsPage />} />
+      </Route>
+      <Route element={<AppLayout />}>
+        <Route path="/capacity" element={<Navigate to="/capacity/audit" replace />} />
+        <Route path="/capacity/audit" element={<CapacityAuditPage />} />
+        <Route path="/capacity/analysis" element={<CrossAnalysisPage />} />
+        <Route path="/capacity/admin" element={<DataAdminPage />} />
+      </Route>
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 }
