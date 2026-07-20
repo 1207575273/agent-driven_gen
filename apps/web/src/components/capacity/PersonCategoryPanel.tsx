@@ -389,7 +389,7 @@ function PersonCategoryCrossTable({
     <div>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-medium text-neutral-400">人员x分类交叉表</h3>
-        <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer select-none">
+        <div className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer select-none">
           <span className={!showPct ? "text-accent" : ""}>人天</span>
           <button
             type="button"
@@ -405,7 +405,7 @@ function PersonCategoryCrossTable({
             />
           </button>
           <span className={showPct ? "text-accent" : ""}>占比</span>
-        </label>
+        </div>
       </div>
       <div className="rounded-lg border border-neutral-800/50 overflow-x-auto">
         <table className="min-w-full">
