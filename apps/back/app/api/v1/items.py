@@ -1,14 +1,14 @@
 """Item 路由层(Controller, 薄): 只收参/返 DTO, 业务逻辑全在 service。
 
 只用 GET / POST: 更新与删除走 POST 子路径, 不使用 PATCH/PUT/DELETE。
+列表用 GET query 参数分页(limit/offset)。
 """
 
-from collections.abc import Sequence
-
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
 
 from app.api.deps import ItemServiceDep
 from app.models.item import Item, ItemCreate, ItemPublic, ItemUpdate
+from app.models.pagination import Page
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -18,9 +18,13 @@ async def create_item(payload: ItemCreate, service: ItemServiceDep) -> Item:
     return await service.create(payload)
 
 
-@router.get("", response_model=list[ItemPublic])
-async def list_items(service: ItemServiceDep) -> Sequence[Item]:
-    return await service.list()
+@router.get("", response_model=Page[ItemPublic])
+async def list_items(
+    service: ItemServiceDep,
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+) -> Page[Item]:
+    return await service.list_page(limit, offset)
 
 
 @router.get("/{item_id}", response_model=ItemPublic)

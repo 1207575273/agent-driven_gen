@@ -35,9 +35,23 @@ export interface ItemUpdate {
   quantity?: number;
 }
 
-// 更新/删除走 POST 子路径, 不用 PATCH/PUT/DELETE。
+// 分页信封: 与后端 Page[T] 对应。
+export interface Page<T> {
+  items: T[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface ListParams {
+  limit: number;
+  offset: number;
+}
+
+// 更新/删除走 POST 子路径, 不用 PATCH/PUT/DELETE。列表走 GET query 分页。
 export const itemsApi = {
-  list: () => request<Item[]>("/items"),
+  list: (params: ListParams) =>
+    request<Page<Item>>(`/items?limit=${params.limit}&offset=${params.offset}`),
   create: (payload: ItemCreate) =>
     request<Item>("/items", { method: "POST", body: JSON.stringify(payload) }),
   update: (id: number, payload: ItemUpdate) =>

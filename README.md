@@ -1,7 +1,27 @@
 # 通用 monorepo 母版
 
-一套极简、可 fork 的全栈脚手架。团队(PMO、测试等)clone 出去即可迭代自己的工具与系统。
+一套极简、可 fork 的**全栈**脚手架:前端 + 后端 + 质量闸门一次备齐。任何 web 业务、任何形态(内部工具、后台系统、数据看板、审批 / CRUD)都照着 Item 示例往外长即可。团队(PMO、测试等)clone 出去就能迭代自己的系统。
+
 母版只保证两件事:**开箱能跑通** + **写不进烂代码**(硬性质量闸门)。
+
+## 为什么是它(价值)
+
+- **一套整完前后端**:一个仓库、一条 `pnpm dev` 起飞,前端(React)+ 后端(FastAPI)+ 三道质量闸门全接好,不用自己从零拼脚手架。
+- **部署极简,无需 nginx**:生产是**同源单进程** —— `pnpm build` 把前端打进后端 `static`,`pnpm start` 起**一个** uvicorn 同时托管前端页面与 `/api`。没有反向代理、没有 nginx、没有跨域、没有多进程编排:**一个端口、一个进程、一台机器**就上线。
+- **任何 web 业务、任何形态**:完整三层 + 配置化前端,CRUD / 看板 / 审批 / 报表都能往外长;全程只用 GET / POST,心智极简。
+- **写不进烂代码**:Python 无编译期,靠 Ruff + mypy(strict) + pytest(覆盖率 ≥ 80%)+ 前端 Biome / tsc / Vitest 兜底,一键 `pnpm check` 自查。
+
+## 一支单进程的 Agent 团队(需求 → 测试)
+
+`.claude/agents/` 里放了 5 个角色 Agent,由主会话在**同一进程 / 会话**内按流水线协作 —— 这是"Agent 团队"的最简形态:只靠几个 markdown 文件,无需 tmux / 多进程 / 后台编排。
+
+```
+需求分析 -> 架构设计 -> [后端 / 前端 并行实现] -> 测试
+```
+
+- **完整交付链**:从需求澄清、接口契约、分层实现到测试守闸一条链走完;每步产出任务文档到 `docs/<时间戳-任务>/`(见 `docs/README.md`),尽量配架构图 / 流程图 / 用例图。(严格意义的"全闭环"还含评审 / 部署 / 线上反馈,可按需再接。)
+- **越用越懂这个项目**:5 个 Agent 都开了项目级持久记忆(`memory: project` -> `.claude/agent-memory/<agent>/`,随仓库共享)。用得越多、沉淀越多(套路 / 踩坑 / 决策),Agent 对**本项目**就越熟。前提是认真维护 `MEMORY.md`(启动只载入前 200 行)并提交共享 `.claude/agent-memory/` —— 它长的是"对项目的了解",不是模型本身变聪明。
+- **按需启动**:简单需求直接在主会话干完,不必拉这套流水线;多模块、需求模糊或工作量大时才拆到 Agent。
 
 ## 技术栈
 
@@ -12,9 +32,63 @@
 | 后端质量 | Ruff(lint/format) + mypy(strict, 编译期替身) + pytest(覆盖率闸门) |
 | 前端 | Vite + React + TypeScript(strict) + Zustand + React Query + ECharts |
 | 前端质量 | Biome(lint/format) + tsc + Vitest |
+| 后端基座 | 定时任务 APScheduler(进程内) · 日志 structlog(控制台人读 + 文件 JSONL) · 配置 pydantic-settings(env + .env, 12-factor) |
+| 前端路由 | react-router(声明式);生产同源由后端 SPA 兜底 |
 | 质量自查 | `pnpm check`(手动一键);pre-commit + CI 为未来可选(见方案文档附录) |
 
 后端预置常用包:`httpx / orjson / structlog / tenacity / python-multipart / email-validator / pandas / openpyxl`(按需删减)。
+
+## 前置条件(项目基座)
+
+只需两样基座工具:**Node.js + pnpm**(前端与编排脚本)和 **uv**(Python 运行时与后端)。装好这两样,其余依赖由 `pnpm install` / `uv sync` 自动拉齐 —— 本机**不需要**预装 Python。
+
+### 1. Node.js + pnpm
+
+先装 Node.js LTS(>= 18),再装 pnpm:
+
+```bash
+# Node.js: 到 https://nodejs.org 下载 LTS, 或用 nvm / fnm 等版本管理器
+
+# pnpm 方式一(Node 自带 Corepack, 推荐):
+corepack enable pnpm
+
+# pnpm 方式二(独立安装):
+#   Windows(PowerShell):
+Invoke-WebRequest https://get.pnpm.io/install.ps1 -UseBasicParsing | Invoke-Expression
+#   macOS / Linux:
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+#   或: npm install -g pnpm@latest-11   /   brew install pnpm
+```
+
+> 官方来源:安装文档 <https://pnpm.io/installation> · GitHub <https://github.com/pnpm/pnpm>
+
+### 2. uv(自带并管理 Python 3.12,无需预装 Python)
+
+```bash
+#   Windows(PowerShell):
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+#   macOS / Linux:
+curl -LsSf https://astral.sh/uv/install.sh | sh
+#   或: brew install uv   /   pipx install uv
+
+# 备好 Python 3.12(可选; 后端命令 / pnpm build 首次运行会自动拉齐):
+uv python install 3.12
+```
+
+> 官方来源:安装文档 <https://docs.astral.sh/uv/getting-started/installation/> · GitHub <https://github.com/astral-sh/uv>
+
+> Windows 上这两条**安装命令用 PowerShell** 执行(一次性装工具);装好后日常开发再切回 Git Bash 跑 `./xxx.sh`。
+
+### 3. 校验 + 首次装依赖
+
+```bash
+node -v && pnpm -v && uv --version    # 三个都打印版本号即就绪
+
+pnpm install                          # 前端 + 编排脚本依赖
+uv sync --directory apps/back         # 后端 Python 依赖(uv 顺带备好 Python 3.12)
+```
+
+装依赖也可直接跑 `./run.sh`(傻瓜一键:装好依赖并起开发)。
 
 ## 快速开始
 
@@ -93,12 +167,24 @@ ORM 映射在 `models/`(`Item(table=True)` = `@Entity`),SQL 操作在 `repositor
 全项目只用两种方法。更新、删除走 POST 子路径,不用 PATCH/PUT/DELETE:
 
 ```
-GET  /api/v1/items            列表
+GET  /api/v1/items?limit&offset  分页列表(返回 {items,total,limit,offset})
 GET  /api/v1/items/{id}       详情
 POST /api/v1/items            新增
 POST /api/v1/items/{id}/update  更新
 POST /api/v1/items/{id}/delete  删除
 ```
+
+## 后端基座能力
+
+- **列表分页**:`GET /items?limit&offset` 返回 `{items,total,limit,offset}`;`limit` 1~100(默认 20)、`offset>=0`,越界 422。通用 `Page[T]`(`app/models/pagination.py`)团队新实体照抄。
+- **定时任务**:进程内 APScheduler,随 `lifespan` 起停(单进程,不另起 worker)。`app/core/scheduler.py` 的 `register_jobs` 加 job;job 经 `session_scope()` + service 访问数据、守三层。多副本会重复触发(母版单 worker 无碍;多副本需外部调度 / 分布式锁,不预置)。
+- **生产日志**:structlog 双出口 —— 控制台人读、文件 `logs/app.jsonl`(JSONL / UTC / 固定字段 `timestamp·level·logger·message` / 结构化异常);**8 小时滚动、留 10 天自动清理**。格式与滚动 / 留存由 `APP_LOGGING__*` 环境变量控制(见 `apps/back/.env`)。
+- **配置服务**:pydantic-settings,优先级 `环境变量 > .env > 默认`(12-factor,无 YAML);K8s ConfigMap / Nacos 挂成 env 注入即可。`app/core/config.reload_settings()` 是热更 seam,供未来接配置中心 watcher。`apps/back/.env` 已随母版提交(仅无密钥默认值,fork 后开箱即用、想改直接改它);真实密钥 / 生产值一律用环境变量注入,勿写进已提交的 `.env`。
+- **前端路由 + SPA 同源**:react-router 客户端路由;生产由后端 `SpaStaticFiles` 兜底(深链刷新回 `index.html`,不 404),仍单进程、无 nginx。
+- **请求追踪**:`core/middleware.py` 的 request-id 中间件 —— 入站带 `X-Request-ID` 则透传、否则生成,经 `structlog.contextvars` 自动注入本次请求的每条日志,并回写响应头。排障时一个 id 串起一次请求的全部日志。接分布式 trace 在此扩展(seam)。
+- **启动即迁移建表**:`lifespan` 启动跑 `alembic upgrade head`(`db/migrate.py`),**不用 `create_all`**(create_all 只建缺失表、不 alter 已有表,团队后续加字段会"默认即漏迁移")。初始迁移已随母版提交;团队加实体后 `alembic revision --autogenerate` 生成迁移即可。`alembic.ini` 保持 ASCII(configparser 按 OS locale 读,中文注释会在 zh-CN Windows 启动崩)。
+
+> 每项设计的"为什么 / 取舍"速查见架构方案的[决策记录(ADR)](docs/20260715_通用monorepo母版架构方案.md#三决策记录adr)。改母版前先看它,别无谓推翻已定权衡。
 
 ## 加一个新功能的标准动作(以实体 Foo 为例)
 

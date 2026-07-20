@@ -13,14 +13,40 @@ async def test_should_create_item_when_payload_valid(client: AsyncClient) -> Non
     assert body["id"] >= 1
 
 
-async def test_should_list_created_items(client: AsyncClient) -> None:
+async def test_should_list_created_items_as_page(client: AsyncClient) -> None:
     await client.post("/api/v1/items", json={"name": "a"})
     await client.post("/api/v1/items", json={"name": "b"})
 
     resp = await client.get("/api/v1/items")
 
     assert resp.status_code == 200
-    assert len(resp.json()) == 2
+    body = resp.json()
+    assert body["total"] == 2
+    assert len(body["items"]) == 2
+    assert body["limit"] == 20
+    assert body["offset"] == 0
+
+
+async def test_should_paginate_items(client: AsyncClient) -> None:
+    for i in range(3):
+        await client.post("/api/v1/items", json={"name": f"n{i}"})
+
+    page1 = (await client.get("/api/v1/items?limit=2&offset=0")).json()
+    page2 = (await client.get("/api/v1/items?limit=2&offset=2")).json()
+
+    assert page1["total"] == 3
+    assert page2["total"] == 3
+    assert len(page1["items"]) == 2
+    assert len(page2["items"]) == 1
+    ids1 = {it["id"] for it in page1["items"]}
+    ids2 = {it["id"] for it in page2["items"]}
+    assert ids1.isdisjoint(ids2)
+
+
+async def test_should_reject_out_of_range_pagination(client: AsyncClient) -> None:
+    assert (await client.get("/api/v1/items?limit=0")).status_code == 422
+    assert (await client.get("/api/v1/items?limit=101")).status_code == 422
+    assert (await client.get("/api/v1/items?offset=-1")).status_code == 422
 
 
 async def test_should_return_404_when_item_missing(client: AsyncClient) -> None:

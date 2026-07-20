@@ -5,6 +5,7 @@ get_session 作为请求级工作单元(Unit of Work): 请求成功自动 commit
 """
 
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 from typing import Any
 
 from sqlalchemy import event
@@ -33,6 +34,22 @@ async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_o
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:  # pragma: no cover
+    async with async_session_factory() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+
+
+@asynccontextmanager
+async def session_scope() -> AsyncGenerator[AsyncSession, None]:  # pragma: no cover
+    """请求作用域之外的独立工作单元(定时任务 / 脚本用)。
+
+    与 get_session 同一套 UoW 语义(成功 commit / 异常 rollback), 但不依赖
+    FastAPI 请求生命周期。定时 job 用它自建会话, 再经 service 访问数据, 守住三层。
+    """
     async with async_session_factory() as session:
         try:
             yield session

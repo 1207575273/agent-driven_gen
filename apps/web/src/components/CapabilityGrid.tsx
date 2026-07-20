@@ -30,6 +30,9 @@ const CAPS: Capability[] = [
     title: "端口自动探测",
     desc: "ports.json 候选端口, 被占用自动跳下一个, 不用手改配置。",
   },
+  { title: "定时任务 · 进程内", desc: "APScheduler 随应用起停, 单进程不另起 worker, job 守三层。" },
+  { title: "生产日志 · JSONL", desc: "控制台人读 + 文件 JSONL, 8 小时滚动、留 10 天自动清理。" },
+  { title: "12-factor 配置", desc: "env + .env 覆盖, 预留配置中心热更 seam(Nacos / ConfigMap)。" },
 ];
 
 export function CapabilityGrid() {
