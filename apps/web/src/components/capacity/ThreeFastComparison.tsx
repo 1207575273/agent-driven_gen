@@ -1,7 +1,14 @@
 import type { ThreeFastComparisonItem } from "../../api/capacity";
 import { useThreeFastComparison } from "../../hooks/useCapacity";
-import { BarChart } from "../charts/BarChart";
+import { BarChart, type BarChartSeries } from "../charts/BarChart";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
+
+/** 计划=浅灰蓝, 实际=亮蓝 — 全局配对色, 与品类无关(品类靠 X 轴标签区分) */
+const PLAN_COLOR = "#475569";
+const ACTUAL_COLOR = "#38bdf8";
+
+/** 品类固定顺序 */
+const CATEGORY_ORDER = ["快服务", "快交付", "快营销"];
 
 export function ThreeFastComparison() {
   const { data, isLoading, isError } = useThreeFastComparison();
@@ -17,38 +24,56 @@ export function ThreeFastComparison() {
 
   const items: ThreeFastComparisonItem[] = data;
 
-  const quarters = [...new Set(items.map((d: ThreeFastComparisonItem) => d.quarter))];
-  const categories = [...new Set(items.map((d: ThreeFastComparisonItem) => d.category_name))];
+  // 按季度分组, 每季度一张图; X 轴 = 品类, 两根柱(计划/实际)
+  const quarters = [...new Set(items.map((d) => d.quarter))].sort();
 
-  const planSeries = categories.map((cat: string) => ({
-    name: `${cat}-计划`,
-    data: quarters.map((q: string) => {
-      const item = items.find(
-        (d: ThreeFastComparisonItem) => d.quarter === q && d.category_name === cat,
-      );
-      return item?.plan_days ?? 0;
-    }),
-    color: "#475569",
-    type: "bar" as const,
-  }));
+  const charts = quarters.map((q) => {
+    const cats = CATEGORY_ORDER.filter((cat) =>
+      items.some((d) => d.quarter === q && d.category_name === cat),
+    );
+    // 补回数据里存在但不在 ORDER 中的品类
+    for (const it of items) {
+      if (it.quarter === q && !cats.includes(it.category_name)) {
+        cats.push(it.category_name);
+      }
+    }
 
-  const actualSeries = categories.map((cat: string) => ({
-    name: `${cat}-实际`,
-    data: quarters.map((q: string) => {
-      const item = items.find(
-        (d: ThreeFastComparisonItem) => d.quarter === q && d.category_name === cat,
-      );
-      return item?.actual_days ?? 0;
-    }),
-    type: "bar" as const,
-  }));
+    const planSeries: BarChartSeries = {
+      name: "计划",
+      color: PLAN_COLOR,
+      data: cats.map((cat) => {
+        const it = items.find((d) => d.quarter === q && d.category_name === cat);
+        return it?.plan_days ?? 0;
+      }),
+      type: "bar",
+    };
+    const actualSeries: BarChartSeries = {
+      name: "实际",
+      color: ACTUAL_COLOR,
+      data: cats.map((cat) => {
+        const it = items.find((d) => d.quarter === q && d.category_name === cat);
+        return it?.actual_days ?? 0;
+      }),
+      type: "bar",
+    };
+
+    return { quarter: q, categories: cats, series: [planSeries, actualSeries] };
+  });
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-medium text-neutral-400 mb-3">Q1/Q2 三快计划 vs 实际</h3>
-        <div className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4">
-          <BarChart categories={quarters} series={[...planSeries, ...actualSeries]} height={320} />
+        <h3 className="text-sm font-medium text-neutral-400 mb-3">三快计划 vs 实际(按季度)</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {charts.map((c) => (
+            <div
+              key={c.quarter}
+              className="rounded-lg border border-neutral-800/50 bg-neutral-900/30 p-4"
+            >
+              <div className="text-sm font-medium text-neutral-300 mb-2">{c.quarter}</div>
+              <BarChart categories={c.categories} series={c.series} height={280} showLegend />
+            </div>
+          ))}
         </div>
       </div>
 
