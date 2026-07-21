@@ -471,6 +471,32 @@ function PersonCategoryCrossTable({
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-neutral-600 bg-neutral-900/60">
+              <td className="px-3 py-2.5 text-sm font-medium text-neutral-100" colSpan={4}>
+                汇总
+              </td>
+              {categoryList.map((cat) => {
+                const sum = data.reduce((acc, item) => acc + (item.category_distribution[cat] ?? 0), 0);
+                return (
+                  <td key={cat} className="px-3 py-2.5 text-sm font-medium text-accent text-right">
+                    {showPct
+                      ? (() => {
+                          const colSum = data.reduce((acc, item) => acc + (item.category_distribution[cat] ?? 0), 0);
+                          const totalAll = data.reduce((acc, item) => acc + item.total_days, 0);
+                          return totalAll > 0 ? `${((colSum / totalAll) * 100).toFixed(1)}%` : "-";
+                        })()
+                      : sum.toFixed(1)}
+                  </td>
+                );
+              })}
+              <td className="px-3 py-2.5 text-sm font-medium text-accent text-right">
+                {showPct
+                  ? "100%"
+                  : data.reduce((acc, item) => acc + item.total_days, 0).toFixed(1)}
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
