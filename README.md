@@ -13,14 +13,21 @@
 
 ## 一支单进程的 Agent 团队(需求 → 测试)
 
-`.claude/agents/` 里放了 5 个角色 Agent,由主会话在**同一进程 / 会话**内按流水线协作 —— 这是"Agent 团队"的最简形态:只靠几个 markdown 文件,无需 tmux / 多进程 / 后台编排。
+母版同时配了两套 Agent 工具链,选你用哪个 IDE 就行:
+
+| 工具 | Agent 定义 | 权限配置 | 记忆目录 | 项目宪法 |
+|------|-----------|---------|---------|---------|
+| Claude Code | `.claude/agents/*.md` | `.claude/settings.json` | `.claude/agent-memory/` | `.claude/CLAUDE.md` |
+| Codex | `.codex/agents/*.toml` | `.codex/config.toml` + `.codex/rules/` | `.codex/agent-memory/` | `AGENTS.md` |
+
+两边都是 5 个角色 Agent,由主会话在**同一进程 / 会话**内按流水线协作 —— 这是"Agent 团队"的最简形态:只靠几个文件,无需 tmux / 多进程 / 后台编排。
 
 ```
 需求分析 -> 架构设计 -> [后端 / 前端 并行实现] -> 测试
 ```
 
 - **完整交付链**:从需求澄清、接口契约、分层实现到测试守闸一条链走完;每步产出任务文档到 `docs/<时间戳-任务>/`(见 `docs/README.md`),尽量配架构图 / 流程图 / 用例图。(严格意义的"全闭环"还含评审 / 部署 / 线上反馈,可按需再接。)
-- **越用越懂这个项目**:5 个 Agent 都开了项目级持久记忆(`memory: project` -> `.claude/agent-memory/<agent>/`,随仓库共享)。用得越多、沉淀越多(套路 / 踩坑 / 决策),Agent 对**本项目**就越熟。前提是认真维护 `MEMORY.md`(启动只载入前 200 行)并提交共享 `.claude/agent-memory/` —— 它长的是"对项目的了解",不是模型本身变聪明。
+- **越用越懂这个项目**:5 个 Agent 都开了项目级持久记忆(`.claude/agent-memory/` 或 `.codex/agent-memory/`,随仓库共享)。用得越多、沉淀越多(套路 / 踩坑 / 决策),Agent 对**本项目**就越熟。Claude Code 的 memory 自动载入;Codex 靠 agent 指令引导读写。两者都长的是"对项目的了解",不是模型本身变聪明。
 - **按需启动**:简单需求直接在主会话干完,不必拉这套流水线;多模块、需求模糊或工作量大时才拆到 Agent。
 
 ## 技术栈
@@ -104,7 +111,23 @@ uv sync --directory apps/back         # 后端 Python 依赖(uv 顺带备好 Pyt
 
 - **它做什么**:只把"本项目路径"写进你自己 `~/.claude.json` 的信任标记,不改任何权限内容。改前自动备份、幂等,可反复跑。
 - **为什么要脚本**:权限"声明"是项目级的(`.claude/settings.json` 随仓库共享:`acceptEdits` + `Bash`/读写编辑全放行,删除类命令仍二次确认);而"是否信任某目录"是用户级状态(每台机器各一份,无法随仓库共享),只能靠本机脚本补上。两者合一才达成"克隆后自动放行"。
+### 首次授信(一次即可)
+
+#### Claude Code
+
+克隆后先跑一次授信脚本,让本机的 Claude Code 免信任弹窗、直接应用本项目 `.claude/settings.json` 里声明的放行权限:
+
+```bash
+./trust.sh        # macOS / Linux / Windows(Git Bash)
+```
+
+- **它做什么**:只把"本项目路径"写进你自己 `~/.claude.json` 的信任标记,不改任何权限内容。改前自动备份、幂等,可反复跑。
+- **为什么要脚本**:权限"声明"是项目级的(`.claude/settings.json` 随仓库共享:`acceptEdits` + `Bash`/读写编辑全放行,删除类命令仍二次确认);而"是否信任某目录"是用户级状态(每台机器各一份,无法随仓库共享),只能靠本机脚本补上。两者合一才达成"克隆后自动放行"。
 - **注意**:运行前先关掉本项目正在跑的 Claude Code 会话,否则它退出时可能覆盖回写、抵消改动;脚本依赖 node 在 PATH(开发本就需要,一般已具备)。
+
+#### Codex
+
+Codex 无需额外脚本。项目级权限直接在仓库里的 `.codex/config.toml`(`sandbox_mode = "workspace-write"` + `approval_policy = "on-request"`)和 `.codex/rules/default.rules`(删除类命令二次确认)声明。首次在项目目录启动 Codex 时,它会自动发现 `.codex/` 并提示信任;信任后 `.codex/config.toml` 生效,等价于 Claude Code 的 `acceptEdits`。
 
 ### 开发
 

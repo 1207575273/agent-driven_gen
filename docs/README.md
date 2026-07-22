@@ -83,4 +83,5 @@ flowchart LR
 
 - **任务文档**(本目录 `docs/<任务>/<角色>/`):单次任务的**交付物**, 给人看、随任务归档, "这次做了什么"。
 - **Agent 记忆**(`.claude/agent-memory/<agent>/`, 各 subagent 已开 `memory: project`):该 Agent **跨任务**积累的复用知识(套路 / 踩坑 / 决策), 启动时自动载入其上下文, "以后怎么少踩坑"。随仓库共享, fork 团队用得越久越聪明。
-
+- **Agent 记忆**(`.claude/agent-memory/` 或 `.codex/agent-memory/`,随仓库共享):该 Agent **跨任务**积累的复用知识(套路 / 踩坑 / 决策)。Claude Code 的 memory 自动载入;Codex 靠 agent 指令引导读写。随仓库共享, fork 团队用得越久越聪明。
+- **Agent 记忆**(`.claude/agent-memory/` 或 `.codex/agent-memory/`,随仓库共享):该 Agent **跨任务**积累的复用知识(套路 / 踩坑 / 决策)。Claude Code 的 memory 自动载入;Codex 靠 agent 指令引导读写。随仓库共享, fork 团队用得越久越聪明。

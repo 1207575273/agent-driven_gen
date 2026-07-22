@@ -1,0 +1,28 @@
+# ---------------------------------------------------------------------------
+# Codex 项目级配置(.codex/config.toml)
+# 对应 .claude/settings.json:沙箱模式 + 审批策略 + MCP + Agent 子线程
+# ---------------------------------------------------------------------------
+
+# 沙箱 + 审批:等价于 Claude 的 acceptEdits(可编辑工作区文件,越界才问)
+# workspace-write = 可读 + 可编辑工作区内文件 + 可运行本地命令(沙箱内)
+# on-request = 沙箱内直接干,越界(写工作区外 / 联网等)才弹审批
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+approvals_reviewer = "user"
+
+# Agent 子线程设置
+[agents]
+max_threads = 6
+max_depth = 1
+
+# ---------------------------------------------------------------------------
+# MCP 服务器(随仓库共享,fork 后开箱即用)
+# ---------------------------------------------------------------------------
+[mcp_servers.context7]
+type = "stdio"
+command = "cmd"
+args = ["/c", "npx", "-y", "@upstash/context7-mcp"]
+
+[mcp_servers.deepwiki]
+type = "streamable-http"
+url = "https://mcp.deepwiki.com/mcp"

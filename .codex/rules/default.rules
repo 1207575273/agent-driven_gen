@@ -1,0 +1,31 @@
+# 破坏性命令二次确认(对应 .claude/settings.json 的 ask 列表)
+# workspace-write 模式下,工作区内的 rm 等命令本可直接跑;
+# 这里加一层 prompt,让删除类命令始终弹确认,防止误删。
+
+prefix_rule(
+    pattern = ["rm"],
+    decision = "prompt",
+    justification = "rm 删除不可逆,始终确认",
+    match = ["rm file.txt", "rm -rf dist"],
+)
+
+prefix_rule(
+    pattern = ["rmdir"],
+    decision = "prompt",
+    justification = "rmdir 删除目录,始终确认",
+    match = ["rmdir tmp"],
+)
+
+prefix_rule(
+    pattern = ["git", "rm"],
+    decision = "prompt",
+    justification = "git rm 删除版本跟踪文件,始终确认",
+    match = ["git rm --cached file.txt"],
+)
+
+prefix_rule(
+    pattern = ["Remove-Item"],
+    decision = "prompt",
+    justification = "Remove-Item 删除不可逆,始终确认",
+    match = ["Remove-Item dist"],
+)
