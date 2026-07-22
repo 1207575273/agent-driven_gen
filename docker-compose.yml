@@ -58,15 +58,15 @@ services:
     # 集群部署(Swarm)用 deploy.resources; 单机 Docker 用 mem_limit / cpus。
     # 按实际负载调整: CPU 紧张调高 cpus, 内存不足调高 memory。
     mem_limit: 512m          # 内存上限(超出会被 OOM Kill)
-    cpus: "1.0"              # CPU 上限(1 核; 多并发场景可调到 1.5~2.0)
+    cpus: "2.0"              # CPU 上限(2 核)
     # 单机环境下下面的 deploy 段不生效, 但写了不影响; Swarm 模式才读取:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: "2.0"
           memory: 512M
         reservations:        # 保留额(调度器保证至少分到这么多)
-          cpus: "0.25"
+          cpus: "0.5"
           memory: 128M
       restart_policy:        # Swarm 模式下的重启策略(单机用上面的 restart 字段)
         condition: on-failure
