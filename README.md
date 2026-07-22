@@ -148,6 +148,26 @@ pnpm start        # 起后端单进程, 同源托管前端 + API(默认端口 = 
 ```
 
 生产是**同源单进程**:一个 uvicorn 同时提供 `/api/v1/*`(API)和 `/`(前端页面),不需要单独起前端。
+### Docker 一键部署
+
+不想装 Node / Python / uv,装个 Docker 就行:
+
+```bash
+docker compose up -d     # 构建并后台启动(首次约 1~2 分钟)
+docker compose logs -f   # 看日志
+docker compose down      # 停止(数据卷保留)
+docker compose down -v   # 停止并清空数据库
+```
+
+容器内:前端构建 -> `apps/back/static`,后端 uvicorn 同源托管,SQLite 数据持久化到 docker volume。端口默认 `8901`(见 `ports.json`),改端口在 `docker-compose.yml` 的 `ports` 映射。
+
+### deploy 脚本(dev / 生产 / 停服务)
+
+```bash
+./deploy/start.sh dev    # 开发模式(= pnpm dev)
+./deploy/start.sh prod   # 生产模式(= pnpm build && pnpm start)
+./deploy/stop.sh         # 杀掉 ports.json 里所有端口占用的进程
+```
 
 ## 目录结构
 

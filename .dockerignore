@@ -1,0 +1,40 @@
+# 版本控制 / IDE
+.git/
+.agents/
+.claude/
+.codex/
+.idea/
+.vscode/
+
+# 依赖(node_modules / .venv 由 Docker 内重新安装)
+node_modules/
+**/node_modules/
+apps/back/.venv/
+
+# 构建产物(static 由 Docker 内构建生成)
+apps/back/static/
+apps/web/dist/
+
+# 运行时数据(不进镜像, 用 volume 挂载)
+apps/back/dev.db*
+apps/back/logs/
+apps/back/data/
+
+# 缓存
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 文档(不影响运行)
+docs/
+*.md
+!README.md
+
+# 部署脚本自身
+deploy/
+codex.sh
+trust.sh
+run.sh
+check.sh

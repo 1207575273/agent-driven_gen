@@ -1,0 +1,27 @@
+# docker-compose.yml —— 一键部署
+#
+# 用法:
+#   docker compose up -d          # 构建并后台启动
+#   docker compose logs -f        # 看日志
+#   docker compose down           # 停止并移除容器(数据卷保留)
+#   docker compose down -v        # 停止并删除数据卷(清空数据库)
+
+services:
+  app:
+    build: .
+    container_name: agent-driven-gen
+    ports:
+      - "8901:8901"
+    volumes:
+      - app-data:/app/apps/back/data
+      - app-logs:/app/apps/back/logs
+    environment:
+      - APP_DATABASE_URL=sqlite+aiosqlite:///./data/dev.db
+      - APP_LOGGING__SQL_ECHO=false
+      # 生产收窄 CORS(取消注释改成你的域名):
+      # - APP_CORS_ORIGINS=["https://your.domain"]
+    restart: unless-stopped
+
+volumes:
+  app-data:
+  app-logs:
