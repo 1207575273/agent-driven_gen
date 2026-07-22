@@ -160,15 +160,6 @@ docker compose down -v   # 停止并清空数据库
 ```
 
 容器内:前端构建 -> `apps/back/static`,后端 uvicorn 同源托管,SQLite 数据持久化到 docker volume。端口默认 `8901`(见 `ports.json`),改端口在 `docker-compose.yml` 的 `ports` 映射。
-
-### deploy 脚本(dev / 生产 / 停服务)
-
-```bash
-./deploy/start.sh dev    # 开发模式(= pnpm dev)
-./deploy/start.sh prod   # 生产模式(= pnpm build && pnpm start)
-./deploy/stop.sh         # 杀掉 ports.json 里所有端口占用的进程
-```
-
 ## 目录结构
 
 ```
@@ -245,6 +236,7 @@ POST /api/v1/items/{id}/delete  删除
 pnpm dev       # 开发: 自动探测端口起前后端(热更新)
 pnpm build     # 构建: 前端产物 -> apps/back/static
 pnpm start     # 生产: 起后端单进程, 同源托管前端 + API
+pnpm stop      # 杀进程: 按 ports.json 端口杀掉残留的 uvicorn / vite
 pnpm check     # 自查: 后端 Ruff+mypy+pytest / 前端 Biome+tsc+Vitest(或 ./check.sh)
 ```
 

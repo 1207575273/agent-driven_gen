@@ -1,27 +1,88 @@
-# docker-compose.yml —— 一键部署
+# =============================================================================
+# docker-compose.yml —— 一键部署(生产可用)
+# =============================================================================
 #
 # 用法:
 #   docker compose up -d          # 构建并后台启动
 #   docker compose logs -f        # 看日志
 #   docker compose down           # 停止并移除容器(数据卷保留)
 #   docker compose down -v        # 停止并删除数据卷(清空数据库)
+#
+# 健康检查: 容器启动后定期探测 /api/v1/health, 连续失败判定为不健康。
+# 资源预算: 限制 CPU / 内存上限, 防止单容器吃光宿主机资源。
+# 重启策略: unless-stopped —— 崩溃自动拉起, 手动 stop 不自动重启。
+# 日志策略: JSON File 驱动, 单文件 10MB、滚动保留 3 份(共约 30MB)。
+# =============================================================================
 
 services:
   app:
     build: .
     container_name: agent-driven-gen
+
+    # ---- 网络 ----
     ports:
-      - "8901:8901"
+      - "8901:8901"          # 左边改端口可对外暴露到不同宿主端口(容器内固定 8901)
+
+    # ---- 持久化卷 ----
+    # data: SQLite 数据库文件(dev.db), 换容器不丢数据
+    # logs: 结构化日志(JSONL), 方便宿主机直接查看或采集
     volumes:
       - app-data:/app/apps/back/data
       - app-logs:/app/apps/back/logs
+
+    # ---- 环境变量(覆盖 apps/back/.env 默认值) ----
     environment:
-      - APP_DATABASE_URL=sqlite+aiosqlite:///./data/dev.db
-      - APP_LOGGING__SQL_ECHO=false
+      - APP_DATABASE_URL=sqlite+aiosqlite:///./data/dev.db   # 指向持久化卷内的库
+      - APP_LOGGING__SQL_ECHO=false                          # 生产关闭 SQL 回显
+      - APP_LOGGING__LEVEL=INFO                              # 日志级别(调试改 DEBUG)
       # 生产收窄 CORS(取消注释改成你的域名):
       # - APP_CORS_ORIGINS=["https://your.domain"]
+
+    # ---- 重启策略 ----
+    # unless-stopped: 崩溃 / 宿主机重启后自动拉起; 手动 docker stop 不会自动重启
     restart: unless-stopped
 
+    # ---- 健康检查 ----
+    # 启动后等 10 秒开始探测(给 uvicorn + Alembic 迁移留时间),
+    # 之后每 30 秒探一次 /api/v1/health; 连续 3 次失败(90 秒)判定不健康。
+    # unhealthy 状态可被集群编排(Swarm / K8s)感知并重启容器。
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8901/api/v1/health')"]
+      interval: 30s          # 探测间隔
+      timeout: 5s            # 单次探测超时(超时算失败)
+      retries: 3             # 连续失败多少次判定 unhealthy
+      start_period: 10s      # 启动宽限期(此期间失败不计入 retries)
+
+    # ---- 资源预算 ----
+    # 母版是单进程 SQLite 应用, 资源占用不高; 这里给的是合理上限。
+    # 集群部署(Swarm)用 deploy.resources; 单机 Docker 用 mem_limit / cpus。
+    # 按实际负载调整: CPU 紧张调高 cpus, 内存不足调高 memory。
+    mem_limit: 512m          # 内存上限(超出会被 OOM Kill)
+    cpus: "1.0"              # CPU 上限(1 核; 多并发场景可调到 1.5~2.0)
+    # 单机环境下下面的 deploy 段不生效, 但写了不影响; Swarm 模式才读取:
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:        # 保留额(调度器保证至少分到这么多)
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:        # Swarm 模式下的重启策略(单机用上面的 restart 字段)
+        condition: on-failure
+        max_attempts: 3
+        delay: 5s
+        window: 120s
+
+    # ---- 日志策略 ----
+    # JSON File 驱动, 单文件 10MB 滚动、留 3 份(约 30MB 封顶), 防止日志撑满磁盘。
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ---- 数据卷 ----
 volumes:
   app-data:
   app-logs:

@@ -5,6 +5,7 @@
     "dev": "node scripts/dev.mjs",
     "build": "uv sync --directory apps/back && pnpm --filter web build",
     "start": "node scripts/start.mjs",
+    "stop": "node scripts/stop.mjs",
     "lint:back": "uv run --directory apps/back ruff check . && uv run --directory apps/back ruff format --check .",
     "lint:web": "pnpm --filter web lint",
     "type:back": "uv run --directory apps/back mypy .",
